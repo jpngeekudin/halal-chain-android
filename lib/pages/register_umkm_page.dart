@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/models/form_config_model.dart';
 import 'package:halal_chain/services/main_service.dart';
 
 class RegisterUmkmPage extends StatefulWidget {
@@ -24,94 +25,6 @@ class _RegisterUmkmPageState extends State<RegisterUmkmPage> {
   final _productTypeController = TextEditingController();
   final _marketingAreaController = TextEditingController();
   final _marketingSystemController = TextEditingController();
-
-  InputDecoration _getInputDecoration({
-    required String label
-  }) => InputDecoration(
-    hintText: label,
-    border: OutlineInputBorder(
-      borderSide: BorderSide.none,
-    ),
-    filled: true,
-    fillColor: Colors.grey[200],
-    isDense: true,
-    contentPadding: EdgeInsets.symmetric(
-      horizontal: 12,
-      vertical: 10
-    )
-  );
-
-  final _inputTextStyle = TextStyle(
-    fontSize: 14
-  );
-
-  Widget _buildFormList(GlobalKey<FormState> key, List<FormConfig> configs, Function onSubmit) {
-    List<Widget> formList = configs.map((config) {
-      Widget input;
-
-      if (config.type == FormConfigType.password) {
-        input = TextFormField(
-          controller: config.controller,
-          decoration: _getInputDecoration(label: config.label),
-          style: _inputTextStyle,
-          validator: config.validator,
-          obscureText: true,
-          enableSuggestions: false,
-        );
-      }
-
-      else if (config.type == FormConfigType.number) {
-        input = TextFormField(
-          controller: config.controller,
-          decoration: _getInputDecoration(label: config.label),
-          style: _inputTextStyle,
-          validator: config.validator,
-          keyboardType: TextInputType.number,
-        );
-      }
-
-      else {
-        input = TextFormField(
-          controller: config.controller,
-          decoration: _getInputDecoration(label: config.label),
-          style: _inputTextStyle,
-          validator: config.validator,
-        );
-      }
-
-      return Container(
-        margin: EdgeInsets.only(bottom: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(config.label, style: TextStyle(
-              fontWeight: FontWeight.bold
-            )),
-            SizedBox(height: 10),
-            input,
-          ],
-        ),
-      );
-    }).toList();
-
-    return Form(
-      key: key,
-      child: Column(
-        children: [
-          ...formList,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                onPressed: () => onSubmit(),
-                child: Text('Submit'),
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
 
   void _register() async {
     final isValid = _formKey.currentState!.validate();
@@ -178,30 +91,10 @@ class _RegisterUmkmPageState extends State<RegisterUmkmPage> {
         child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(20),
-            child: _buildFormList(_formKey, formConfigs, _register),
+            child: buildFormList(_formKey, formConfigs, _register),
           ),
         ),
       ),
     );
   }
-}
-
-class FormConfig {
-  FormConfigType type = FormConfigType.text;
-  late String label;
-  late TextEditingController controller;
-  String? Function(String?)? validator;
-
-  FormConfig({
-    required this.label,
-    required this.controller,
-    required this.type,
-    this.validator,
-  });
-}
-
-enum FormConfigType {
-  text,
-  password,
-  number,
 }

@@ -1,13 +1,27 @@
 import 'package:dio/dio.dart';
 
-Future registerUmkm(Map<String, dynamic> params) async {
+Future<Response> registerUmkm(Map<String, dynamic> params) async {
   try {
-    final response = await Dio().post(
+    return await Dio().post(
       'http://103.176.79.228:5001/auth/register_umkm',
       data: params
     );
-    return response;
-  } catch(err) {
+  }
+  
+  catch(err) {
+    rethrow;
+  }
+}
+
+Future<Response> login(Map<String, dynamic> params) async {
+  try {
+    return await Dio().post(
+      'http://103.176.79.228:5001/auth/login',
+      data: params
+    );
+  }
+
+  catch(err) {
     rethrow;
   }
 }
