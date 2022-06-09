@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
 
 class FormConfig {
-  FormConfigType type = FormConfigType.text;
-  late String label;
-  late TextEditingController controller;
+  String label;
+  TextEditingController? controller;
+  FormConfigType type;
   String? Function(String?)? validator;
+  void Function(dynamic)? onChanged;
+  List<FormConfigOption> options;
 
   FormConfig({
     required this.label,
-    required this.controller,
-    required this.type,
+    this.controller,
+    this.type = FormConfigType.text,
     this.validator,
+    this.onChanged,
+    this.options = const [],
   });
+}
+
+class FormConfigOption {
+  String value;
+  String label;
+
+  FormConfigOption(this.value, this.label);
 }
 
 enum FormConfigType {
   text,
   password,
   number,
+  select,
+  date
 }

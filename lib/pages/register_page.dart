@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:halal_chain/pages/register_auditor_page.dart';
+import 'package:halal_chain/pages/register_consumen_page.dart';
 import 'package:halal_chain/pages/register_umkm_page.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -37,6 +39,18 @@ class RegisterPage extends StatelessWidget {
         MaterialPageRoute(builder: (context) => RegisterUmkmPage())
       );
     }
+
+    else if (type == 'auditor') {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => RegisterAuditorPage())
+      );
+    }
+
+    else if (type == 'consumen') {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => RegisterConsumenPage())
+      );
+    }
   }
 
   void _back(BuildContext context) {
@@ -61,6 +75,8 @@ class RegisterPage extends StatelessWidget {
             _choice(name: 'umkm', label: 'UMKM', context: context),
             SizedBox(height: 20),
             _choice(name: 'auditor', label: 'Auditor', context: context),
+            SizedBox(height: 20),
+            _choice(name: 'consumen', label: 'Consumen', context: context),
             SizedBox(height: 10),
             Row(
               children: [

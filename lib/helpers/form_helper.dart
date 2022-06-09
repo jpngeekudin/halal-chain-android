@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:halal_chain/models/form_config_model.dart';
+import 'package:intl/intl.dart';
 
 String? validateRequired(String? value) {
   if (value == null || value.isEmpty) {
@@ -35,10 +37,15 @@ InputDecoration getInputDecoration({
 );
 
 final inputTextStyle = TextStyle(
-  fontSize: 14
+  fontSize: 14,
 );
 
-Widget buildFormList(GlobalKey<FormState> key, List<FormConfig> configs, Function onSubmit) {
+Widget buildFormList(
+  GlobalKey<FormState> key,
+  List<FormConfig> configs,
+  Function onSubmit,
+  BuildContext context,
+) {
   List<Widget> formList = configs.map((config) {
     Widget input;
 
@@ -60,6 +67,39 @@ Widget buildFormList(GlobalKey<FormState> key, List<FormConfig> configs, Functio
         style: inputTextStyle,
         validator: config.validator,
         keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      );
+    }
+
+    else if (config.type == FormConfigType.select) {
+      input = DropdownButtonFormField(
+        items: config.options.map((opt) => DropdownMenuItem(
+          value: opt.value,
+          child: Text(opt.label),
+        )).toList(),
+        onChanged: config.onChanged,
+        decoration: getInputDecoration(label: config.label),
+        isDense: true,
+      );
+    }
+
+    else if (config.type == FormConfigType.date) {
+      input = TextFormField(
+        controller: config.controller,
+        decoration: getInputDecoration(label: config.label),
+        style: inputTextStyle,
+        onTap: () async {
+          FocusScope.of(context).requestFocus(FocusNode());
+          DateTime? picked = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2016),
+            lastDate: DateTime(2100),
+          );
+
+          if (picked != null && config.onChanged != null) config.onChanged!(picked);
+          if (picked != null && config.controller != null) config.controller!.text = DateFormat('yyyy/MM/dd').format(picked);
+        },
       );
     }
 

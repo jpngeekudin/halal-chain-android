@@ -41,8 +41,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await login(params);
-      final userData = UserData.fromJSON(response.data['data']);
-      setUserData(userData);
+      setUserData(response.data['data']);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => HomePage()),
       );

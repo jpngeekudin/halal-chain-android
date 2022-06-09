@@ -27,6 +27,10 @@ class ProfilePage extends StatelessWidget {
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               String username = snapshot.data['username'];
+              late String role;
+
+              if (snapshot.data['role'] == 'umkm') role = 'UMKM';
+              else if (snapshot.data['role'] == 'auditor') role = 'Auditor';
 
               return SingleChildScrollView(
                 child: Column(
@@ -50,8 +54,11 @@ class ProfilePage extends StatelessWidget {
                                 Text(username, style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 24
-                                ),),
-                                Text('UMKM')
+                                )),
+                                SizedBox(height: 5),
+                                Text(role, style: TextStyle(
+                                  color: Colors.grey[600]
+                                ))
                               ],
                             ),
                           )

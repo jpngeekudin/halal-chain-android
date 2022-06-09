@@ -46,13 +46,13 @@ class _RegisterUmkmPageState extends State<RegisterUmkmPage> {
         'marketing_system': _marketingSystemController.text,
       });
       
+      Navigator.of(context).pop();
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(content: Text('Sukses membuat akun!'));
         }
       );
-      Navigator.of(context).pop();
     }
 
     catch(err) {
@@ -91,7 +91,7 @@ class _RegisterUmkmPageState extends State<RegisterUmkmPage> {
         child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(20),
-            child: buildFormList(_formKey, formConfigs, _register),
+            child: buildFormList(_formKey, formConfigs, _register, context),
           ),
         ),
       ),
