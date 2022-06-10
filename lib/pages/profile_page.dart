@@ -31,6 +31,7 @@ class ProfilePage extends StatelessWidget {
 
               if (snapshot.data['role'] == 'umkm') role = 'UMKM';
               else if (snapshot.data['role'] == 'auditor') role = 'Auditor';
+              else if (snapshot.data['role'] == 'consumen') role = 'Consumen';
 
               return SingleChildScrollView(
                 child: Column(
