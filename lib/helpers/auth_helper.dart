@@ -20,6 +20,12 @@ Future setUserData(Map<String, dynamic> json) async {
     final userUmkmDataJson = userUmkmData.toJSON();
     await storage.write(key: 'user_umkm', value: jsonEncode(userUmkmDataJson));
   }
+
+  else if (userData.role == 'consumen') {
+    final userConsumentData = UserConsumentData.fromJSON(json);
+    final userConsumentDataJson = userConsumentData.toJSON();
+    await storage.write(key: 'user_consumen', value: jsonEncode(userConsumentDataJson));
+  }
 }
 
 Future<UserData?> getUserData() async {

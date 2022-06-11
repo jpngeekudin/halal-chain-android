@@ -1,11 +1,42 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/avatar_helper.dart';
 import 'package:halal_chain/helpers/user_helper.dart';
+import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/pages/login_page.dart';
+import 'package:halal_chain/pages/profile_edit_auditor_page.dart';
+import 'package:halal_chain/pages/profile_edit_consument_page.dart';
+import 'package:halal_chain/pages/profile_edit_umkm_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({ Key? key }) : super(key: key);
+
+  void _navigateToEditProfile(BuildContext context, String role) async {
+    final storage = FlutterSecureStorage();
+    Route route;
+
+    if (role == 'umkm') {
+      final umkmDataStr = await storage.read(key: 'user_umkm');
+      final umkmData = UserUmkmData.fromJSON(jsonDecode(umkmDataStr!));
+      route = MaterialPageRoute(builder: (context) => ProfileEditUmkmPage(umkmData));
+    }
+
+    else if (role == 'auditor') {
+      final auditorDataStr = await storage.read(key: 'user_auditor');
+      final auditorData = UserAuditorData.fromJSON(jsonDecode(auditorDataStr!));
+      route = MaterialPageRoute(builder: (context) => ProfileEditAuditorPage(auditorData));
+    }
+
+    else {
+      final consumenDataStr = await storage.read(key: 'user_consumen');
+      final consumenData = UserConsumentData.fromJSON(jsonDecode(consumenDataStr!));
+      route = MaterialPageRoute(builder: (context) => ProfileEditConsumentPage(consumenData));
+    }
+
+    Navigator.of(context).push(route);
+  }
 
   void _logout(BuildContext context) async {
     final storage = FlutterSecureStorage();
@@ -31,7 +62,7 @@ class ProfilePage extends StatelessWidget {
 
               if (snapshot.data['role'] == 'umkm') role = 'UMKM';
               else if (snapshot.data['role'] == 'auditor') role = 'Auditor';
-              else if (snapshot.data['role'] == 'consumen') role = 'Consumen';
+              else if (snapshot.data['role'] == 'consumen') role = 'Consument';
 
               return SingleChildScrollView(
                 child: Column(
@@ -64,6 +95,20 @@ class ProfilePage extends StatelessWidget {
                             ),
                           )
                         ],
+                      ),
+                    ),
+                    VerticalDivider(),
+                    InkWell(
+                      onTap: () => _navigateToEditProfile(context, snapshot.data['role']),
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit_outlined),
+                            SizedBox(width: 10,),
+                            Text('Edit Profile')
+                          ]
+                        )
                       ),
                     ),
                     VerticalDivider(),

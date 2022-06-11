@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/models/form_config_model.dart';
 import 'package:intl/intl.dart';
 
@@ -40,12 +41,13 @@ final inputTextStyle = TextStyle(
   fontSize: 14,
 );
 
-Widget buildFormList(
-  GlobalKey<FormState> key,
-  List<FormConfig> configs,
-  Function onSubmit,
-  BuildContext context,
-) {
+Widget buildFormList({
+  required GlobalKey<FormState> key,
+  required List<FormConfig> configs,
+  required Function onSubmit,
+  required BuildContext context,
+  String submitText = 'Submit'
+}) {
   List<Widget> formList = configs.map((config) {
     Widget input;
 
@@ -80,6 +82,7 @@ Widget buildFormList(
         onChanged: config.onChanged,
         decoration: getInputDecoration(label: config.label),
         isDense: true,
+        value: config.value,
       );
     }
 
@@ -92,13 +95,13 @@ Widget buildFormList(
           FocusScope.of(context).requestFocus(FocusNode());
           DateTime? picked = await showDatePicker(
             context: context,
-            initialDate: DateTime.now(),
+            initialDate: defaultDateFormat.parse(config.controller!.text),
             firstDate: DateTime(2016),
             lastDate: DateTime(2100),
           );
 
           if (picked != null && config.onChanged != null) config.onChanged!(picked);
-          if (picked != null && config.controller != null) config.controller!.text = DateFormat('yyyy/MM/dd').format(picked);
+          if (picked != null && config.controller != null) config.controller!.text = defaultDateFormat.format(picked);
         },
       );
     }
@@ -137,7 +140,7 @@ Widget buildFormList(
           children: [
             ElevatedButton(
               onPressed: () => onSubmit(),
-              child: Text('Submit'),
+              child: Text(submitText),
             )
           ],
         )

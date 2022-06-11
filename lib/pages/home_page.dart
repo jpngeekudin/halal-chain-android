@@ -2,18 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:halal_chain/helpers/avatar_helper.dart';
-import 'package:halal_chain/pages/login_page.dart';
 import 'package:halal_chain/pages/profile_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({ Key? key }) : super(key: key);
 
   Widget _getMenuItem({
-    title: String,
-    subtitle: String,
-    context: BuildContext
+    required String title,
+    required String subtitle,
+    required BuildContext context,
   }) {
     return  Row(
       children: [
@@ -133,14 +131,14 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: _getMenuItem(
-                    title: 'Edit Profile',
-                    subtitle: 'Sunting profile anda',
-                    context: context
-                  ),
-                ),
+                // Container(
+                //   margin: EdgeInsets.only(bottom: 20),
+                //   child: _getMenuItem(
+                //     title: 'Edit Profile',
+                //     subtitle: 'Sunting profile anda',
+                //     context: context
+                //   ),
+                // ),
                 Container(
                   margin: EdgeInsets.only(bottom: 20),
                   child: _getMenuItem(

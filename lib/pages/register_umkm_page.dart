@@ -91,7 +91,12 @@ class _RegisterUmkmPageState extends State<RegisterUmkmPage> {
         child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(20),
-            child: buildFormList(_formKey, formConfigs, _register, context),
+            child: buildFormList(
+              key: _formKey,
+              context: context,
+              configs: formConfigs,
+              onSubmit: _register,
+            ),
           ),
         ),
       ),

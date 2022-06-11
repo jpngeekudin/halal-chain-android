@@ -35,6 +35,39 @@ Future<Response> registerConsumen(Map<String, dynamic> params) async {
   }
 }
 
+Future<Response> editUmkm(Map<String, dynamic> params) async {
+  try {
+    return await Dio().post(
+      '$SERVICE_BASE_URL/account/update_umkm',
+      data: params
+    );
+  } catch(err) {
+    rethrow;
+  }
+}
+
+Future<Response> editAuditor(Map<String, dynamic> params) async {
+  try {
+    return await Dio().post(
+      '$SERVICE_BASE_URL/account/update_auditor',
+      data: params
+    );
+  } catch(err) {
+    rethrow;
+  }
+}
+
+Future<Response> editConsument(Map<String, dynamic> params) async {
+  try {
+    return await Dio().post(
+      '$SERVICE_BASE_URL/account/update_consumen',
+      data: params
+    );
+  } catch(err) {
+    rethrow;
+  }
+}
+
 Future<Response> login(Map<String, dynamic> params) async {
   try {
     return await Dio().post(

@@ -27,6 +27,7 @@ class UserData {
 class UserUmkmData {
   late String id;
   late String username;
+  late String? password;
   late String companyName;
   late String companyAddress;
   late String companyNumber;
@@ -42,6 +43,7 @@ class UserUmkmData {
   UserUmkmData({
     required this.id,
     required this.username,
+    this.password,
     required this.companyName,
     required this.companyAddress,
     required this.companyNumber,
@@ -56,8 +58,9 @@ class UserUmkmData {
   });
 
   UserUmkmData.fromJSON(Map<String, dynamic> json) {
-    id = json['_id'];
+    id = json['_id'] ?? json['id'];
     username = json['username'];
+    password = json['password'];
     companyName = json['company_name'];
     companyAddress = json['company_address'];
     companyNumber = json['company_number'];
@@ -75,14 +78,15 @@ class UserUmkmData {
     return {
       '_id': id,
       'username': username,
+      'password': password,
       'company_name': companyName,
       'company_address': companyAddress,
       'company_number': companyNumber,
       'factory_name': factoryName,
       'factory_address': factoryAddress,
       'email': email,
-      'productName': productName,
-      'productType': productType,
+      'product_name': productName,
+      'product_type': productType,
       'marketing_area': marketingArea,
       'marketing_system': marketingSystem,
       'created_at': createdAt.millisecondsSinceEpoch
@@ -95,6 +99,7 @@ class UserAuditorData {
   late String noKtp;
   late String name;
   late String username;
+  String? password;
   late String type;
   late String role;
   late String religion;
@@ -112,6 +117,7 @@ class UserAuditorData {
     required this.noKtp,
     required this.name,
     required this.username,
+    this.password,
     required this.type,
     required this.role,
     required this.religion,
@@ -126,12 +132,14 @@ class UserAuditorData {
   });
 
   UserAuditorData.fromJSON(Map<String, dynamic> json) {
-    id = json['_id'];
+    print(json);
+    id = json['_id'] ?? json['id'];
     noKtp = json['no_ktp'];
     name = json['name'];
     username = json['username'];
+    password = json['password'];
     type = json['type'];
-    role = json['role'];
+    role = json['role'] ?? 'auditor';
     religion = json['religion'];
     address = json['address'];
     institution = json['institution'];
@@ -139,7 +147,7 @@ class UserAuditorData {
     experience = json['experience'];
     certCompetence = json['cert_competence'];
     auditorExperience = json['auditor_experience'];
-    expiredCert = DateTime.fromMillisecondsSinceEpoch(json['expired_cert']);
+    expiredCert = DateTime.fromMillisecondsSinceEpoch(json['experied_cert']);
     createdAt = DateTime.fromMillisecondsSinceEpoch(json['created_at']);
   }
 
@@ -149,6 +157,7 @@ class UserAuditorData {
       'no_ktp': noKtp,
       'name': name,
       'username': username,
+      'password': password,
       'type': type,
       'role': role,
       'religion': religion,
@@ -158,8 +167,57 @@ class UserAuditorData {
       'experience': experience,
       'cert_competence': certCompetence,
       'auditor_experience': auditorExperience,
-      'expired_cert': expiredCert.millisecondsSinceEpoch,
+      'experied_cert': expiredCert.millisecondsSinceEpoch,
       'created_at': createdAt.millisecondsSinceEpoch
+    };
+  }
+}
+
+class UserConsumentData {
+  late String id;
+  late String name;
+  late String username;
+  late String? password;
+  late String email;
+  late String role;
+  late String phone;
+  late String address;
+  late DateTime createdAt;
+
+  UserConsumentData({
+    required this.id,
+    required this.name,
+    required this.username,
+    this.password,
+    required this.email,
+    required this.role,
+    required this.phone,
+    required this.address,
+    required this.createdAt
+  });
+
+  UserConsumentData.fromJSON(Map<String, dynamic> json) {
+    id = json['_id'] ?? json['id'];
+    name = json['name'];
+    username = json['username'];
+    password = json['password'];
+    email = json['email'];
+    role = json['role'];
+    phone = json['phone'];
+    address = json['address'];
+    createdAt = DateTime.fromMillisecondsSinceEpoch(json['created_at']);
+  }
+
+  Map<String, dynamic> toJSON() {
+    return {
+      '_id': id,
+      'name': name,
+      'username': username,
+      'email': email,
+      'role': role,
+      'phone': phone,
+      'address': address,
+      'created_at': createdAt.millisecondsSinceEpoch,
     };
   }
 }

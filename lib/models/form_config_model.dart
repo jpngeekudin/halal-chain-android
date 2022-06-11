@@ -7,6 +7,7 @@ class FormConfig {
   String? Function(String?)? validator;
   void Function(dynamic)? onChanged;
   List<FormConfigOption> options;
+  dynamic? value;
 
   FormConfig({
     required this.label,
@@ -15,6 +16,7 @@ class FormConfig {
     this.validator,
     this.onChanged,
     this.options = const [],
+    this.value
   });
 }
 
