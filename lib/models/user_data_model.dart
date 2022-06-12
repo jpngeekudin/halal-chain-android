@@ -1,3 +1,5 @@
+import 'package:halal_chain/helpers/date_helper.dart';
+
 class UserData {
   late String id;
   late String username;
@@ -56,6 +58,8 @@ class UserUmkmData {
     required this.marketingSystem,
     required this.createdAt
   });
+
+  String createdAtString() => defaultDateFormat.format(createdAt);
 
   UserUmkmData.fromJSON(Map<String, dynamic> json) {
     id = json['_id'] ?? json['id'];
@@ -131,6 +135,9 @@ class UserAuditorData {
     required this.createdAt
   });
 
+  String createdAtString() => defaultDateFormat.format(createdAt);
+  String expiredCertString() => defaultDateFormat.format(expiredCert);
+
   UserAuditorData.fromJSON(Map<String, dynamic> json) {
     print(json);
     id = json['_id'] ?? json['id'];
@@ -196,6 +203,8 @@ class UserConsumentData {
     required this.createdAt
   });
 
+  String createdAtString() => defaultDateFormat.format(createdAt);
+
   UserConsumentData.fromJSON(Map<String, dynamic> json) {
     id = json['_id'] ?? json['id'];
     name = json['name'];
@@ -220,4 +229,10 @@ class UserConsumentData {
       'created_at': createdAt.millisecondsSinceEpoch,
     };
   }
+}
+
+enum UserType {
+  umkm,
+  auditor,
+  consument
 }

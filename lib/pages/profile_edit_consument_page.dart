@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/models/form_config_model.dart';
 import 'package:halal_chain/models/user_data_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 import 'package:halal_chain/services/main_service.dart';
 
 class ProfileEditConsumentPage extends StatefulWidget {
@@ -18,11 +19,12 @@ class ProfileEditConsumentPage extends StatefulWidget {
 }
 
 class _ProfileEditConsumentPageState extends State<ProfileEditConsumentPage> {
+  final _coreService = CoreService();
+
   final _formKey = GlobalKey<FormState>();
   List<FormConfig> _formsConfig = [];
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
@@ -36,7 +38,6 @@ class _ProfileEditConsumentPageState extends State<ProfileEditConsumentPage> {
         'id': widget.consumentData.id,
         'name': _nameController.text,
         'username': _usernameController.text,
-        'password': _passwordController.text,
         'email': _emailController.text,
         'role': widget.consumentData.role,
         'phone': _phoneController.text,
@@ -44,7 +45,7 @@ class _ProfileEditConsumentPageState extends State<ProfileEditConsumentPage> {
         'created_at': widget.consumentData.createdAt.millisecondsSinceEpoch,
       };
 
-      final response = await editConsument(params);
+      final response = await _coreService.updateUser(UserType.consument, params);
       final newConsumentData = UserConsumentData.fromJSON(params);
       final storage = FlutterSecureStorage();
       await storage.write(key: 'user_consumen', value: jsonEncode(newConsumentData.toJSON()));
@@ -75,7 +76,6 @@ class _ProfileEditConsumentPageState extends State<ProfileEditConsumentPage> {
 
     _nameController.text = widget.consumentData.name;
     _usernameController.text = widget.consumentData.username;
-    _passwordController.text = widget.consumentData.password ?? '';
     _emailController.text = widget.consumentData.email;
     _phoneController.text = widget.consumentData.phone;
     _addressController.text = widget.consumentData.address;
@@ -90,12 +90,6 @@ class _ProfileEditConsumentPageState extends State<ProfileEditConsumentPage> {
         label: 'Username',
         controller: _usernameController,
         validator: validateRequired
-      ),
-      FormConfig(
-        label: 'Password',
-        type: FormConfigType.password,
-        controller: _passwordController,
-        validator: validateRequired,
       ),
       FormConfig(
         label: 'Email',

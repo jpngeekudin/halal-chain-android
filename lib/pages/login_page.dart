@@ -8,7 +8,7 @@ import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/pages/home_page.dart';
 import 'package:halal_chain/pages/register_page.dart';
-import 'package:halal_chain/services/main_service.dart';
+import 'package:halal_chain/services/core_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({ Key? key }) : super(key: key);
@@ -19,6 +19,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+  final _coreService = CoreService();
   final _usernameController = TextEditingController(text: '');
   final _passwordController = TextEditingController(text: '');
   final _formKey = GlobalKey<FormState>();
@@ -40,8 +41,8 @@ class _LoginPageState extends State<LoginPage> {
     };
 
     try {
-      final response = await login(params);
-      setUserData(response.data['data']);
+      final response = await _coreService.login(params);
+      setUserData(response.data);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => HomePage()),
       );

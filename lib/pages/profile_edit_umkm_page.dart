@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/models/form_config_model.dart';
 import 'package:halal_chain/models/user_data_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 import 'package:halal_chain/services/main_service.dart';
 
 class ProfileEditUmkmPage extends StatefulWidget {
@@ -18,10 +19,11 @@ class ProfileEditUmkmPage extends StatefulWidget {
 }
 
 class _ProfileEditUmkmPageState extends State<ProfileEditUmkmPage> {
+  final _coreService = CoreService();
+
   final _formKey = GlobalKey<FormState>();
   List<FormConfig> _formConfigs = [];
   final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _companyNameController = TextEditingController();
   final _companyAddressController = TextEditingController();
   final _companyNumberController = TextEditingController();
@@ -41,7 +43,6 @@ class _ProfileEditUmkmPageState extends State<ProfileEditUmkmPage> {
       final params = {
         'id': widget.userUmkmData.id,
         'username': _usernameController.text,
-        'password': _passwordController.text,
         'company_name': _companyNameController.text,
         'company_address': _companyAddressController.text,
         'company_number': _companyNumberController.text,
@@ -54,7 +55,7 @@ class _ProfileEditUmkmPageState extends State<ProfileEditUmkmPage> {
         'marketing_system': _marketingSystemController.text,
       };
 
-      final response = await editUmkm(params);
+      final response = await _coreService.updateUser(UserType.umkm, params);
       final newUmkmData = UserUmkmData.fromJSON(params);
       final storage = FlutterSecureStorage();
       await storage.write(key: 'user_umkm', value: jsonEncode(newUmkmData.toJSON()));
@@ -63,7 +64,10 @@ class _ProfileEditUmkmPageState extends State<ProfileEditUmkmPage> {
       showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(content: Text('Sukses mennyunting akun!'));
+          return AlertDialog(
+            title: Text('Success'),
+            content: Text('Sukses mennyunting akun!')
+          );
         }
       );
     }
@@ -83,7 +87,6 @@ class _ProfileEditUmkmPageState extends State<ProfileEditUmkmPage> {
   void initState() {
     super.initState();
     _usernameController.text = widget.userUmkmData.username;
-    _passwordController.text = widget.userUmkmData.password ?? '';
     _companyNameController.text = widget.userUmkmData.companyName;
     _companyAddressController.text = widget.userUmkmData.companyAddress;
     _companyNumberController.text = widget.userUmkmData.companyNumber;
@@ -100,12 +103,6 @@ class _ProfileEditUmkmPageState extends State<ProfileEditUmkmPage> {
         label: 'Username',
         controller: _usernameController,
         validator: validateRequired
-      ),
-      FormConfig(
-        label: 'Password',
-        controller: _passwordController,
-        type: FormConfigType.password,
-        validator: validateRequired,
       ),
       FormConfig(
         label: 'Company Name',

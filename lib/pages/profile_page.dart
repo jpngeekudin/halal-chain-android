@@ -6,12 +6,19 @@ import 'package:halal_chain/helpers/avatar_helper.dart';
 import 'package:halal_chain/helpers/user_helper.dart';
 import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/pages/login_page.dart';
+import 'package:halal_chain/pages/profile_detail_page.dart';
 import 'package:halal_chain/pages/profile_edit_auditor_page.dart';
 import 'package:halal_chain/pages/profile_edit_consument_page.dart';
 import 'package:halal_chain/pages/profile_edit_umkm_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({ Key? key }) : super(key: key);
+
+  void _navigateToProfileDetail(context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => ProfileDetailPage()),
+    );
+  }
 
   void _navigateToEditProfile(BuildContext context, String role) async {
     final storage = FlutterSecureStorage();
@@ -43,6 +50,19 @@ class ProfilePage extends StatelessWidget {
     await storage.deleteAll();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => LoginPage())
+    );
+  }
+
+  Widget _getMenuItem(String label, IconData icon) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Icon(icon),
+          SizedBox(width: 10),
+          Text(label)
+        ],
+      )
     );
   }
 
@@ -99,31 +119,18 @@ class ProfilePage extends StatelessWidget {
                     ),
                     VerticalDivider(),
                     InkWell(
+                      onTap: () => _navigateToProfileDetail(context),
+                      child: _getMenuItem('Profile Detail', Icons.person),
+                    ),
+                    VerticalDivider(),
+                    InkWell(
                       onTap: () => _navigateToEditProfile(context, snapshot.data['role']),
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit_outlined),
-                            SizedBox(width: 10,),
-                            Text('Edit Profile')
-                          ]
-                        )
-                      ),
+                      child: _getMenuItem('Edit Profile', Icons.edit_outlined),
                     ),
                     VerticalDivider(),
                     InkWell(
                       onTap: () => _logout(context),
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            Icon(Icons.logout_outlined),
-                            SizedBox(width: 10),
-                            Text('Logout')
-                          ],
-                        )
-                      ),
+                      child: _getMenuItem('Logout', Icons.logout_outlined),
                     ),
                     VerticalDivider(),
                   ],

@@ -2,7 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/models/form_config_model.dart';
-import 'package:halal_chain/services/main_service.dart';
+import 'package:halal_chain/models/user_data_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 
 class RegisterUmkmPage extends StatefulWidget {
   const RegisterUmkmPage({ Key? key }) : super(key: key);
@@ -26,12 +27,14 @@ class _RegisterUmkmPageState extends State<RegisterUmkmPage> {
   final _marketingAreaController = TextEditingController();
   final _marketingSystemController = TextEditingController();
 
+  final _coreService = CoreService();
+
   void _register() async {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) return;
 
     try {
-      final response = await registerUmkm({
+      final response = await _coreService.register(UserType.umkm, {
         'username': _usernameController.text,
         'password': _passwordController.text,
         'company_name': _companyNameController.text,
@@ -61,7 +64,10 @@ class _RegisterUmkmPageState extends State<RegisterUmkmPage> {
 
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(content: Text(message))
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text(message)
+        )
       );
     }
   }

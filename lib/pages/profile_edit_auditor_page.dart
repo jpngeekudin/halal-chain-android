@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/models/form_config_model.dart';
 import 'package:halal_chain/models/user_data_model.dart';
-import 'package:halal_chain/services/main_service.dart';
+import 'package:halal_chain/services/core_service.dart';
 import 'package:intl/intl.dart';
 
 class ProfileEditAuditorPage extends StatefulWidget {
@@ -19,12 +19,13 @@ class ProfileEditAuditorPage extends StatefulWidget {
 }
 
 class _ProfileEditAuditorPageState extends State<ProfileEditAuditorPage> {
+  final _coreService = CoreService();
+
   final _formKey = GlobalKey<FormState>();
   late List<FormConfig> _formsConfig;
   final _noKtpController = TextEditingController();
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
   String? _religionModel;
   final _typeController = TextEditingController();
   final _addressController = TextEditingController();
@@ -46,7 +47,6 @@ class _ProfileEditAuditorPageState extends State<ProfileEditAuditorPage> {
         'no_ktp': _noKtpController.text,
         'name': _nameController.text,
         'username': _usernameController.text,
-        'password': _passwordController.text,
         'religion': _religionModel,
         'type': _typeController.text,
         'address': _addressController.text,
@@ -58,7 +58,7 @@ class _ProfileEditAuditorPageState extends State<ProfileEditAuditorPage> {
         'auditor_experience': _auditorExperienceController.text,
       };
 
-      final response = await editAuditor(params);
+      final response = await _coreService.updateUser(UserType.auditor, params);
       final newAuditorData = UserAuditorData.fromJSON({
         ...params,
         'role': widget.userAuditorData.role,
@@ -95,7 +95,6 @@ class _ProfileEditAuditorPageState extends State<ProfileEditAuditorPage> {
     _noKtpController.text = widget.userAuditorData.noKtp;
     _nameController.text = widget.userAuditorData.name;
     _usernameController.text = widget.userAuditorData.username;
-    _passwordController.text = widget.userAuditorData.password ?? '';
     _religionModel = widget.userAuditorData.religion;
     _typeController.text = widget.userAuditorData.type;
     _addressController.text = widget.userAuditorData.address;
@@ -121,12 +120,6 @@ class _ProfileEditAuditorPageState extends State<ProfileEditAuditorPage> {
       FormConfig(
         label: 'Username',
         controller: _usernameController,
-        validator: validateRequired
-      ),
-      FormConfig(
-        label: 'Password',
-        type: FormConfigType.password,
-        controller: _passwordController,
         validator: validateRequired
       ),
       FormConfig(

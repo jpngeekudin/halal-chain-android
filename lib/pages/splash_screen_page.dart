@@ -6,13 +6,10 @@ class SplashScreenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CircularProgressIndicator()
-        ],
-      ),
+      body: Align(
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      )
     );
   }
 }

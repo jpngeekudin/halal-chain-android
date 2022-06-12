@@ -2,7 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/models/form_config_model.dart';
-import 'package:halal_chain/services/main_service.dart';
+import 'package:halal_chain/models/user_data_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 
 class RegisterAuditorPage extends StatefulWidget {
   const RegisterAuditorPage({ Key? key }) : super(key: key);
@@ -12,6 +13,8 @@ class RegisterAuditorPage extends StatefulWidget {
 }
 
 class _RegisterAuditorPageState extends State<RegisterAuditorPage> {
+  final _coreService = CoreService();
+
   final _formKey = GlobalKey<FormState>();
   final _noKtpController = TextEditingController();
   final _nameController = TextEditingController();
@@ -33,7 +36,7 @@ class _RegisterAuditorPageState extends State<RegisterAuditorPage> {
     if (!formIsValid) return;
 
     try {
-      final response = await registerAuditor({
+      final response = await _coreService.register(UserType.auditor, {
         'no_ktp': _noKtpController.text,
         'name': _nameController.text,
         'username': _usernameController.text,
@@ -53,13 +56,15 @@ class _RegisterAuditorPageState extends State<RegisterAuditorPage> {
       showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(content: Text('Sukses membuat akun!'));
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Sukses membuat akun!')
+          );
         }
       );
     }
 
     catch(err) {
-      print(err);
       String message = 'Terjadi kesalahan';
       if (err is DioError) message = err.response?.data['detail'];
 
