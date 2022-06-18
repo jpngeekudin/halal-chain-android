@@ -32,5 +32,6 @@ enum FormConfigType {
   password,
   number,
   select,
-  date
+  date,
+  file
 }

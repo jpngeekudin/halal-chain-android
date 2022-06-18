@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
@@ -41,6 +44,45 @@ final inputTextStyle = TextStyle(
   fontSize: 14,
 );
 
+Widget getInputFile({
+  required File? model,
+  required Function(File? file) onChanged,
+}) {
+  return model == null
+    ? ElevatedButton(
+      child: Wrap(
+        runAlignment: WrapAlignment.center,
+        children: [
+          Icon(Icons.file_copy),
+          SizedBox(width: 10),
+          Text('Pick File')
+        ]
+      ),
+      onPressed: () async {
+        final result = await FilePicker.platform.pickFiles();
+        if (result != null) onChanged(File(result.files.single.path!));
+      },
+    ) :
+    Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        SizedBox(
+          width: 100,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Image.file(model)
+          ),
+        ),
+        SizedBox(width: 10),
+        ElevatedButton(
+          child: Text('Remove'),
+          style: ElevatedButton.styleFrom(primary: Colors.red),
+          onPressed: () => onChanged(null)
+        )
+      ],
+    );
+} 
+
 Widget buildFormList({
   required GlobalKey<FormState> key,
   required List<FormConfig> configs,
@@ -50,6 +92,7 @@ Widget buildFormList({
 }) {
   List<Widget> formList = configs.map((config) {
     Widget input;
+    print(config.type);
 
     if (config.type == FormConfigType.password) {
       input = TextFormField(
@@ -106,6 +149,36 @@ Widget buildFormList({
       );
     }
 
+    else if (config.type == FormConfigType.file) {
+      print(config.value);
+      input = config.value == null
+        ? ElevatedButton(
+          child: Text('Pick File'),
+          onPressed: () async {
+            final result = await FilePicker.platform.pickFiles();
+            if (result != null) config.onChanged!(File(result.files.single.path!));
+          },
+        ) :
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              width: 100,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Image.file(config.value!)
+              ),
+            ),
+            SizedBox(width: 10),
+            ElevatedButton(
+              child: Text('Clear'),
+              style: ElevatedButton.styleFrom(primary: Colors.red),
+              onPressed: () => config.onChanged!(null)
+            )
+          ],
+        );
+    }
+
     else {
       input = TextFormField(
         controller: config.controller,
@@ -116,6 +189,7 @@ Widget buildFormList({
     }
 
     return Container(
+      width: double.infinity,
       margin: EdgeInsets.only(bottom: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

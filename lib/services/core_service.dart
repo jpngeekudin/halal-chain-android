@@ -6,6 +6,8 @@ class CoreService {
   final _prefix = 'http://103.176.79.228:5000';
   final _dio = Dio();
 
+  // AUTH
+
   Future<ApiResponse> login(Map<String, dynamic> params) async {
     try {
       final url = '$_prefix/auth/login';
@@ -53,6 +55,60 @@ class CoreService {
     try {
       final query = { 'id': userId };
       final response = await _dio.get(url, queryParameters: query );
+      return _handleResponse(response);
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  // UMKM
+
+  Future<ApiResponse> createInit(String creatorId) async {
+    try {
+      final url = '$_prefix/umkm/create_init';
+      final data = { 'creator_id': creatorId };
+      final response = await _dio.post(url, data: data);
+      return _handleResponse(response);
+    } catch(err) {
+      rethrow;
+    }
+  }
+
+  Future<ApiResponse> createDetailUmkm(Map<String, dynamic> params) async {
+    try {
+      final url = '$_prefix/umkm/insert_detail_umkm';
+      final response = await _dio.post(url, data: params);
+      return _handleResponse(response);
+    } catch(err) {
+      rethrow;
+    }
+  }
+
+  Future<ApiResponse> createPenetapanTim(Map<String, dynamic> params) async {
+    try {
+      final url = '$_prefix/umkm/insert_penetapan_tim';
+      final response = await _dio.post(url, data: params);
+      return _handleResponse(response);
+    } catch(err) {
+      rethrow;
+    }
+  }
+
+  Future<ApiResponse> createBuktiPelaksanaan(Map<String, dynamic> params) async {
+    try {
+      final url = '$_prefix/umkm/insert_bukti_pelaksanaan';
+      final response = await _dio.post(url, data: params);
+      return _handleResponse(response);
+    } catch(err) {
+      rethrow;
+    }
+  }
+
+  // HTTP UTILS
+
+  Future<ApiResponse> genericGet(String url, Map<String, dynamic> params) async {
+    try {
+      final response = await _dio.post(url, queryParameters: params);
       return _handleResponse(response);
     } catch (err) {
       rethrow;

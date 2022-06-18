@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/avatar_helper.dart';
 import 'package:halal_chain/pages/profile_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({ Key? key }) : super(key: key);
@@ -12,35 +13,41 @@ class HomePage extends StatelessWidget {
     required String title,
     required String subtitle,
     required BuildContext context,
+    Route? route,
   }) {
-    return  Row(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-            borderRadius: BorderRadius.circular(10),
+    return  InkWell(
+      onTap: () => {
+        if (route != null) Navigator.of(context).push(route)
+      },
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            width: 60,
+            height: 60,
           ),
-          width: 60,
-          height: 60,
-        ),
-        SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16
-              )),
-              Text(subtitle, style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12
-              ),)
-            ],
+          SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16
+                )),
+                Text(subtitle, style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12
+                ),)
+              ],
+            ),
           ),
-        ),
-        Icon(Icons.chevron_right, size: 48, color: Theme.of(context).primaryColor)
-      ],
+          Icon(Icons.chevron_right, size: 48, color: Theme.of(context).primaryColor)
+        ],
+      ),
     );
   }
 
@@ -131,14 +138,34 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Container(
-                //   margin: EdgeInsets.only(bottom: 20),
-                //   child: _getMenuItem(
-                //     title: 'Edit Profile',
-                //     subtitle: 'Sunting profile anda',
-                //     context: context
-                //   ),
-                // ),
+
+                // SJH MENU
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: _getMenuItem(
+                    title: 'Create Init',
+                    subtitle: 'Initializing a docs',
+                    context: context
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: _getMenuItem(
+                    title: 'Detail UMKM',
+                    subtitle: 'Inserting UMKM Details',
+                    context: context,
+                    route: MaterialPageRoute(builder: (context) => UmkmDetailInsertPage()),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: _getMenuItem(
+                    title: 'Penetapan Tim',
+                    subtitle: 'Menetapkan orang-orang yang bekerja di tim',
+                    context: context
+                  ),
+                ),
+
                 Container(
                   margin: EdgeInsets.only(bottom: 20),
                   child: _getMenuItem(
