@@ -141,6 +141,7 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
                         )),
                         SizedBox(height: 10,),
                         getInputFile(
+                          context: context,
                           model: _logoPerusahaanModel,
                           onChanged: (file) {
                             setState(() => _logoPerusahaanModel = file);
@@ -160,6 +161,7 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
                         )),
                         SizedBox(height: 10,),
                         getInputFile(
+                          context: context,
                           model: _ttdKetuaModel,
                           onChanged: (file) {
                             setState(() => _ttdKetuaModel = file);
@@ -179,6 +181,7 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
                         )),
                         SizedBox(height: 10,),
                         getInputFile(
+                          context: context,
                           model: _ttdPenanggungjawabModel,
                           onChanged: (file) {
                             setState(() => _ttdPenanggungjawabModel = file);

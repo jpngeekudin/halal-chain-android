@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -44,21 +45,83 @@ final inputTextStyle = TextStyle(
   fontSize: 14,
 );
 
+Widget getInputWrapper({
+  required String label,
+  required Widget input,
+}) {
+  return Container(
+    width: double.infinity,
+    margin: EdgeInsets.only(bottom: 30),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(
+          fontWeight: FontWeight.bold
+        )),
+        SizedBox(height: 10),
+        input,
+      ],
+    ),
+  );
+}
+
 Widget getInputFile({
   required File? model,
   required Function(File? file) onChanged,
+  required BuildContext context,
 }) {
   return model == null
-    ? ElevatedButton(
-      child: Wrap(
-        runAlignment: WrapAlignment.center,
-        children: [
-          Icon(Icons.file_copy),
-          SizedBox(width: 10),
-          Text('Pick File')
-        ]
+    // ? ElevatedButton(
+    //   child: Wrap(
+    //     crossAxisAlignment: WrapCrossAlignment.center,
+    //     children: [
+    //       Icon(Icons.file_copy),
+    //       SizedBox(width: 10),
+    //       Text('Pick File')
+    //     ]
+    //   ),
+    //   onPressed: () async {
+    //     final result = await FilePicker.platform.pickFiles();
+    //     if (result != null) onChanged(File(result.files.single.path!));
+    //   },
+    // ) :
+    ? InkWell(
+      child: DottedBorder(
+        color: Theme.of(context).primaryColor,
+        customPath: (size) {
+          const cardRadius = 5.0;
+          return Path()
+            ..moveTo(cardRadius, 0)
+            ..lineTo(size.width - cardRadius, 0)
+            ..arcToPoint(Offset(size.width, cardRadius), radius: Radius.circular(cardRadius))
+            ..lineTo(size.width, size.height - cardRadius)
+            ..arcToPoint(Offset(size.width - cardRadius, size.height), radius: Radius.circular(cardRadius))
+            ..lineTo(cardRadius, size.height)
+            ..arcToPoint(Offset(0, size.height - cardRadius), radius: Radius.circular(cardRadius))
+            ..lineTo(0, cardRadius)
+            ..arcToPoint(Offset(cardRadius, 0), radius: Radius.circular(cardRadius));
+        },
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 10),
+          alignment: Alignment.center,
+          color: Theme.of(context).primaryColor.withOpacity(.02),
+          child: IntrinsicHeight(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.image_outlined, color: Theme.of(context).primaryColor),
+                SizedBox(width: 5),
+                Text('Add File', style: TextStyle(
+                  fontSize: 11,
+                  color: Theme.of(context).primaryColor
+                ))
+              ],
+            ),
+          ),
+        ),
       ),
-      onPressed: () async {
+      onTap: () async {
         final result = await FilePicker.platform.pickFiles();
         if (result != null) onChanged(File(result.files.single.path!));
       },
@@ -92,7 +155,6 @@ Widget buildFormList({
 }) {
   List<Widget> formList = configs.map((config) {
     Widget input;
-    print(config.type);
 
     if (config.type == FormConfigType.password) {
       input = TextFormField(
@@ -150,7 +212,6 @@ Widget buildFormList({
     }
 
     else if (config.type == FormConfigType.file) {
-      print(config.value);
       input = config.value == null
         ? ElevatedButton(
           child: Text('Pick File'),
@@ -188,19 +249,9 @@ Widget buildFormList({
       );
     }
 
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.only(bottom: 30),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(config.label, style: TextStyle(
-            fontWeight: FontWeight.bold
-          )),
-          SizedBox(height: 10),
-          input,
-        ],
-      ),
+    return getInputWrapper(
+      label: config.label,
+      input: input,
     );
   }).toList();
 

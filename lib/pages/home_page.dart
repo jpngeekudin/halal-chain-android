@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/avatar_helper.dart';
 import 'package:halal_chain/pages/profile_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_team_assign_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({ Key? key }) : super(key: key);
@@ -162,7 +163,8 @@ class HomePage extends StatelessWidget {
                   child: _getMenuItem(
                     title: 'Penetapan Tim',
                     subtitle: 'Menetapkan orang-orang yang bekerja di tim',
-                    context: context
+                    context: context,
+                    route: MaterialPageRoute(builder: (context) => UmkmTeamAssignPage())
                   ),
                 ),
 
