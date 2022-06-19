@@ -212,32 +212,11 @@ Widget buildFormList({
     }
 
     else if (config.type == FormConfigType.file) {
-      input = config.value == null
-        ? ElevatedButton(
-          child: Text('Pick File'),
-          onPressed: () async {
-            final result = await FilePicker.platform.pickFiles();
-            if (result != null) config.onChanged!(File(result.files.single.path!));
-          },
-        ) :
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              width: 100,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: Image.file(config.value!)
-              ),
-            ),
-            SizedBox(width: 10),
-            ElevatedButton(
-              child: Text('Clear'),
-              style: ElevatedButton.styleFrom(primary: Colors.red),
-              onPressed: () => config.onChanged!(null)
-            )
-          ],
-        );
+      input = getInputFile(
+        model: config.value,
+        onChanged: config.onChanged!,
+        context: context
+      );
     }
 
     else {

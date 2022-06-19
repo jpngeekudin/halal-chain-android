@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/avatar_helper.dart';
 import 'package:halal_chain/pages/profile_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_team_assign_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -165,6 +166,15 @@ class HomePage extends StatelessWidget {
                     subtitle: 'Menetapkan orang-orang yang bekerja di tim',
                     context: context,
                     route: MaterialPageRoute(builder: (context) => UmkmTeamAssignPage())
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: _getMenuItem(
+                    title: 'Bukti Pelaksanaan',
+                    subtitle: 'Memasukkan bukti pelaksanaan',
+                    context: context,
+                    route: MaterialPageRoute(builder: (context) => UmkmPenilaianPage())
                   ),
                 ),
 
