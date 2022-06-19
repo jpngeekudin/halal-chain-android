@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:logger/logger.dart';
 
 class UmkmTeamAssignment {
   String nama;
@@ -33,4 +34,30 @@ class UmkmTeamAssignmentWithScore {
     'position': position,
     'nilai': nilai
   };
+}
+
+class UmkmSoalEvaluasi {
+  late int id;
+  late String soal;
+  late List<UmkmJawabSoalEvaluasi> jawabanList;
+  String? jawaban;
+
+  UmkmSoalEvaluasi({ required this.id, required this.soal, required this.jawabanList });
+
+  UmkmSoalEvaluasi.fromJSON(Map<String, dynamic> json) {
+    id = json['id'];
+    soal = json['soal'];
+    jawabanList = json['jawaban'].entries.map<UmkmJawabSoalEvaluasi>((entry) => UmkmJawabSoalEvaluasi(entry.key, entry.value)).toList();
+  }
+
+  void setJawaban(String jawab) {
+    jawaban = jawab;
+  }
+}
+
+class UmkmJawabSoalEvaluasi {
+  String key;
+  String value;
+
+  UmkmJawabSoalEvaluasi(this.key, this.value);
 }

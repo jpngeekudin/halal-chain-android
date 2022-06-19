@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/avatar_helper.dart';
+import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/pages/profile_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_evaluasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_team_assign_page.dart';
 
@@ -83,19 +85,20 @@ class HomePage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: FutureBuilder(
-                    future: _getUserData(context),
-                    builder: (context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData && snapshot.data != null) {
-                        return Row(
+            child: FutureBuilder(
+              future: _getUserData(context),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  final userData = UserData.fromJSON(snapshot.data);
+                  return Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(
-                              child: Text('Hello, ${snapshot.data['username']}!', style: TextStyle(
+                              child: Text('Hello, ${userData.username}!', style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold
                               ),),
@@ -105,104 +108,120 @@ class HomePage extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: 18,
                                 // backgroundColor: Theme.of(context).primaryColor,
-                                backgroundImage: NetworkImage(getAvatarUrl(snapshot.data['username']))
+                                backgroundImage: NetworkImage(getAvatarUrl(userData.username))
                               ),
                             )
                           ],
-                        );
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  padding: EdgeInsets.all(20),
-                  margin: EdgeInsets.only(bottom: 30),
-                  height: 200,
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        child: Text('Pastikan makanan yang anda makan halal.', style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18
-                        ),),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        padding: EdgeInsets.all(20),
+                        margin: EdgeInsets.only(bottom: 30),
+                        height: 200,
+                        width: double.infinity,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: Text('Pastikan makanan yang anda makan halal.', style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18
+                              ),),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      if (userData.role == 'umkm') 
+                        ...[Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Create Init',
+                            subtitle: 'Initializing a docs',
+                            context: context
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Detail UMKM',
+                            subtitle: 'Inserting UMKM Details',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmDetailInsertPage()),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Penetapan Tim',
+                            subtitle: 'Menetapkan orang-orang yang bekerja di tim',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmTeamAssignPage())
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Bukti Pelaksanaan',
+                            subtitle: 'Memasukkan bukti pelaksanaan',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmPenilaianPage())
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Evaluasi',
+                            subtitle: 'Quiz Test Evaluasi',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmEvaluasiPage())
+                          ),
+                        )],
+                      
+
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: _getMenuItem(
+                          title: 'Data SJH',
+                          subtitle: 'Kelola data SJH',
+                          context: context
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: _getMenuItem(
+                          title: 'Simulasi SJH',
+                          subtitle: 'Simulasikan data SJH yang sudah di masukkan',
+                          context: context
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: _getMenuItem(
+                          title: 'Daftar Sertifikat',
+                          subtitle: 'Daftarkan SJH untuk mendapatkan sertifikasi',
+                          context: context
+                        ),
                       ),
                     ],
-                  ),
-                ),
+                  );
+                }
 
-                // SJH MENU
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: _getMenuItem(
-                    title: 'Create Init',
-                    subtitle: 'Initializing a docs',
-                    context: context
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: _getMenuItem(
-                    title: 'Detail UMKM',
-                    subtitle: 'Inserting UMKM Details',
-                    context: context,
-                    route: MaterialPageRoute(builder: (context) => UmkmDetailInsertPage()),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: _getMenuItem(
-                    title: 'Penetapan Tim',
-                    subtitle: 'Menetapkan orang-orang yang bekerja di tim',
-                    context: context,
-                    route: MaterialPageRoute(builder: (context) => UmkmTeamAssignPage())
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: _getMenuItem(
-                    title: 'Bukti Pelaksanaan',
-                    subtitle: 'Memasukkan bukti pelaksanaan',
-                    context: context,
-                    route: MaterialPageRoute(builder: (context) => UmkmPenilaianPage())
-                  ),
-                ),
-
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: _getMenuItem(
-                    title: 'Data SJH',
-                    subtitle: 'Kelola data SJH',
-                    context: context
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: _getMenuItem(
-                    title: 'Simulasi SJH',
-                    subtitle: 'Simulasikan data SJH yang sudah di masukkan',
-                    context: context
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: _getMenuItem(
-                    title: 'Daftar Sertifikat',
-                    subtitle: 'Daftarkan SJH untuk mendapatkan sertifikasi',
-                    context: context
-                  ),
-                ),
-              ],
+                else {
+                  return Container(
+                    height: 400,
+                    alignment: Alignment.center,
+                    child: Text('You are not logged in'),
+                  );
+                }
+              }
             ),
           ),
         )

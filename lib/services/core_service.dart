@@ -104,6 +104,16 @@ class CoreService {
     }
   }
 
+  Future<ApiResponse> getSoalEvaluasi() async {
+    try {
+      final url = '$_prefix/umkm/get_soal_evaluasi';
+      final response = await _dio.get(url);
+      return _handleResponse(response);
+    } catch(err) {
+      rethrow;
+    }
+  }
+
   // HTTP UTILS
 
   Future<ApiResponse> genericGet(String url, Map<String, dynamic> params) async {
