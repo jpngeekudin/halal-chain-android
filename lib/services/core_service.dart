@@ -1,16 +1,18 @@
 import 'package:dio/dio.dart';
+import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/models/api_model.dart';
 import 'package:halal_chain/models/user_data_model.dart';
+import 'package:logger/logger.dart';
 
 class CoreService {
-  final _prefix = 'http://103.176.79.228:5000';
+  final _prefix = apiPrefix;
   final _dio = Dio();
 
   // AUTH
 
   Future<ApiResponse> login(Map<String, dynamic> params) async {
     try {
-      final url = '$_prefix/auth/login';
+      final url = ApiList.login;
       final response = await _dio.post(url, data: params);
       return _handleResponse(response);
     } catch (err) {
@@ -20,9 +22,9 @@ class CoreService {
 
   Future<ApiResponse> register(UserType userType, Map<String, dynamic> params) async {
     String url;
-    if (userType == UserType.umkm) url = '$_prefix/auth/register_umkm';
-    else if (userType == UserType.auditor) url = '$_prefix/auth/register_auditor';
-    else url = '$_prefix/auth/register_consumen';
+    if (userType == UserType.umkm) url = ApiList.registerUmkm;
+    else if (userType == UserType.auditor) url = ApiList.registerAuditor;
+    else url = ApiList.registerConsument;
 
     try {
       final response = await _dio.post(url, data: params);
@@ -34,9 +36,9 @@ class CoreService {
 
   Future<ApiResponse> updateUser(UserType userType, Map<String, dynamic> params) async {
     String url;
-    if (userType == UserType.umkm) url = '$_prefix/account/update_umkm';
-    else if (userType == UserType.auditor) url = '$_prefix/account/update_auditor';
-    else url = '$_prefix/account/update_consumen';
+    if (userType == UserType.umkm) url = ApiList.updateUserUmkm;
+    else if (userType == UserType.auditor) url = ApiList.updateUserAuditor;
+    else url = ApiList.updateUserConsument;
 
     try {
       final response = await _dio.post(url, data: params);
@@ -48,9 +50,9 @@ class CoreService {
 
   Future<ApiResponse> getUser(UserType userType, String userId) async {
     String url;
-    if (userType == UserType.umkm) url = '$_prefix/account/get_umkm';
-    else if (userType == UserType.auditor) url = '$_prefix/account/get_auditor';
-    else url = '$_prefix/account/get_consumen';
+    if (userType == UserType.umkm) url = ApiList.getUserUmkm;
+    else if (userType == UserType.auditor) url = ApiList.getUserAuditor;
+    else url = ApiList.getUserConsument;
 
     try {
       final query = { 'id': userId };
@@ -65,7 +67,7 @@ class CoreService {
 
   Future<ApiResponse> createInit(String creatorId) async {
     try {
-      final url = '$_prefix/umkm/create_init';
+      final url = ApiList.umkmCreateInit;
       final data = { 'creator_id': creatorId };
       final response = await _dio.post(url, data: data);
       return _handleResponse(response);
@@ -76,7 +78,7 @@ class CoreService {
 
   Future<ApiResponse> createDetailUmkm(Map<String, dynamic> params) async {
     try {
-      final url = '$_prefix/umkm/insert_detail_umkm';
+      final url = ApiList.umkmCreateDetail;
       final response = await _dio.post(url, data: params);
       return _handleResponse(response);
     } catch(err) {
@@ -86,7 +88,7 @@ class CoreService {
 
   Future<ApiResponse> createPenetapanTim(Map<String, dynamic> params) async {
     try {
-      final url = '$_prefix/umkm/insert_penetapan_tim';
+      final url = ApiList.umkmCreatePenetapanTim;
       final response = await _dio.post(url, data: params);
       return _handleResponse(response);
     } catch(err) {
@@ -96,7 +98,7 @@ class CoreService {
 
   Future<ApiResponse> createBuktiPelaksanaan(Map<String, dynamic> params) async {
     try {
-      final url = '$_prefix/umkm/insert_bukti_pelaksanaan';
+      final url = ApiList.umkmCreateBuktiPelaksanaan;
       final response = await _dio.post(url, data: params);
       return _handleResponse(response);
     } catch(err) {
@@ -106,7 +108,7 @@ class CoreService {
 
   Future<ApiResponse> getSoalEvaluasi() async {
     try {
-      final url = '$_prefix/umkm/get_soal_evaluasi';
+      final url = ApiList.umkmGetEvaluasiSoal;
       final response = await _dio.get(url);
       return _handleResponse(response);
     } catch(err) {
@@ -118,7 +120,7 @@ class CoreService {
 
   Future<ApiResponse> genericGet(String url, Map<String, dynamic> params) async {
     try {
-      final response = await _dio.post(url, queryParameters: params);
+      final response = await _dio.get(url, queryParameters: params);
       return _handleResponse(response);
     } catch (err) {
       rethrow;
@@ -128,7 +130,7 @@ class CoreService {
   ApiResponse _handleResponse(Response dioResponse) {
     ApiResponse apiResponse;
 
-    if (dioResponse.data.runtimeType == String || dioResponse.data['data'] == null) {
+    if (dioResponse.data.runtimeType == String || dioResponse.data.runtimeType == List || dioResponse.data['data'] == null) {
       apiResponse = ApiResponse(
         status: dioResponse.statusCode ?? 200,
         data: dioResponse.data,

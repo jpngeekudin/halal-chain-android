@@ -5,6 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/avatar_helper.dart';
 import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/pages/profile_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_audit_internal_2_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_audit_internal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_evaluasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
@@ -20,8 +22,8 @@ class HomePage extends StatelessWidget {
     Route? route,
   }) {
     return  InkWell(
-      onTap: () => {
-        if (route != null) Navigator.of(context).push(route)
+      onTap: () {
+        if (route != null) Navigator.of(context).push(route);
       },
       child: Row(
         children: [
@@ -182,6 +184,15 @@ class HomePage extends StatelessWidget {
                             subtitle: 'Quiz Test Evaluasi',
                             context: context,
                             route: MaterialPageRoute(builder: (context) => UmkmEvaluasiPage())
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Audit Internal',
+                            subtitle: 'Audit Internal',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmAuditInternal2Page())
                           ),
                         )],
                       

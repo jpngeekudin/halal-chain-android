@@ -61,3 +61,16 @@ class UmkmJawabSoalEvaluasi {
 
   UmkmJawabSoalEvaluasi(this.key, this.value);
 }
+
+class UmkmSoalAudit {
+  int id;
+  String soal;
+  bool? jawaban;
+  TextEditingController? keterangan;
+
+  UmkmSoalAudit(this.id, this.soal);
+
+  void setJawaban(bool jawaban) {
+    jawaban = jawaban;
+  }
+}
