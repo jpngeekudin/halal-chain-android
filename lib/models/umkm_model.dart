@@ -74,3 +74,18 @@ class UmkmSoalAudit {
     jawaban = jawaban;
   }
 }
+
+class UmkmDaftarHadirKaji {
+  String nama;
+  String jabatan;
+  String? paraf;
+
+  UmkmDaftarHadirKaji(this.nama, this.jabatan, this.paraf);
+}
+
+class UmkmDaftarHadirKajiPembahasan {
+  String pembahasan;
+  String perbaikan;
+
+  UmkmDaftarHadirKajiPembahasan(this.pembahasan, this.perbaikan);
+}

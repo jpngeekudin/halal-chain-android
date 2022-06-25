@@ -7,6 +7,7 @@ import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/pages/profile_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_audit_internal_2_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_audit_internal_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_daftar_hadir_kaji_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_evaluasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
@@ -193,6 +194,15 @@ class HomePage extends StatelessWidget {
                             subtitle: 'Audit Internal',
                             context: context,
                             route: MaterialPageRoute(builder: (context) => UmkmAuditInternal2Page())
+                          ),
+                        ), 
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Daftar Hadir Kajian',
+                            subtitle: 'Mengisi daftar hadir kajian',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmDaftarHadirKajiPage())
                           ),
                         )],
                       
