@@ -107,3 +107,21 @@ class UmkmPembelianPemeriksaanBahan {
     required this.paraf
   });
 }
+
+class UmkmStokBarang {
+  DateTime tanggalBeli;
+  String namaBahan;
+  String jumlahBahan;
+  String jumlahKeluar;
+  String stokSisa;
+  bool paraf;
+
+  UmkmStokBarang({
+    required this.tanggalBeli,
+    required this.namaBahan,
+    required this.jumlahBahan,
+    required this.jumlahKeluar,
+    required this.stokSisa,
+    required this.paraf
+  });
+}

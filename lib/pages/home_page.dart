@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:halal_chain/helpers/avatar_helper.dart';
+import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/pages/profile_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_audit_internal_2_page.dart';
@@ -12,6 +13,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_evaluasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_pembelian_pemeriksaan_bahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_stok_barang_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_team_assign_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -222,6 +224,15 @@ class HomePage extends StatelessWidget {
                             subtitle: 'Mengisi daftar pembelian dan pemeriksaan bahan import',
                             context: context,
                             route: MaterialPageRoute(builder: (context) => UmkmPembelianPemerikasaanBahanPage(typeBahan: 'import'))
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Stok Bahan',
+                            subtitle: 'Mengisi form stok bahan',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmStokBarangPage())
                           ),
                         ),],
                       
