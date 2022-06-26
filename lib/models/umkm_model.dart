@@ -89,3 +89,21 @@ class UmkmDaftarHadirKajiPembahasan {
 
   UmkmDaftarHadirKajiPembahasan(this.pembahasan, this.perbaikan);
 }
+
+class UmkmPembelianPemeriksaanBahan {
+  DateTime tanggal;
+  String namaMerkBahan;
+  String namaNegaraProdusen;
+  bool adaDiDaftarBahanHalal;
+  DateTime expDateBahan;
+  bool paraf;
+
+  UmkmPembelianPemeriksaanBahan({
+    required this.tanggal,
+    required this.namaMerkBahan,
+    required this.namaNegaraProdusen,
+    required this.adaDiDaftarBahanHalal,
+    required this.expDateBahan,
+    required this.paraf
+  });
+}

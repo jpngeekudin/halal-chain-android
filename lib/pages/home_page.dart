@@ -10,6 +10,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_audit_internal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_daftar_hadir_kaji_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_evaluasi_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_pembelian_pemeriksaan_bahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_team_assign_page.dart';
 
@@ -203,6 +204,15 @@ class HomePage extends StatelessWidget {
                             subtitle: 'Mengisi daftar hadir kajian',
                             context: context,
                             route: MaterialPageRoute(builder: (context) => UmkmDaftarHadirKajiPage())
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Pembelian dan Pemeriksaan Bahan',
+                            subtitle: 'Mengisi daftar pembelian dan pemeriksaan bahan',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmPembelianPemerikasaanBahanPage())
                           ),
                         )],
                       
