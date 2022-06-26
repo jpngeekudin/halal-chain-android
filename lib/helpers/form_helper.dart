@@ -144,7 +144,36 @@ Widget getInputFile({
         )
       ],
     );
-} 
+}
+
+Widget getInputDate({
+  required String label,
+  required TextEditingController controller,
+  required void Function(DateTime) onChanged,
+  required BuildContext context,
+}) {
+  return TextFormField(
+    controller: controller,
+    decoration: getInputDecoration(label: label),
+    style: inputTextStyle,
+    onTap: () async {
+      FocusScope.of(context).requestFocus(FocusNode());
+      DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: controller.text.isNotEmpty
+          ? defaultDateFormat.parse(controller.text)
+          : DateTime.now(),
+        firstDate: DateTime(2016),
+        lastDate: DateTime(2100),
+      );
+
+      if (picked != null) {
+        onChanged(picked);
+        controller.text = defaultDateFormat.format(picked);
+      }
+    },
+  );
+}
 
 Widget buildFormList({
   required GlobalKey<FormState> key,
@@ -192,22 +221,11 @@ Widget buildFormList({
     }
 
     else if (config.type == FormConfigType.date) {
-      input = TextFormField(
-        controller: config.controller,
-        decoration: getInputDecoration(label: config.label),
-        style: inputTextStyle,
-        onTap: () async {
-          FocusScope.of(context).requestFocus(FocusNode());
-          DateTime? picked = await showDatePicker(
-            context: context,
-            initialDate: defaultDateFormat.parse(config.controller!.text),
-            firstDate: DateTime(2016),
-            lastDate: DateTime(2100),
-          );
-
-          if (picked != null && config.onChanged != null) config.onChanged!(picked);
-          if (picked != null && config.controller != null) config.controller!.text = defaultDateFormat.format(picked);
-        },
+      input = getInputDate(
+        controller: config.controller!,
+        label: config.label,
+        onChanged: config.onChanged!,
+        context: context
       );
     }
 

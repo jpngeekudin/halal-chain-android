@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:logger/logger.dart';
 
-class UmkmStokBarangPage extends StatefulWidget {
-  const UmkmStokBarangPage({ Key? key }) : super(key: key);
+class UmkmProduksiPage extends StatefulWidget {
+  const UmkmProduksiPage({ Key? key }) : super(key: key);
 
   @override
-  State<UmkmStokBarangPage> createState() => _UmkmStokBarangPageState();
+  State<UmkmProduksiPage> createState() => _UmkmProduksiPageState();
 }
 
-class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
-  final List<UmkmStokBarang> _listStok = [];
-  
-  DateTime? _tanggalBeliModel;
-  final _tanggalBeliController = TextEditingController();
-  final _namaBahanController = TextEditingController();
-  final _jumlahBahanController = TextEditingController();
-  final _jumlahKeluarController = TextEditingController();
-  final _stokSisaController = TextEditingController();
-  bool _parafModel = false;
-  
+class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
   final _titleTextStyle = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 16
   );
 
-  Widget _getStokCard(UmkmStokBarang stok) {
-    final _labelTextStyle = TextStyle(
+  final List<UmkmProduksi> _listProduksi = [];
+  
+  DateTime? _tanggalProduksiModel;
+  final _tanggalProduksiController = TextEditingController();
+  final _namaProdukController = TextEditingController();
+  final _jumlahAwalController = TextEditingController();
+  final _jumlahProdukKeluarController = TextEditingController();
+  final _sisaStokController = TextEditingController();
+  bool _parafModel = false;
+
+  Widget _getProduksiCard(UmkmProduksi produksi) {
+    final labelTextStyle = TextStyle(
       color: Colors.grey[400]
     );
 
@@ -39,8 +40,8 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
         ),
         borderRadius: BorderRadius.circular(10),
       ),
-      margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.all(10),
+      margin: EdgeInsets.only(bottom: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -48,105 +49,99 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(stok.namaBahan, style: TextStyle(
-                  fontWeight: FontWeight.bold
+                Text(produksi.namaProduk, style: TextStyle(
+                  fontWeight: FontWeight.bold,
                 )),
                 SizedBox(height: 10),
                 Wrap(
                   children: [
-                    Text('Pembelian', style: _labelTextStyle),
+                    Text('Tanggal Produksi', style: labelTextStyle),
                     SizedBox(width: 10),
-                    Text(defaultDateFormat.format(stok.tanggalBeli))
+                    Text(defaultDateFormat.format(produksi.tanggalProduksi))
                   ],
                 ),
                 SizedBox(height: 5),
                 Wrap(
                   children: [
-                    Text('Bahan Masuk', style: _labelTextStyle),
+                    Text('Jumlah Awal', style: labelTextStyle),
                     SizedBox(width: 10),
-                    Text(stok.jumlahBahan)
+                    Text('${produksi.jumlahAwal}')
                   ],
                 ),
                 SizedBox(height: 5),
                 Wrap(
                   children: [
-                    Text('Bahan Keluar', style: _labelTextStyle),
+                    Text('Produk Keluar', style: labelTextStyle),
                     SizedBox(width: 10),
-                    Text(stok.jumlahKeluar)
+                    Text('${produksi.jumlahProdukKeluar}')
                   ],
                 ),
                 SizedBox(height: 5),
                 Wrap(
                   children: [
-                    Text('Sisa', style: _labelTextStyle),
+                    Text('Sisa Stok', style: labelTextStyle),
                     SizedBox(width: 10),
-                    Text(stok.stokSisa)
+                    Text('${produksi.sisaStok}')
                   ],
                 ),
                 SizedBox(height: 5),
                 Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text('Paraf', style: _labelTextStyle),
+                    Text('Paraf', style: labelTextStyle),
                     SizedBox(width: 10),
-                    if (stok.paraf) Icon(Icons.check, color: Colors.green)
+                    if (produksi.paraf) Icon(Icons.check, color: Colors.green)
                     else Icon(Icons.close, color: Colors.red)
                   ],
-                )
+                ),
+                SizedBox(height: 5),
               ],
             ),
           ),
           ElevatedButton(
+            onPressed: () => _removeProduksi(produksi),
             child: Text('Remove'),
             style: ElevatedButton.styleFrom(
               primary: Colors.red
             ),
-            onPressed: () => _removeStok(stok),
           )
         ],
       ),
     );
   }
 
-  void _addStok() {
+  void _addProduksi() {
     if (
-      _tanggalBeliModel == null ||
-      _namaBahanController.text.isEmpty ||
-      _jumlahBahanController.text.isEmpty ||
-      _jumlahKeluarController.text.isEmpty ||
-      _stokSisaController.text.isEmpty
+      _namaProdukController.text.isEmpty ||
+      _tanggalProduksiModel == null ||
+      _jumlahAwalController.text.isEmpty ||
+      _jumlahProdukKeluarController.text.isEmpty ||
+      _sisaStokController.text.isEmpty
     ) {
-      final snackBar = SnackBar(content: Text('Harap isi semua field yang diperlukan'));
+      final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
 
-    final stok = UmkmStokBarang(
-      tanggalBeli: _tanggalBeliModel!,
-      namaBahan: _namaBahanController.text,
-      jumlahBahan: _jumlahBahanController.text,
-      jumlahKeluar: _jumlahKeluarController.text,
-      stokSisa: _stokSisaController.text,
+    final produksi = UmkmProduksi(
+      tanggalProduksi: _tanggalProduksiModel!,
+      namaProduk: _namaProdukController.text,
+      jumlahAwal: int.parse(_jumlahAwalController.text),
+      jumlahProdukKeluar: int.parse(_jumlahProdukKeluarController.text),
+      sisaStok: int.parse(_sisaStokController.text),
       paraf: _parafModel
     );
-    
-    setState(() => _listStok.add(stok));
-    _tanggalBeliModel = null;
-    _tanggalBeliController.text = '';
-    _namaBahanController.text = '';
-    _jumlahBahanController.text = '';
-    _jumlahKeluarController.text = '';
-    _stokSisaController.text = '';
-    _parafModel = false;
+
+    setState(() => _listProduksi.add(produksi));
   }
 
-  void _removeStok(UmkmStokBarang stok) {
-    setState(() => _listStok.remove(stok));
+  void _removeProduksi(UmkmProduksi produksi) {
+    setState(() => _listProduksi.remove(produksi));
   }
 
   void _submit() {
-    if (_listStok.isEmpty) {
-      final snackBar = SnackBar(content: Text('Harap isi sisa stok terlebih dahulu'));
+    if (_listProduksi.isEmpty) {
+      final snackBar = SnackBar(content: Text('Harap isi daftar produksi terlebih dahulu'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
@@ -154,14 +149,14 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
     final params = {
       'id': '',
       'created_at': DateTime.now().millisecondsSinceEpoch,
-      'data': _listStok.map((stok) => {
-        'tanggal_beli': stok.tanggalBeli.millisecondsSinceEpoch,
-        'nama_bahan': stok.namaBahan,
-        'jumlah_bahan': stok.jumlahBahan,
-        'jumlah_keluar': stok.jumlahKeluar,
-        'stok_sisa': stok.stokSisa,
-        'paraf': stok.paraf
-      }).toList(),
+      'data': _listProduksi.map((produksi) => {
+        'tanggal_produksi': produksi.tanggalProduksi.millisecondsSinceEpoch,
+        'nama_produk': produksi.namaProduk,
+        'jumlah_awal': produksi.jumlahAwal,
+        'jumlah_produk_keluar': produksi.jumlahProdukKeluar,
+        'sisa_stok': produksi.sisaStok,
+        'paraf': produksi.paraf
+      }).toList()
     };
 
     final logger = Logger();
@@ -172,7 +167,7 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Stok Bahan'),
+        title: Text('Produksi'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -181,66 +176,61 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Stok Bahan', style: _titleTextStyle),
+                Text('Daftar Produksi', style: _titleTextStyle),
                 SizedBox(height: 10),
-                if (_listStok.isEmpty) Text('Belum ada stok bahan')
-                else ..._listStok.map((stok) => _getStokCard(stok)).toList(),
+                if (_listProduksi.isEmpty) Text('Belum ada produksi')
+                else ..._listProduksi.map((produksi) => _getProduksiCard(produksi)).toList(),
                 SizedBox(height: 30),
 
-                Text('Tambah Stok Bahan', style: _titleTextStyle),
+                Text('Tambah Produksi', style: _titleTextStyle),
                 SizedBox(height: 10),
                 getInputWrapper(
-                  label: 'Nama Bahan',
+                  label: 'Nama Produk',
                   input: TextField(
-                    controller: _namaBahanController,
-                    decoration: getInputDecoration(label: 'Nama Bahan'),
+                    controller: _namaProdukController,
+                    decoration: getInputDecoration(label: 'Nama Produk'),
                     style: inputTextStyle,
                   )
                 ),
                 getInputWrapper(
-                  label: 'Tanggal Pembelian',
-                  input: TextFormField(
-                    controller: _tanggalBeliController,
-                    decoration: getInputDecoration(label: 'Tanggal Pembelian'),
-                    style: inputTextStyle,
-                    onTap: () async {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _tanggalBeliModel ?? DateTime.now(),
-                        firstDate: DateTime(2016),
-                        lastDate: DateTime(2100),
-                      );
-
-                      if (picked != null) {
-                        setState(() => _tanggalBeliModel = picked);
-                        _tanggalBeliController.text = defaultDateFormat.format(picked);
-                      }
+                  label: 'Tanggal Produksi',
+                  input: getInputDate(
+                    label: 'Tanggal Produksi',
+                    controller: _tanggalProduksiController,
+                    onChanged: (picked) {
+                      setState(() => _tanggalProduksiModel = picked);
                     },
-                  ),
-                ),
-                getInputWrapper(
-                  label: 'Jumlah Bahan Masuk',
-                  input: TextField(
-                    controller: _jumlahBahanController,
-                    decoration: getInputDecoration(label: 'Jumlah Bahan Masuk'),
-                    style: inputTextStyle,
+                    context: context
                   )
                 ),
                 getInputWrapper(
-                  label: 'Jumlah Bahan Keluar',
+                  label: 'Jumlah Awal',
                   input: TextField(
-                    controller: _jumlahKeluarController,
-                    decoration: getInputDecoration(label: 'Jumlah Bahan Keluar'),
+                    controller: _jumlahAwalController,
+                    decoration: getInputDecoration(label: 'Jumlah Awal'),
                     style: inputTextStyle,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  )
+                ),
+                getInputWrapper(
+                  label: 'Jumlah Produk Keluar',
+                  input: TextField(
+                    controller: _jumlahProdukKeluarController,
+                    decoration: getInputDecoration(label: 'Jumlah Produk Keluar'),
+                    style: inputTextStyle,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   )
                 ),
                 getInputWrapper(
                   label: 'Sisa Stok',
                   input: TextField(
-                    controller: _stokSisaController,
+                    controller: _sisaStokController,
                     decoration: getInputDecoration(label: 'Sisa Stok'),
                     style: inputTextStyle,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   )
                 ),
                 getInputWrapper(
@@ -253,7 +243,9 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
                         onChanged: (value) {
                           setState(() => _parafModel = value);
                         },
-                      )
+                      ),
+                      SizedBox(width: 5,),
+                      Text(_parafModel ? 'Ya' : 'Tidak')
                     ],
                   )
                 ),
@@ -261,11 +253,11 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: () => _addStok(),
+                      onPressed: () => _addProduksi(),
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Icon(Icons.add_circle_outline, color: Colors.black),
+                          Icon(Icons.add_circle, color: Colors.black),
                           SizedBox(width: 10),
                           Text('Tambah', style: TextStyle(
                             color: Colors.black
@@ -283,8 +275,8 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    child: Text('Subtmit'),
                     onPressed: () => _submit(),
+                    child: Text('Submit'),
                   ),
                 )
               ],

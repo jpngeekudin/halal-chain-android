@@ -13,6 +13,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_evaluasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_pembelian_pemeriksaan_bahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_produksi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_stok_barang_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_team_assign_page.dart';
 
@@ -233,6 +234,15 @@ class HomePage extends StatelessWidget {
                             subtitle: 'Mengisi form stok bahan',
                             context: context,
                             route: MaterialPageRoute(builder: (context) => UmkmStokBarangPage())
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Produksi',
+                            subtitle: 'Mengisi form produksi',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmProduksiPage())
                           ),
                         ),],
                       

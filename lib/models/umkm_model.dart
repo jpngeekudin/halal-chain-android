@@ -125,3 +125,21 @@ class UmkmStokBarang {
     required this.paraf
   });
 }
+
+class UmkmProduksi {
+  DateTime tanggalProduksi;
+  String namaProduk;
+  int jumlahAwal;
+  int jumlahProdukKeluar;
+  int sisaStok;
+  bool paraf;
+
+  UmkmProduksi({
+    required this.tanggalProduksi,
+    required this.namaProduk,
+    required this.jumlahAwal,
+    required this.jumlahProdukKeluar,
+    required this.sisaStok,
+    required this.paraf
+  });
+}
