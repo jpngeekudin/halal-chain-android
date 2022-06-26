@@ -5,7 +5,8 @@ import 'package:halal_chain/models/umkm_model.dart';
 import 'package:logger/logger.dart';
 
 class UmkmPembelianPemerikasaanBahanPage extends StatefulWidget {
-  const UmkmPembelianPemerikasaanBahanPage({ Key? key }) : super(key: key);
+  const UmkmPembelianPemerikasaanBahanPage({ Key? key, this.typeBahan = 'non-import' }) : super(key: key);
+  final String typeBahan;
 
   @override
   State<UmkmPembelianPemerikasaanBahanPage> createState() => _UmkmPembelianPemerikasaanBahanPageState();
@@ -175,7 +176,10 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pembelian dan Pemeriksaan Bahan'),
+        title: Text(widget.typeBahan != 'import'
+          ? 'Pembelian dan Pemeriksaan Bahan'
+          : 'Pembelian dan Pemeriksaan Bahan Import'
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -184,7 +188,11 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('List Bahan', style: _titleTextStyle),
+                Text(widget.typeBahan != 'import'
+                  ? 'List Bahan'
+                  : 'List Bahan Import',
+                  style: _titleTextStyle
+                ),
                 SizedBox(height: 10),
                 if (_listBahan.isNotEmpty) ..._listBahan.map((bahan) => _getBahanCard(bahan)).toList()
                 else Text('Belum ada list bahan.'),

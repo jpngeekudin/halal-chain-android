@@ -214,7 +214,16 @@ class HomePage extends StatelessWidget {
                             context: context,
                             route: MaterialPageRoute(builder: (context) => UmkmPembelianPemerikasaanBahanPage())
                           ),
-                        )],
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Pembelian dan Pemeriksaan Bahan Import',
+                            subtitle: 'Mengisi daftar pembelian dan pemeriksaan bahan import',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmPembelianPemerikasaanBahanPage(typeBahan: 'import'))
+                          ),
+                        ),],
                       
 
                       Container(
