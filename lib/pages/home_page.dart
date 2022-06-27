@@ -11,6 +11,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_audit_internal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_daftar_hadir_kaji_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_evaluasi_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_kebersihan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_pembelian_pemeriksaan_bahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_pemusnahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
@@ -253,6 +254,15 @@ class HomePage extends StatelessWidget {
                             subtitle: 'Mengisi form pemusnahan barang / produk',
                             context: context,
                             route: MaterialPageRoute(builder: (context) => UmkmPemusnahanPage())
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Pengecekan Kebersihan',
+                            subtitle: 'Mengisi form pengecekan kebersihan fasilitas produksi dan kendaraan',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmKebersihanPage())
                           ),
                         ),],
                       

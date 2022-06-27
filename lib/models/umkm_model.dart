@@ -161,3 +161,21 @@ class UmkmPemusnahan {
     required this.penanggungjawab
   });
 }
+
+class UmkmKebersihan {
+  DateTime tanggal;
+  bool produksi;
+  bool gudang;
+  bool mesin;
+  bool kendaraan;
+  String penanggungjawab;
+
+  UmkmKebersihan({
+    required this.tanggal,
+    required this.produksi,
+    required this.gudang,
+    required this.mesin,
+    required this.kendaraan,
+    required this.penanggungjawab
+  });
+}
