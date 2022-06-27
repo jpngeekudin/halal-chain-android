@@ -143,3 +143,21 @@ class UmkmProduksi {
     required this.paraf
   });
 }
+
+class UmkmPemusnahan {
+  DateTime tanggalProduksi;
+  String namaProduk;
+  String jumlah;
+  String penyebab;
+  DateTime tanggalPemusnahan;
+  String penanggungjawab;
+
+  UmkmPemusnahan({
+    required this.tanggalPemusnahan,
+    required this.tanggalProduksi,
+    required this.namaProduk,
+    required this.jumlah,
+    required this.penyebab,
+    required this.penanggungjawab
+  });
+}
