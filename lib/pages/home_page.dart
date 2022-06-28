@@ -8,6 +8,7 @@ import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/pages/profile_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_audit_internal_2_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_audit_internal_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_bahan_halal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_daftar_hadir_kaji_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_evaluasi_page.dart';
@@ -36,11 +37,15 @@ class HomePage extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).primaryColor.withOpacity(0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             width: 60,
             height: 60,
+            alignment: Alignment.center,
+            child: Icon(Icons.check_circle,
+              color: Theme.of(context).primaryColor
+            ),
           ),
           SizedBox(width: 20),
           Expanded(
@@ -263,6 +268,15 @@ class HomePage extends StatelessWidget {
                             subtitle: 'Mengisi form pengecekan kebersihan fasilitas produksi dan kendaraan',
                             context: context,
                             route: MaterialPageRoute(builder: (context) => UmkmKebersihanPage())
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Bahan Halal',
+                            subtitle: 'Mengisi form daftar bahan halal',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmBahanHalalPage())
                           ),
                         ),],
                       

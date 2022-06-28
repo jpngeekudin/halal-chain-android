@@ -179,3 +179,25 @@ class UmkmKebersihan {
     required this.penanggungjawab
   });
 }
+
+class UmkmBahanHalal {
+  String namaMerk;
+  String namaNegara;
+  String pemasok;
+  String penerbit;
+  String nomor;
+  DateTime masaBerlaku;
+  String dokumenLain;
+  String keterangan;
+
+  UmkmBahanHalal({
+    required this.namaMerk,
+    required this.namaNegara,
+    required this.pemasok,
+    required this.penerbit,
+    required this.nomor,
+    required this.masaBerlaku,
+    required this.dokumenLain,
+    required this.keterangan
+  });
+}
