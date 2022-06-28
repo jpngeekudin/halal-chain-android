@@ -201,3 +201,13 @@ class UmkmBahanHalal {
     required this.keterangan
   });
 }
+
+class UmkmMatriks {
+  String namaBahan;
+  Map<String, bool> produk;
+
+  UmkmMatriks({
+    required this.namaBahan,
+    required this.produk
+  });
+}

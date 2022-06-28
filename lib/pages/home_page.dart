@@ -13,6 +13,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_daftar_hadir_kaji_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_detail_insert_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_evaluasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_kebersihan_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_matriks_produk_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_pembelian_pemeriksaan_bahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_pemusnahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
@@ -277,6 +278,15 @@ class HomePage extends StatelessWidget {
                             subtitle: 'Mengisi form daftar bahan halal',
                             context: context,
                             route: MaterialPageRoute(builder: (context) => UmkmBahanHalalPage())
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: _getMenuItem(
+                            title: 'Matriks Produk',
+                            subtitle: 'Mengisi form matriks produk',
+                            context: context,
+                            route: MaterialPageRoute(builder: (context) => UmkmMatriksProdukPage())
                           ),
                         ),],
                       
