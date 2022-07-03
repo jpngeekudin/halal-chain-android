@@ -1,9 +1,10 @@
 import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
-import 'package:halal_chain/models/form_config_model.dart';
+import 'package:halal_chain/helpers/umkm_helper.dart';
+import 'package:halal_chain/services/core_service.dart';
 
 class UmkmDetailInsertPage extends StatefulWidget {
   const UmkmDetailInsertPage({ Key? key }) : super(key: key);
@@ -14,6 +15,7 @@ class UmkmDetailInsertPage extends StatefulWidget {
 
 class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
 
+  final _core = CoreService();
   final _formKey = GlobalKey<FormState>();
   final _namaKetuaController = TextEditingController();
   final _namaPenanggungjawabController = TextEditingController();
@@ -23,16 +25,61 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
 
   // List<FormConfig> _formConfigs = [];
 
-  void _submit() {
+  Future _submit() async {
+    if (
+      _namaKetuaController.text.isEmpty ||
+      _namaPenanggungjawabController.text.isEmpty ||
+      _logoPerusahaanModel == null ||
+      _ttdKetuaModel == null ||
+      _ttdPenanggungjawabModel == null
+    ) {
+      const snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    final document = await getUmkmDocument();
+    final logoPerusahaanFormData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(_logoPerusahaanModel!.path, filename: _logoPerusahaanModel!.path.split('/').last)
+    });
+
+    final ttdKetuaFormData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(_ttdKetuaModel!.path, filename: _ttdKetuaModel!.path.split('/').last)
+    });
+
+    final ttdPenanggungjawabFormData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(
+        _ttdPenanggungjawabModel!.path,
+        filename: _ttdPenanggungjawabModel!.path.split('/').last
+      )
+    });
+
+    final uploadLogoPerusahaan = await _core.genericPost(ApiList.imageUpload, null, logoPerusahaanFormData);
+    final uploadTtdKetua = await _core.genericPost(ApiList.imageUpload, null, ttdKetuaFormData);
+    final uploadTtdPenanggungjawab = await _core.genericPost(ApiList.imageUpload, null, ttdPenanggungjawabFormData);
+
     final params = {
+      'id': document!.id,
       'nama_ketua': _namaKetuaController.text,
       'nama_penanggungjawab': _namaPenanggungjawabController.text,
-      'logo_perusahaan': _logoPerusahaanModel.toString(),
-      'ttd_ketua': _ttdKetuaModel.toString(),
-      'ttd_penanggungjawab': _ttdPenanggungjawabModel.toString()
+      'logo_perusahaan': uploadLogoPerusahaan.data,
+      'ttd_ketua': uploadTtdKetua.data,
+      'ttd_penanggungjawab': uploadTtdPenanggungjawab.data
     };
 
-    print(params);
+    try {
+      final response = await _core.createDetailUmkm(params);
+      Navigator.of(context).pop();
+      const snackBar = SnackBar(content: Text('Sukses menyimpan data!'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
+    catch(err) {
+      String message = 'Terjadi kesalahan';
+      if (err is DioError) message = err.response?.data['detail'];
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override

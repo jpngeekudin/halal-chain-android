@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
 
 class UmkmProduksiPage extends StatefulWidget {
@@ -132,22 +136,30 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
       paraf: _parafModel
     );
 
-    setState(() => _listProduksi.add(produksi));
+    setState(() {
+      _listProduksi.add(produksi);
+      _namaProdukController.text = '';
+      _tanggalProduksiController.text = '';
+      _jumlahAwalController.text = '';
+      _jumlahProdukKeluarController.text = '';
+      _sisaStokController.text = '';
+    });
   }
 
   void _removeProduksi(UmkmProduksi produksi) {
     setState(() => _listProduksi.remove(produksi));
   }
 
-  void _submit() {
+  void _submit() async {
     if (_listProduksi.isEmpty) {
       final snackBar = SnackBar(content: Text('Harap isi daftar produksi terlebih dahulu'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
 
+    final document = await getUmkmDocument();
     final params = {
-      'id': '',
+      'id': document!.id,
       'created_at': DateTime.now().millisecondsSinceEpoch,
       'data': _listProduksi.map((produksi) => {
         'tanggal_produksi': produksi.tanggalProduksi.millisecondsSinceEpoch,
@@ -158,9 +170,21 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
         'paraf': produksi.paraf
       }).toList()
     };
+    
+    try {
+      final core = CoreService();
+      final response = await core.genericPost(ApiList.umkmCreateFormProduksi, null, params);
+      Navigator.of(context).pop();
+      const snackBar = SnackBar(content: Text('Sukses menyimpan data'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
-    final logger = Logger();
-    logger.i(params);
+    catch(err) {
+      String message = 'Terjadi kesalahan';
+      if (err is DioError) message = err.response?.data['detail'] ?? message;
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override

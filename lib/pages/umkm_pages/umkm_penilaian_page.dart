@@ -1,7 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 
 class UmkmPenilaianPage extends StatefulWidget {
   const UmkmPenilaianPage({ Key? key }) : super(key: key);
@@ -11,6 +15,9 @@ class UmkmPenilaianPage extends StatefulWidget {
 }
 
 class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
+  final _core = CoreService();
+  bool _loading = false;
+
   final _dataPelaksanaanFormKey = GlobalKey<FormState>();
   final _teamMemberFormKey = GlobalKey<FormState>();
   final List<UmkmTeamAssignmentWithScore> _teamAssignment = [];
@@ -32,11 +39,17 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
       _positionController.text.isEmpty
     ) return;
 
+    // final assignment = UmkmTeamAssignmentWithScore(
+    //   _namaController.text,
+    //   _jabatanController.text,
+    //   _positionController.text,
+    //   _nilaiController.text
+    // );
+
     final assignment = UmkmTeamAssignmentWithScore(
-      _namaController.text,
-      _jabatanController.text,
-      _positionController.text,
-      _nilaiController.text
+      nama: _namaController.text,
+      jabatan: _jabatanController.text,
+      nilai: _nilaiController.text
     );
 
     setState(() => _teamAssignment.add(assignment));
@@ -50,20 +63,40 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
     setState(() => _teamAssignment.remove(assignment));
   }
 
-  void _submit() {
+  void _submit() async {
     final valid = _dataPelaksanaanFormKey.currentState!.validate();
     if (!valid) return;
 
-    if (_teamAssignment.isEmpty) return;
+    if (_teamAssignment.isEmpty) {
+      const snackBar = SnackBar(content: Text('Harap isi anggota team terlebih dahulu'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
 
+    final document = await getUmkmDocument();
     final params = {
-      'id': '',
+      'id': document!.id,
       'tanggal_pelaksanaan': _tanggalModel!.millisecondsSinceEpoch,
       'pemateri': _pemateriController.text,
       'data': _teamAssignment.map((ass) => ass.toJSON()).toList(),
     };
+    
+    try {
+      setState(() => _loading = true);
+      final response = await _core.genericPost(ApiList.umkmCreateBuktiPelaksanaan, null, params);
+      const snackBar = SnackBar(content: Text('Sukses menyimpan data'));
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
-    print(params);
+    catch(err, stacktrace) {
+      print(stacktrace);
+      setState(() => _loading = false);
+      String message = 'Terjadi kesalahan';
+      if (err is DioError) message = err.response?.data['detail'];
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override
@@ -163,16 +196,16 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
                             Text(ass.jabatan)
                           ],
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Position', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            )),
-                            Text(ass.position)
-                          ],
-                        ),
+                        // Column(
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: [
+                        //     Text('Position', style: TextStyle(
+                        //       fontWeight: FontWeight.bold,
+                        //       fontSize: 12,
+                        //     )),
+                        //     Text(ass.position)
+                        //   ],
+                        // ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

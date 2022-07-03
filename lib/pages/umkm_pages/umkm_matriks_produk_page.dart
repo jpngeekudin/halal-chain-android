@@ -1,6 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
 
 class UmkmMatriksProdukPage extends StatefulWidget {
@@ -123,15 +127,16 @@ class _UmkmMatriksProdukPageState extends State<UmkmMatriksProdukPage> {
     setState(() => _listMatriks.remove(matriks));
   }
 
-  void _submit() {
+  void _submit() async {
     if (_listMatriks.isEmpty) {
       final snackBar = SnackBar(content: Text('Harap isi matriks terlebih dahulu'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
 
+    final document = await getUmkmDocument();
     final params = {
-      'id': '',
+      'id': document!.id,
       'created_at': DateTime.now().millisecondsSinceEpoch,
       'data': _listMatriks.map((matriks) {
         Map<String, dynamic> item = { 'nama_bahan': matriks.namaBahan };
@@ -139,9 +144,21 @@ class _UmkmMatriksProdukPageState extends State<UmkmMatriksProdukPage> {
         return item;
       }).toList()
     };
+    
+    try {
+      final core = CoreService();
+      final response = await core.genericPost(ApiList.umkmMatriksProduk, null, params);
+      Navigator.of(context).pop();
+      const snackBar = SnackBar(content: Text('Sukses menyimpan data'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
-    final logger = Logger();
-    logger.i(params);
+    catch(err) {
+      String message = 'Terjadi kesalahan';
+      if (err is DioError) message = err.response?.data['detail'] ?? message;
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override

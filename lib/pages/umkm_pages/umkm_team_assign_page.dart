@@ -1,6 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 
 class UmkmTeamAssignPage extends StatefulWidget {
   const UmkmTeamAssignPage({ Key? key }) : super(key: key);
@@ -10,11 +14,14 @@ class UmkmTeamAssignPage extends StatefulWidget {
 }
 
 class _UmkmTeamAssignPageState extends State<UmkmTeamAssignPage> {
+  final _core = CoreService();
   final _formKey = GlobalKey<FormState>();
   final List<UmkmTeamAssignment> _teamAssignment = [];
   final _namaController = TextEditingController();
   final _jabatanController = TextEditingController();
   final _positionController = TextEditingController();
+
+  bool _loading = false;
 
   void _addAssignment() {
     if (
@@ -39,13 +46,34 @@ class _UmkmTeamAssignPageState extends State<UmkmTeamAssignPage> {
     setState(() => _teamAssignment.remove(assignment));
   }
 
-  void _submit() {
+  void _submit() async {
+    if (_teamAssignment.isEmpty) {
+      const snackBar = SnackBar(content: Text('Harap isi anggota tim terlebih dahulu'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    final document = await getUmkmDocument();
+
     final params = {
-      'id': '',
       'data': _teamAssignment.map((ass) => ass.toJSON()).toList(),
     };
+    
+    try {
+      setState(() => _loading = true);
+      final response = await _core.genericPost(ApiList.umkmCreatePenetapanTim, { 'doc_id': document!.id }, params);
+      Navigator.of(context).pop();
+      const snackBar = SnackBar(content: Text('Sukses menyimpan data!'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
-    print(params);
+    catch(err) {
+      setState(() => _loading = false);
+      String message = 'Terjadi kesalahan';
+      if (err is DioError) message = err.response?.data['detail'];
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override
@@ -166,8 +194,10 @@ class _UmkmTeamAssignPageState extends State<UmkmTeamAssignPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    child: Text('Submit'),
-                    onPressed: _submit,
+                    child: _loading
+                      ? CircularProgressIndicator()
+                      : Text('Submit'),
+                    onPressed: _loading ? null : _submit,
                   ),
                 )
               ],

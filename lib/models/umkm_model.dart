@@ -1,6 +1,84 @@
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 
+class UmkmDocument {
+  late String id;
+  late String status;
+  late bool detailUmkm;
+  late bool penetapanTim;
+  late bool buktiPelaksanaan;
+  late bool jawabanEvaluasi;
+  late bool jawabanAudit;
+  late bool daftarHasilKaji;
+  late bool pembelian;
+  late bool pembelianImport;
+  late bool stokBarang;
+  late bool formProduksi;
+  late bool formPemusnahan;
+  late bool formPengecekanKebersihan;
+  late bool daftarBahanHalal;
+  late bool matriksProduk;
+
+  UmkmDocument({
+    required this.id,
+    required this.status,
+    required this.detailUmkm,
+    required this.penetapanTim,
+    required this.buktiPelaksanaan,
+    required this.jawabanEvaluasi,
+    required this.jawabanAudit,
+    required this.daftarHasilKaji,
+    required this.pembelian,
+    required this.pembelianImport,
+    required this.stokBarang,
+    required this.formProduksi,
+    required this.formPemusnahan,
+    required this.formPengecekanKebersihan,
+    required this.daftarBahanHalal,
+    required this.matriksProduk
+  });
+
+  UmkmDocument.fromJSON(Map<String, dynamic> json) {
+    id = json['_id'];
+    status = json['status'];
+    detailUmkm = json['detail_umkm'];
+    penetapanTim = json['penetapan_tim'];
+    buktiPelaksanaan = json['bukti_pelaksanaan'];
+    jawabanEvaluasi = json['jawaban_evaluasi'];
+    jawabanAudit = json['jawaban_audit'];
+    daftarHasilKaji = json['daftar_hasil_kaji'];
+    pembelian = json['pembelian'];
+    pembelianImport = json['pembelian_import'];
+    stokBarang = json['stok_barang'];
+    formProduksi = json['form_produksi'];
+    formPemusnahan = json['form_pemusnahan'];
+    formPengecekanKebersihan = json['form_pengecekan_kebersihan'];
+    daftarBahanHalal = json['daftar_bahan_halal'];
+    matriksProduk = json['matriks_produk'];
+  }
+
+  Map<String, dynamic> toJSON() {
+    return {
+      '_id': id,
+      'status': status,
+      'detail_umkm': detailUmkm,
+      'penetapan_tim': penetapanTim,
+      'bukti_pelaksanaan': buktiPelaksanaan,
+      'jawaban_evaluasi': jawabanEvaluasi,
+      'jawaban_audit': jawabanAudit,
+      'daftar_hasil_kaji': daftarHasilKaji,
+      'pembelian': pembelian,
+      'pembelian_import': pembelianImport,
+      'stok_barang': stokBarang,
+      'form_produksi': formProduksi,
+      'form_pemusnahan': formPemusnahan,
+      'form_pengecekan_kebersihan': formPengecekanKebersihan,
+      'daftar_bahan_halal': daftarBahanHalal,
+      'matriks_produk': matriksProduk
+    };
+  }
+}
+
 class UmkmTeamAssignment {
   String nama;
   String jabatan;
@@ -18,20 +96,23 @@ class UmkmTeamAssignment {
 class UmkmTeamAssignmentWithScore {
   String nama;
   String jabatan;
-  String position;
+  // String position;
+  String ttd;
   int nilai;
 
-  UmkmTeamAssignmentWithScore(
-    this.nama,
-    this.jabatan,
-    this.position,
-    String nilai
-  ) : nilai = int.parse(nilai);
+  UmkmTeamAssignmentWithScore({
+    required this.nama,
+    required this.jabatan,
+    // this.position,
+    this.ttd = '',
+    required String nilai
+  }) : nilai = int.parse(nilai);
 
   Map<String, dynamic> toJSON() => {
     'nama': nama,
     'jabatan': jabatan,
-    'position': position,
+    // 'position': position,
+    'ttd': '',
     'nilai': nilai
   };
 }

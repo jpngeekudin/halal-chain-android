@@ -1,7 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
 
 class UmkmDaftarHadirKajiPage extends StatefulWidget {
@@ -182,8 +186,10 @@ class _UmkmDaftarHadirKajiPageState extends State<UmkmDaftarHadirKajiPage> {
       return;
     }
 
+    final document = await getUmkmDocument();
+
     final params = {
-      'id': '',
+      'id': document!.id,
       'tanggal': _tanggalModel?.millisecondsSinceEpoch,
       'list_orang': _daftarHadir.map((hadir) => {
         'nama': hadir.nama,
@@ -195,9 +201,21 @@ class _UmkmDaftarHadirKajiPageState extends State<UmkmDaftarHadirKajiPage> {
         'perbaikan': pembahasan.perbaikan
       }).toList()
     };
+    
+    try {
+      final core = CoreService();
+      final response = await core.genericPost(ApiList.umkmCreateDaftarHadirKaji, null, params);
+      Navigator.of(context).pop();
+      const snackBar = SnackBar(content: Text('Sukses menyimpan data'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
-    final logger = Logger();
-    logger.i(params);
+    catch(err) {
+      String message = 'Terjadi kesalahan';
+      if (err is DioError) message = err.response?.data['detail'] ?? message;
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override

@@ -1,8 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:halal_chain/configs/api_config.dart';
+import 'package:halal_chain/helpers/auth_helper.dart';
 import 'package:halal_chain/helpers/avatar_helper.dart';
+import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/pages/profile_page.dart';
@@ -20,6 +22,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_produksi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_stok_barang_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_team_assign_page.dart';
+import 'package:halal_chain/services/core_service.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({ Key? key }) : super(key: key);
@@ -27,6 +30,7 @@ class HomePage extends StatelessWidget {
   Widget _getMenuItem({
     required String title,
     required String subtitle,
+    bool isDone = false,
     required BuildContext context,
     Route? route,
   }) {
@@ -38,15 +42,17 @@ class HomePage extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.2),
+              color: isDone
+                ? Theme.of(context).primaryColor.withOpacity(0.2)
+                : Colors.grey[400]!.withOpacity(0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             width: 60,
             height: 60,
             alignment: Alignment.center,
-            child: Icon(Icons.check_circle,
-              color: Theme.of(context).primaryColor
-            ),
+            child: isDone 
+              ? Icon(Icons.check_circle, color: Theme.of(context).primaryColor)
+              : Icon(Icons.watch_later_outlined, color: Colors.grey[800]),
           ),
           SizedBox(width: 20),
           Expanded(
@@ -89,6 +95,37 @@ class HomePage extends StatelessWidget {
     else {
       final userData = jsonDecode(userDataStr);
       return userData;
+    }
+  }
+
+  Future _createInit() async {
+    final core = CoreService();
+    final userData = await getUserData();
+    final response = await core.createInit(userData!.id);
+    return response.data;
+  }
+
+  Future<UmkmDocument?> _getUmkmDocument() async {
+    try {
+      final core = CoreService();
+      final userData = await getUserData();
+      final response = await core.genericGet(ApiList.umkmGetDocument, { 'creator_id': userData!.id });
+
+      if (response.data != null) {
+        final umkmDocument = UmkmDocument.fromJSON(response.data);
+        setUmkmDocument(umkmDocument);
+        return umkmDocument;
+      }
+
+      else {
+        final createInitResponse = await _createInit();
+        return await _getUmkmDocument();
+      }
+    }
+
+    catch(err, stacktrace) {
+      print(stacktrace);
+      rethrow;
     }
   }
 
@@ -155,166 +192,208 @@ class HomePage extends StatelessWidget {
                       ),
 
                       if (userData.role == 'umkm') 
+                        FutureBuilder(
+                          future: _getUmkmDocument(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              final UmkmDocument document = snapshot.data;
+                              return Column(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Create Init',
+                                      subtitle: 'Initializing a docs',
+                                      isDone: true,
+                                      context: context,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Detail UMKM',
+                                      subtitle: 'Inserting UMKM Details',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmDetailInsertPage()),
+                                      isDone: document.detailUmkm,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Penetapan Tim',
+                                      subtitle: 'Menetapkan orang-orang yang bekerja di tim',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmTeamAssignPage()),
+                                      isDone: document.penetapanTim,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Bukti Pelaksanaan',
+                                      subtitle: 'Memasukkan bukti pelaksanaan',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmPenilaianPage()),
+                                      isDone: document.buktiPelaksanaan,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Evaluasi',
+                                      subtitle: 'Quiz Test Evaluasi',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmEvaluasiPage()),
+                                      isDone: document.jawabanEvaluasi,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Audit Internal',
+                                      subtitle: 'Audit Internal',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmAuditInternal2Page()),
+                                      isDone: document.jawabanAudit
+                                    ),
+                                  ), 
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Daftar Hadir Kajian',
+                                      subtitle: 'Mengisi daftar hadir kajian',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmDaftarHadirKajiPage()),
+                                      isDone: document.daftarHasilKaji,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Pembelian dan Pemeriksaan Bahan',
+                                      subtitle: 'Mengisi daftar pembelian dan pemeriksaan bahan',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmPembelianPemerikasaanBahanPage()),
+                                      isDone: document.pembelian,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Pembelian dan Pemeriksaan Bahan Import',
+                                      subtitle: 'Mengisi daftar pembelian dan pemeriksaan bahan import',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmPembelianPemerikasaanBahanPage(typeBahan: 'import')),
+                                      isDone: document.pembelianImport
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Stok Bahan',
+                                      subtitle: 'Mengisi form stok bahan',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmStokBarangPage()),
+                                      isDone: document.stokBarang,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Produksi',
+                                      subtitle: 'Mengisi form produksi',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmProduksiPage()),
+                                      isDone: document.formProduksi,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Pemusnahan Barang / Produk',
+                                      subtitle: 'Mengisi form pemusnahan barang / produk',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmPemusnahanPage()),
+                                      isDone: document.formPemusnahan,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Pengecekan Kebersihan',
+                                      subtitle: 'Mengisi form pengecekan kebersihan fasilitas produksi dan kendaraan',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmKebersihanPage()),
+                                      isDone: document.formPengecekanKebersihan,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Bahan Halal',
+                                      subtitle: 'Mengisi form daftar bahan halal',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmBahanHalalPage()),
+                                      isDone: document.daftarBahanHalal,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Matriks Produk',
+                                      subtitle: 'Mengisi form matriks produk',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmMatriksProdukPage()),
+                                      isDone: document.matriksProduk,
+                                    ),
+                                  )
+                                ],
+                              );
+                            }
+
+                            else {
+                              print(snapshot.error);
+                              return Container(
+                                height: 400,
+                                alignment: Alignment.center,
+                                child: snapshot.hasError
+                                  ? Text('Terjadi kesalahan', style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold
+                                  ))
+                                  : CircularProgressIndicator(),
+                              );
+                            }
+                          },
+                        ),
+                        
+                      if (userData.role != 'umkm')
                         ...[Container(
                           margin: EdgeInsets.only(bottom: 20),
                           child: _getMenuItem(
-                            title: 'Create Init',
-                            subtitle: 'Initializing a docs',
+                            title: 'Data SJH',
+                            subtitle: 'Kelola data SJH',
                             context: context
                           ),
                         ),
                         Container(
                           margin: EdgeInsets.only(bottom: 20),
                           child: _getMenuItem(
-                            title: 'Detail UMKM',
-                            subtitle: 'Inserting UMKM Details',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmDetailInsertPage()),
+                            title: 'Simulasi SJH',
+                            subtitle: 'Simulasikan data SJH yang sudah di masukkan',
+                            context: context
                           ),
                         ),
                         Container(
                           margin: EdgeInsets.only(bottom: 20),
                           child: _getMenuItem(
-                            title: 'Penetapan Tim',
-                            subtitle: 'Menetapkan orang-orang yang bekerja di tim',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmTeamAssignPage())
+                            title: 'Daftar Sertifikat',
+                            subtitle: 'Daftarkan SJH untuk mendapatkan sertifikasi',
+                            context: context
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Bukti Pelaksanaan',
-                            subtitle: 'Memasukkan bukti pelaksanaan',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmPenilaianPage())
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Evaluasi',
-                            subtitle: 'Quiz Test Evaluasi',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmEvaluasiPage())
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Audit Internal',
-                            subtitle: 'Audit Internal',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmAuditInternal2Page())
-                          ),
-                        ), 
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Daftar Hadir Kajian',
-                            subtitle: 'Mengisi daftar hadir kajian',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmDaftarHadirKajiPage())
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Pembelian dan Pemeriksaan Bahan',
-                            subtitle: 'Mengisi daftar pembelian dan pemeriksaan bahan',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmPembelianPemerikasaanBahanPage())
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Pembelian dan Pemeriksaan Bahan Import',
-                            subtitle: 'Mengisi daftar pembelian dan pemeriksaan bahan import',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmPembelianPemerikasaanBahanPage(typeBahan: 'import'))
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Stok Bahan',
-                            subtitle: 'Mengisi form stok bahan',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmStokBarangPage())
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Produksi',
-                            subtitle: 'Mengisi form produksi',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmProduksiPage())
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Pemusnahan Barang / Produk',
-                            subtitle: 'Mengisi form pemusnahan barang / produk',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmPemusnahanPage())
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Pengecekan Kebersihan',
-                            subtitle: 'Mengisi form pengecekan kebersihan fasilitas produksi dan kendaraan',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmKebersihanPage())
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Bahan Halal',
-                            subtitle: 'Mengisi form daftar bahan halal',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmBahanHalalPage())
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: _getMenuItem(
-                            title: 'Matriks Produk',
-                            subtitle: 'Mengisi form matriks produk',
-                            context: context,
-                            route: MaterialPageRoute(builder: (context) => UmkmMatriksProdukPage())
-                          ),
-                        ),],
-                      
-
-                      Container(
-                        margin: EdgeInsets.only(bottom: 20),
-                        child: _getMenuItem(
-                          title: 'Data SJH',
-                          subtitle: 'Kelola data SJH',
-                          context: context
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(bottom: 20),
-                        child: _getMenuItem(
-                          title: 'Simulasi SJH',
-                          subtitle: 'Simulasikan data SJH yang sudah di masukkan',
-                          context: context
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(bottom: 20),
-                        child: _getMenuItem(
-                          title: 'Daftar Sertifikat',
-                          subtitle: 'Daftarkan SJH untuk mendapatkan sertifikasi',
-                          context: context
-                        ),
-                      ),
+                        )],
                     ],
                   );
                 }

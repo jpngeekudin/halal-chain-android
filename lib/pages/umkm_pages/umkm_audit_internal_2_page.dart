@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
@@ -46,7 +47,7 @@ class _UmkmAuditInternal2PageState extends State<UmkmAuditInternal2Page> {
     }
   }
 
-  void _submit() {
+  void _submit() async {
     if (
       _auditeeController.text.isEmpty ||
       _namaAuditorController.text.isEmpty ||
@@ -67,18 +68,32 @@ class _UmkmAuditInternal2PageState extends State<UmkmAuditInternal2Page> {
       return;
     }
 
+    final document = await getUmkmDocument();
     final params = {
-      'id': '',
-      'tanggal_audit': _tanggalAuditModel,
+      'id': document!.id,
+      'created_at': DateTime.now().millisecondsSinceEpoch,
+      'tanggal_audit': _tanggalAuditModel!.millisecondsSinceEpoch,
       'auditee': _auditeeController.text,
       'nama_auditor': _namaAuditorController.text,
       'bagian_diaudit': _bagianDiauditController.text,
-      'jawaban': _soalList.map<Map<String, dynamic>>((soal) {
+      'data': _soalList.map<Map<String, dynamic>>((soal) {
         return { 'id': soal.id, 'jawaban': soal.jawaban, 'keterangan': soal.keterangan?.text ?? '' };
-      })
+      }).toList(),
     };
 
-    _logger.i(params);
+    try {
+      final response = await _core.genericPost('http://103.176.79.228:5000/umkm/jawaban_audit_internal', null, params);
+      const snackBar = SnackBar(content: Text('Sukses menyimpan data!'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.of(context).pop();
+    }
+
+    catch(err, stacktrace) {
+      String message = 'Terjadi kesalahan';
+      if (err is DioError) message = err.response?.data['detail'] ?? message;
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override

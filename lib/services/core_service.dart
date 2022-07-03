@@ -127,10 +127,19 @@ class CoreService {
     }
   }
 
+  Future<ApiResponse> genericPost(String url, Map<String, dynamic>? parameters, dynamic data) async {
+    try {
+      final response = await _dio.post(url, data: data, queryParameters: parameters);
+      return _handleResponse(response);
+    } catch (err) {
+      rethrow;
+    }
+  }
+
   ApiResponse _handleResponse(Response dioResponse) {
     ApiResponse apiResponse;
 
-    if (dioResponse.data.runtimeType == String || dioResponse.data.runtimeType == List || dioResponse.data['data'] == null) {
+    if (dioResponse.data != null && (dioResponse.data.runtimeType == String || dioResponse.data.runtimeType == List || !dioResponse.data.containsKey('data'))) {
       apiResponse = ApiResponse(
         status: dioResponse.statusCode ?? 200,
         data: dioResponse.data,

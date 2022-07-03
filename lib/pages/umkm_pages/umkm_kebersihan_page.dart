@@ -1,7 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
+import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
 
 class UmkmKebersihanPage extends StatefulWidget {
@@ -147,13 +151,14 @@ class _UmkmKebersihanPageState extends State<UmkmKebersihanPage> {
     setState(() => _listKebersihan.remove(kebersihan));
   }
 
-  void _submit() {
+  void _submit() async {
     if (_listKebersihan.isEmpty) {
       final snackBar = SnackBar(content: Text('Harap isi daftar pengecekan kebersihan terlebih dahulu.'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
 
+    final document = await getUmkmDocument();
     final params = {
       'id': '',
       'created_at': DateTime.now().millisecondsSinceEpoch,
@@ -166,9 +171,21 @@ class _UmkmKebersihanPageState extends State<UmkmKebersihanPage> {
         'penanggungjawab': kebersihan.penanggungjawab
       }).toList(),
     };
+    
+    try {
+      final core = CoreService();
+      final response = await core.genericPost(ApiList.umkmFormKebersihan, null, params);
+      Navigator.of(context).pop();
+      const snackBar = SnackBar(content: Text('Sukses menyimpan data'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
-    final logger = Logger();
-    logger.i(params);
+    catch(err) {
+      String message = 'Terjadi kesalahan';
+      if (err is DioError) message = err.response?.data['detail'] ?? message;
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
   
   @override
