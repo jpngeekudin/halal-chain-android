@@ -4,9 +4,11 @@ import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
+import 'package:halal_chain/helpers/utils_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
+import 'package:signature/signature.dart';
 
 class UmkmStokBarangPage extends StatefulWidget {
   const UmkmStokBarangPage({ Key? key }) : super(key: key);
@@ -24,7 +26,9 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
   final _jumlahBahanController = TextEditingController();
   final _jumlahKeluarController = TextEditingController();
   final _stokSisaController = TextEditingController();
-  bool _parafModel = false;
+  final _parafController = SignatureController(
+    penStrokeWidth: 5
+  );
   
   final _titleTextStyle = TextStyle(
     fontWeight: FontWeight.bold,
@@ -87,16 +91,16 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
                     Text(stok.stokSisa)
                   ],
                 ),
-                SizedBox(height: 5),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text('Paraf', style: _labelTextStyle),
-                    SizedBox(width: 10),
-                    if (stok.paraf) Icon(Icons.check, color: Colors.green)
-                    else Icon(Icons.close, color: Colors.red)
-                  ],
-                )
+                // SizedBox(height: 5),
+                // Wrap(
+                //   crossAxisAlignment: WrapCrossAlignment.center,
+                //   children: [
+                //     Text('Paraf', style: _labelTextStyle),
+                //     SizedBox(width: 10),
+                //     if (stok.paraf) Icon(Icons.check, color: Colors.green)
+                //     else Icon(Icons.close, color: Colors.red)
+                //   ],
+                // )
               ],
             ),
           ),
@@ -112,7 +116,7 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
     );
   }
 
-  void _addStok() {
+  void _addStok() async {
     if (
       _tanggalBeliModel == null ||
       _namaBahanController.text.isEmpty ||
@@ -125,13 +129,15 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
       return;
     }
 
+    final parafBytes = await _parafController.toPngBytes();
+
     final stok = UmkmStokBarang(
       tanggalBeli: _tanggalBeliModel!,
       namaBahan: _namaBahanController.text,
       jumlahBahan: _jumlahBahanController.text,
       jumlahKeluar: _jumlahKeluarController.text,
       stokSisa: _stokSisaController.text,
-      paraf: _parafModel
+      paraf: await uint8ListToFile(parafBytes!),
     );
     
     setState(() => _listStok.add(stok));
@@ -141,7 +147,7 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
     _jumlahBahanController.text = '';
     _jumlahKeluarController.text = '';
     _stokSisaController.text = '';
-    _parafModel = false;
+    _parafController.clear();
   }
 
   void _removeStok(UmkmStokBarang stok) {
@@ -155,22 +161,33 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
       return;
     }
 
-    final document = await getUmkmDocument();
-    final params = {
-      'id': document!.id,
-      'created_at': DateTime.now().millisecondsSinceEpoch,
-      'data': _listStok.map((stok) => {
-        'tanggal_beli': stok.tanggalBeli.millisecondsSinceEpoch,
-        'nama_bahan': stok.namaBahan,
-        'jumlah_bahan': stok.jumlahBahan,
-        'jumlah_keluar': stok.jumlahKeluar,
-        'stok_sisa': stok.stokSisa,
-        'paraf': stok.paraf
-      }).toList(),
-    };
-    
     try {
       final core = CoreService();
+      for (int i = 0; i < _listStok.length; i++) {
+        final stok = _listStok[i];
+        final formData = FormData.fromMap({
+          'image': await MultipartFile.fromFile(
+            stok.paraf.path,
+            filename: stok.paraf.path.split('/').last
+          )
+        });
+        final upload = await core.genericPost(ApiList.imageUpload, null, formData);
+        stok.setParafUrl(upload.data);
+      }
+
+      final document = await getUmkmDocument();
+      final params = {
+        'id': document!.id,
+        'data': _listStok.map((stok) => {
+          'tanggal_beli': stok.tanggalBeli.millisecondsSinceEpoch,
+          'nama_bahan': stok.namaBahan,
+          'jumlah_bahan': stok.jumlahBahan,
+          'jumlah_keluar': stok.jumlahKeluar,
+          'stok_sisa': stok.stokSisa,
+          'paraf': stok.uploadedParafUrl
+        }).toList(),
+      };
+
       final response = await core.genericPost(ApiList.umkmCreateFormStokBarang, null, params);
       Navigator.of(context).pop();
       const snackBar = SnackBar(content: Text('Sukses menyimpan data'));
@@ -262,16 +279,20 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
                 ),
                 getInputWrapper(
                   label: 'Paraf',
-                  input: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Switch(
-                        value: _parafModel,
-                        onChanged: (value) {
-                          setState(() => _parafModel = value);
-                        },
-                      )
-                    ],
+                  // input: Wrap(
+                  //   crossAxisAlignment: WrapCrossAlignment.center,
+                  //   children: [
+                  //     Switch(
+                  //       value: _parafModel,
+                  //       onChanged: (value) {
+                  //         setState(() => _parafModel = value);
+                  //       },
+                  //     )
+                  //   ],
+                  // ),
+                  input: getInputSignature(
+                    controller: _parafController,
+                    context: context
                   )
                 ),
                 Row(
