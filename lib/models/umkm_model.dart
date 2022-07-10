@@ -225,7 +225,8 @@ class UmkmProduksi {
   int jumlahAwal;
   int jumlahProdukKeluar;
   int sisaStok;
-  bool paraf;
+  File paraf;
+  String? uploadedParafUrl;
 
   UmkmProduksi({
     required this.tanggalProduksi,
@@ -235,6 +236,10 @@ class UmkmProduksi {
     required this.sisaStok,
     required this.paraf
   });
+
+  void setParafUrl(String url) {
+    uploadedParafUrl = url;
+  }
 }
 
 class UmkmPemusnahan {

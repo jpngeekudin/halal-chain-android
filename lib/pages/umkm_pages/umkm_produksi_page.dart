@@ -5,9 +5,11 @@ import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
+import 'package:halal_chain/helpers/utils_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
+import 'package:signature/signature.dart';
 
 class UmkmProduksiPage extends StatefulWidget {
   const UmkmProduksiPage({ Key? key }) : super(key: key);
@@ -30,7 +32,9 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
   final _jumlahAwalController = TextEditingController();
   final _jumlahProdukKeluarController = TextEditingController();
   final _sisaStokController = TextEditingController();
-  bool _parafModel = false;
+  final _parafController = SignatureController(
+    penStrokeWidth: 5
+  );
 
   Widget _getProduksiCard(UmkmProduksi produksi) {
     final labelTextStyle = TextStyle(
@@ -88,16 +92,16 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
                     Text('${produksi.sisaStok}')
                   ],
                 ),
-                SizedBox(height: 5),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text('Paraf', style: labelTextStyle),
-                    SizedBox(width: 10),
-                    if (produksi.paraf) Icon(Icons.check, color: Colors.green)
-                    else Icon(Icons.close, color: Colors.red)
-                  ],
-                ),
+                // SizedBox(height: 5),
+                // Wrap(
+                //   crossAxisAlignment: WrapCrossAlignment.center,
+                //   children: [
+                //     Text('Paraf', style: labelTextStyle),
+                //     SizedBox(width: 10),
+                //     if (produksi.paraf) Icon(Icons.check, color: Colors.green)
+                //     else Icon(Icons.close, color: Colors.red)
+                //   ],
+                // ),
                 SizedBox(height: 5),
               ],
             ),
@@ -114,18 +118,21 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
     );
   }
 
-  void _addProduksi() {
+  void _addProduksi() async {
     if (
       _namaProdukController.text.isEmpty ||
       _tanggalProduksiModel == null ||
       _jumlahAwalController.text.isEmpty ||
       _jumlahProdukKeluarController.text.isEmpty ||
-      _sisaStokController.text.isEmpty
+      _sisaStokController.text.isEmpty ||
+      _parafController.isEmpty
     ) {
       final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
+
+    final parafBytes = await _parafController.toPngBytes();
 
     final produksi = UmkmProduksi(
       tanggalProduksi: _tanggalProduksiModel!,
@@ -133,7 +140,7 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
       jumlahAwal: int.parse(_jumlahAwalController.text),
       jumlahProdukKeluar: int.parse(_jumlahProdukKeluarController.text),
       sisaStok: int.parse(_sisaStokController.text),
-      paraf: _parafModel
+      paraf: await uint8ListToFile(parafBytes!),
     );
 
     setState(() {
@@ -143,6 +150,7 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
       _jumlahAwalController.text = '';
       _jumlahProdukKeluarController.text = '';
       _sisaStokController.text = '';
+      _parafController.clear();
     });
   }
 
@@ -157,22 +165,34 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
       return;
     }
 
-    final document = await getUmkmDocument();
-    final params = {
-      'id': document!.id,
-      'created_at': DateTime.now().millisecondsSinceEpoch,
-      'data': _listProduksi.map((produksi) => {
-        'tanggal_produksi': produksi.tanggalProduksi.millisecondsSinceEpoch,
-        'nama_produk': produksi.namaProduk,
-        'jumlah_awal': produksi.jumlahAwal,
-        'jumlah_produk_keluar': produksi.jumlahProdukKeluar,
-        'sisa_stok': produksi.sisaStok,
-        'paraf': produksi.paraf
-      }).toList()
-    };
-    
     try {
       final core = CoreService();
+      final document = await getUmkmDocument();
+
+      for (int i = 0; i < _listProduksi.length; i++) {
+        final produksi = _listProduksi[i];
+        final formData = FormData.fromMap({
+          'image': await MultipartFile.fromFile(
+            produksi.paraf.path,
+            filename: produksi.paraf.path.split('/').last
+          )
+        });
+        final upload = await core.genericPost(ApiList.imageUpload, null, formData);
+        produksi.setParafUrl(upload.data);
+      }
+
+      final params = {
+        'id': document!.id,
+        'data': _listProduksi.map((produksi) => {
+          'tanggal_produksi': produksi.tanggalProduksi.millisecondsSinceEpoch,
+          'nama_produk': produksi.namaProduk,
+          'jumlah_awal': produksi.jumlahAwal,
+          'jumlah_produk_keluar': produksi.jumlahProdukKeluar,
+          'sisa_stok': produksi.sisaStok,
+          'paraf': produksi.uploadedParafUrl
+        }).toList()
+      };
+      
       final response = await core.genericPost(ApiList.umkmCreateFormProduksi, null, params);
       Navigator.of(context).pop();
       const snackBar = SnackBar(content: Text('Sukses menyimpan data'));
@@ -259,18 +279,22 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
                 ),
                 getInputWrapper(
                   label: 'Paraf',
-                  input: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Switch(
-                        value: _parafModel,
-                        onChanged: (value) {
-                          setState(() => _parafModel = value);
-                        },
-                      ),
-                      SizedBox(width: 5,),
-                      Text(_parafModel ? 'Ya' : 'Tidak')
-                    ],
+                  // input: Wrap(
+                  //   crossAxisAlignment: WrapCrossAlignment.center,
+                  //   children: [
+                  //     Switch(
+                  //       value: _parafModel,
+                  //       onChanged: (value) {
+                  //         setState(() => _parafModel = value);
+                  //       },
+                  //     ),
+                  //     SizedBox(width: 5,),
+                  //     Text(_parafModel ? 'Ya' : 'Tidak')
+                  //   ],
+                  // ),
+                  input: getInputSignature(
+                    controller: _parafController,
+                    context: context
                   )
                 ),
                 Row(
