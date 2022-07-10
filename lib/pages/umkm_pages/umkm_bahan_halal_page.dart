@@ -183,7 +183,6 @@ class _UmkmBahanHalalPageState extends State<UmkmBahanHalalPage> {
     final document = await getUmkmDocument();
     final params = {
       'id': document!.id,
-      'created_at': DateTime.now().millisecondsSinceEpoch,
       'data': _listBahan.map((bahan) => {
         'nama_merk': bahan.namaMerk,
         'nama_negara': bahan.namaNegara,

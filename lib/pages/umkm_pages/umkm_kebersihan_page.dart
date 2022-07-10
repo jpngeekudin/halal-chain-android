@@ -160,8 +160,7 @@ class _UmkmKebersihanPageState extends State<UmkmKebersihanPage> {
 
     final document = await getUmkmDocument();
     final params = {
-      'id': '',
-      'created_at': DateTime.now().millisecondsSinceEpoch,
+      'id': document!.id,
       'data': _listKebersihan.map((kebersihan) => {
         'tanggal': kebersihan.tanggal.millisecondsSinceEpoch,
         'produksi': kebersihan.produksi,

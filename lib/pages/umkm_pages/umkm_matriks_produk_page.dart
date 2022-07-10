@@ -137,7 +137,6 @@ class _UmkmMatriksProdukPageState extends State<UmkmMatriksProdukPage> {
     final document = await getUmkmDocument();
     final params = {
       'id': document!.id,
-      'created_at': DateTime.now().millisecondsSinceEpoch,
       'data': _listMatriks.map((matriks) {
         Map<String, dynamic> item = { 'nama_bahan': matriks.namaBahan };
         matriks.produk.entries.forEach((element) => item[element.key] = element.value);

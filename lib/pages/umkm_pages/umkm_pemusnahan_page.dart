@@ -160,7 +160,6 @@ class _UmkmPemusnahanPageState extends State<UmkmPemusnahanPage> {
     final document = await getUmkmDocument();
     final params = {
       'id': document!.id,
-      'created_at': DateTime.now().millisecondsSinceEpoch,
       'data': _listPemusnahan.map((pemusnahan) => {
         'tanggal_produksi': pemusnahan.tanggalProduksi.millisecondsSinceEpoch,
         'tanggal_pemusnahan': pemusnahan.tanggalPemusnahan.millisecondsSinceEpoch,
