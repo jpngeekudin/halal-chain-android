@@ -24,9 +24,14 @@ import 'package:halal_chain/pages/umkm_pages/umkm_stok_barang_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_team_assign_page.dart';
 import 'package:halal_chain/services/core_service.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({ Key? key }) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   Widget _getMenuItem({
     required String title,
     required String subtitle,
@@ -36,7 +41,11 @@ class HomePage extends StatelessWidget {
   }) {
     return  InkWell(
       onTap: () {
-        if (route != null) Navigator.of(context).push(route);
+        if (route != null) {
+          Navigator.of(context).push(route).then((value) {
+            setState(() { });
+          });
+        }
       },
       child: Row(
         children: [
@@ -169,7 +178,14 @@ class HomePage extends StatelessWidget {
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
-                          color: Theme.of(context).primaryColor,
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/home_hero.jpg'),
+                            fit: BoxFit.cover,
+                            colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.5),
+                              BlendMode.darken
+                            )
+                          )
                         ),
                         padding: EdgeInsets.all(20),
                         margin: EdgeInsets.only(bottom: 30),

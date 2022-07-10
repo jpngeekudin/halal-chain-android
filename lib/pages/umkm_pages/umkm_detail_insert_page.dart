@@ -1,10 +1,15 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
+import 'package:halal_chain/helpers/utils_helper.dart';
 import 'package:halal_chain/services/core_service.dart';
+import 'package:logger/logger.dart';
+import 'package:signature/signature.dart';
 
 class UmkmDetailInsertPage extends StatefulWidget {
   const UmkmDetailInsertPage({ Key? key }) : super(key: key);
@@ -19,9 +24,14 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
   final _formKey = GlobalKey<FormState>();
   final _namaKetuaController = TextEditingController();
   final _namaPenanggungjawabController = TextEditingController();
+  final _noTelpKetuaController = TextEditingController();
+  final _noKtpKetuaController = TextEditingController();
   File? _logoPerusahaanModel;
-  File? _ttdKetuaModel;
-  File? _ttdPenanggungjawabModel;
+  // File? _ttdKetuaModel;
+  // File? _ttdPenanggungjawabModel;
+
+  final _ttdKetuaController = SignatureController(penStrokeWidth: 5);
+  final _ttdPenanggungjawabController = SignatureController(penStrokeWidth: 5);
 
   // List<FormConfig> _formConfigs = [];
 
@@ -29,9 +39,13 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
     if (
       _namaKetuaController.text.isEmpty ||
       _namaPenanggungjawabController.text.isEmpty ||
+      _noTelpKetuaController.text.isEmpty ||
+      _noKtpKetuaController.text.isEmpty ||
       _logoPerusahaanModel == null ||
-      _ttdKetuaModel == null ||
-      _ttdPenanggungjawabModel == null
+      // _ttdKetuaModel == null ||
+      // _ttdPenanggungjawabModel == null
+      _ttdKetuaController.isEmpty ||
+      _ttdPenanggungjawabController.isEmpty
     ) {
       const snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -39,18 +53,28 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
     }
 
     final document = await getUmkmDocument();
+
+    final ttdKetuaBytes = await _ttdKetuaController.toPngBytes();
+    final ttdPenanggungjawabBytes = await _ttdPenanggungjawabController.toPngBytes();
+
+    final ttdKetuaFile = await uint8ListToFile(ttdKetuaBytes!);
+    final ttdPenanggungjawabFile = await uint8ListToFile(ttdPenanggungjawabBytes!);
+
     final logoPerusahaanFormData = FormData.fromMap({
       'image': await MultipartFile.fromFile(_logoPerusahaanModel!.path, filename: _logoPerusahaanModel!.path.split('/').last)
     });
 
     final ttdKetuaFormData = FormData.fromMap({
-      'image': await MultipartFile.fromFile(_ttdKetuaModel!.path, filename: _ttdKetuaModel!.path.split('/').last)
+      'image': await MultipartFile.fromFile(
+        ttdKetuaFile.path,
+        filename: ttdKetuaFile.path.split('/').last
+      )
     });
 
     final ttdPenanggungjawabFormData = FormData.fromMap({
       'image': await MultipartFile.fromFile(
-        _ttdPenanggungjawabModel!.path,
-        filename: _ttdPenanggungjawabModel!.path.split('/').last
+        ttdPenanggungjawabFile.path,
+        filename: ttdPenanggungjawabFile.path.split('/').last
       )
     });
 
@@ -61,6 +85,8 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
     final params = {
       'id': document!.id,
       'nama_ketua': _namaKetuaController.text,
+      'no_telp_ketua': _noTelpKetuaController.text,
+      'no_ktp_ketua': _noKtpKetuaController.text,
       'nama_penanggungjawab': _namaPenanggungjawabController.text,
       'logo_perusahaan': uploadLogoPerusahaan.data,
       'ttd_ketua': uploadTtdKetua.data,
@@ -164,6 +190,46 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('No. Telepon Ketua', style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        )),
+                        SizedBox(height: 10),
+                        TextFormField(
+                          controller: _noTelpKetuaController,
+                          decoration: getInputDecoration(label: 'No. Telepon ketua'),
+                          style: inputTextStyle,
+                          validator: validateRequired,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('No. KTP Ketua', style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        )),
+                        SizedBox(height: 10),
+                        TextFormField(
+                          controller: _noKtpKetuaController,
+                          decoration: getInputDecoration(label: 'No. KTP Ketua'),
+                          style: inputTextStyle,
+                          validator: validateRequired,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text('Nama Penanggungjawab', style: TextStyle(
                           fontWeight: FontWeight.bold
                         )),
@@ -207,12 +273,36 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
                           fontWeight: FontWeight.bold
                         )),
                         SizedBox(height: 10,),
-                        getInputFile(
-                          context: context,
-                          model: _ttdKetuaModel,
-                          onChanged: (file) {
-                            setState(() => _ttdKetuaModel = file);
-                          }
+                        // getInputFile(
+                        //   context: context,
+                        //   model: _ttdKetuaModel,
+                        //   onChanged: (file) {
+                        //     setState(() => _ttdKetuaModel = file);
+                        //   }
+                        // )
+                        getDottedBorder(
+                          color: Theme.of(context).primaryColor,
+                          child: Stack(
+                            children: [
+                              Signature(
+                                controller: _ttdKetuaController,
+                                width: double.infinity,
+                                height: 300,
+                                backgroundColor: Colors.grey[200]!,
+                              ),
+                              Positioned(
+                                right: 10,
+                                bottom: 10,
+                                child: ElevatedButton(
+                                  child: Text('Clear'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.red
+                                  ),
+                                  onPressed: () => _ttdKetuaController.clear(),
+                                ),
+                              )
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -227,12 +317,36 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
                           fontWeight: FontWeight.bold
                         )),
                         SizedBox(height: 10,),
-                        getInputFile(
-                          context: context,
-                          model: _ttdPenanggungjawabModel,
-                          onChanged: (file) {
-                            setState(() => _ttdPenanggungjawabModel = file);
-                          }
+                        // getInputFile(
+                        //   context: context,
+                        //   model: _ttdPenanggungjawabModel,
+                        //   onChanged: (file) {
+                        //     setState(() => _ttdPenanggungjawabModel = file);
+                        //   }
+                        // )
+                        getDottedBorder(
+                          color: Theme.of(context).primaryColor,
+                          child: Stack(
+                            children: [
+                              Signature(
+                                controller: _ttdPenanggungjawabController,
+                                width: double.infinity,
+                                height: 300,
+                                backgroundColor: Colors.grey[200]!,
+                              ),
+                              Positioned(
+                                right: 10,
+                                bottom: 10,
+                                child: ElevatedButton(
+                                  child: Text('Clear'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.red
+                                  ),
+                                  onPressed: () => _ttdPenanggungjawabController.clear(),
+                                ),
+                              )
+                            ],
+                          ),
                         )
                       ],
                     ),

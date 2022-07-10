@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
+import 'package:halal_chain/helpers/utils_helper.dart';
 import 'package:halal_chain/models/form_config_model.dart';
 import 'package:intl/intl.dart';
 
@@ -86,21 +87,8 @@ Widget getInputFile({
     //   },
     // ) :
     ? InkWell(
-      child: DottedBorder(
+      child: getDottedBorder(
         color: Theme.of(context).primaryColor,
-        customPath: (size) {
-          const cardRadius = 5.0;
-          return Path()
-            ..moveTo(cardRadius, 0)
-            ..lineTo(size.width - cardRadius, 0)
-            ..arcToPoint(Offset(size.width, cardRadius), radius: Radius.circular(cardRadius))
-            ..lineTo(size.width, size.height - cardRadius)
-            ..arcToPoint(Offset(size.width - cardRadius, size.height), radius: Radius.circular(cardRadius))
-            ..lineTo(cardRadius, size.height)
-            ..arcToPoint(Offset(0, size.height - cardRadius), radius: Radius.circular(cardRadius))
-            ..lineTo(0, cardRadius)
-            ..arcToPoint(Offset(cardRadius, 0), radius: Radius.circular(cardRadius));
-        },
         child: Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(vertical: 10),
