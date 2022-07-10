@@ -56,12 +56,13 @@ class _UmkmTeamAssignPageState extends State<UmkmTeamAssignPage> {
     final document = await getUmkmDocument();
 
     final params = {
+      'id': document!.id,
       'data': _teamAssignment.map((ass) => ass.toJSON()).toList(),
     };
     
     try {
       setState(() => _loading = true);
-      final response = await _core.genericPost(ApiList.umkmCreatePenetapanTim, { 'doc_id': document!.id }, params);
+      final response = await _core.genericPost(ApiList.umkmCreatePenetapanTim, null, params);
       Navigator.of(context).pop();
       const snackBar = SnackBar(content: Text('Sukses menyimpan data!'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);

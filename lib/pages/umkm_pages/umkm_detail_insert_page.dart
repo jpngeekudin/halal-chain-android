@@ -280,30 +280,10 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
                         //     setState(() => _ttdKetuaModel = file);
                         //   }
                         // )
-                        getDottedBorder(
-                          color: Theme.of(context).primaryColor,
-                          child: Stack(
-                            children: [
-                              Signature(
-                                controller: _ttdKetuaController,
-                                width: double.infinity,
-                                height: 300,
-                                backgroundColor: Colors.grey[200]!,
-                              ),
-                              Positioned(
-                                right: 10,
-                                bottom: 10,
-                                child: ElevatedButton(
-                                  child: Text('Clear'),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.red
-                                  ),
-                                  onPressed: () => _ttdKetuaController.clear(),
-                                ),
-                              )
-                            ],
-                          ),
-                        )
+                        getInputSignature(
+                          controller: _ttdKetuaController,
+                          context: context
+                        ),
                       ],
                     ),
                   ),
@@ -324,30 +304,10 @@ class _UmkmDetailInsertPageState extends State<UmkmDetailInsertPage> {
                         //     setState(() => _ttdPenanggungjawabModel = file);
                         //   }
                         // )
-                        getDottedBorder(
-                          color: Theme.of(context).primaryColor,
-                          child: Stack(
-                            children: [
-                              Signature(
-                                controller: _ttdPenanggungjawabController,
-                                width: double.infinity,
-                                height: 300,
-                                backgroundColor: Colors.grey[200]!,
-                              ),
-                              Positioned(
-                                right: 10,
-                                bottom: 10,
-                                child: ElevatedButton(
-                                  child: Text('Clear'),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.red
-                                  ),
-                                  onPressed: () => _ttdPenanggungjawabController.clear(),
-                                ),
-                              )
-                            ],
-                          ),
-                        )
+                        getInputSignature(
+                          controller: _ttdPenanggungjawabController,
+                          context: context
+                        ),
                       ],
                     ),
                   ),

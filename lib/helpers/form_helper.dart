@@ -8,6 +8,7 @@ import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/utils_helper.dart';
 import 'package:halal_chain/models/form_config_model.dart';
 import 'package:intl/intl.dart';
+import 'package:signature/signature.dart';
 
 String? validateRequired(String? value) {
   if (value == null || value.isEmpty) {
@@ -160,6 +161,37 @@ Widget getInputDate({
         controller.text = defaultDateFormat.format(picked);
       }
     },
+  );
+}
+
+Widget getInputSignature({
+  required SignatureController controller,
+  required BuildContext context,
+  double height = 300
+}) {
+  return getDottedBorder(
+    color: Theme.of(context).primaryColor,
+    child: Stack(
+      children: [
+        Signature(
+          controller: controller,
+          width: double.infinity,
+          height: 300,
+          backgroundColor: Colors.grey[200]!,
+        ),
+        Positioned(
+          right: 10,
+          bottom: 10,
+          child: ElevatedButton(
+            child: Text('Clear'),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.red
+            ),
+            onPressed: () => controller.clear(),
+          ),
+        )
+      ],
+    ),
   );
 }
 

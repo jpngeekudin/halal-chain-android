@@ -35,8 +35,9 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
     
     if (
       _namaController.text.isEmpty ||
-      _jabatanController.text.isEmpty ||
-      _positionController.text.isEmpty
+      // _jabatanController.text.isEmpty ||
+      _positionController.text.isEmpty ||
+      _nilaiController.text.isEmpty
     ) return;
 
     // final assignment = UmkmTeamAssignmentWithScore(
@@ -48,7 +49,8 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
 
     final assignment = UmkmTeamAssignmentWithScore(
       nama: _namaController.text,
-      jabatan: _jabatanController.text,
+      // jabatan: _jabatanController.text,
+      position: _positionController.text,
       nilai: _nilaiController.text
     );
 
@@ -186,26 +188,26 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
                             Text(ass.nama)
                           ],
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Jabatan', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            )),
-                            Text(ass.jabatan)
-                          ],
-                        ),
                         // Column(
                         //   crossAxisAlignment: CrossAxisAlignment.start,
                         //   children: [
-                        //     Text('Position', style: TextStyle(
+                        //     Text('Jabatan', style: TextStyle(
                         //       fontWeight: FontWeight.bold,
                         //       fontSize: 12,
                         //     )),
-                        //     Text(ass.position)
+                        //     Text(ass.jabatan)
                         //   ],
                         // ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Position', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            )),
+                            Text(ass.position)
+                          ],
+                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -239,15 +241,15 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
                           validator: validateRequired,
                         ),
                       ),
-                      getInputWrapper(
-                        label: 'Jabatan',
-                        input: TextFormField(
-                          controller: _jabatanController,
-                          decoration: getInputDecoration(label: 'Jabatan'),
-                          style: inputTextStyle,
-                          validator: validateRequired,
-                        ),
-                      ),
+                      // getInputWrapper(
+                      //   label: 'Jabatan',
+                      //   input: TextFormField(
+                      //     controller: _jabatanController,
+                      //     decoration: getInputDecoration(label: 'Jabatan'),
+                      //     style: inputTextStyle,
+                      //     validator: validateRequired,
+                      //   ),
+                      // ),
                       getInputWrapper(
                         label: 'Posisi',
                         input: TextFormField(

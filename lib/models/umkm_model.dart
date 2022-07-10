@@ -95,23 +95,23 @@ class UmkmTeamAssignment {
 
 class UmkmTeamAssignmentWithScore {
   String nama;
-  String jabatan;
-  // String position;
+  // String jabatan;
+  String position;
   String ttd;
   int nilai;
 
   UmkmTeamAssignmentWithScore({
     required this.nama,
-    required this.jabatan,
-    // this.position,
+    // required this.jabatan,
+    this.position = '',
     this.ttd = '',
     required String nilai
   }) : nilai = int.parse(nilai);
 
   Map<String, dynamic> toJSON() => {
     'nama': nama,
-    'jabatan': jabatan,
-    // 'position': position,
+    // 'jabatan': jabatan,
+    'posisi': position,
     'ttd': '',
     'nilai': nilai
   };
