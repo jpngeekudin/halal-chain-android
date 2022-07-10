@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 
@@ -177,7 +179,8 @@ class UmkmPembelianPemeriksaanBahan {
   String namaNegaraProdusen;
   bool adaDiDaftarBahanHalal;
   DateTime expDateBahan;
-  bool paraf;
+  File paraf;
+  String? parafUploadedUrl;
 
   UmkmPembelianPemeriksaanBahan({
     required this.tanggal,
@@ -187,6 +190,10 @@ class UmkmPembelianPemeriksaanBahan {
     required this.expDateBahan,
     required this.paraf
   });
+
+  void setParafUrl(String url) {
+    parafUploadedUrl = url;
+  }
 }
 
 class UmkmStokBarang {

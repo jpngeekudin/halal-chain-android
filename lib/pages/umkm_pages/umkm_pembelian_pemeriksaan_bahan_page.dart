@@ -4,9 +4,11 @@ import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
+import 'package:halal_chain/helpers/utils_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
+import 'package:signature/signature.dart';
 
 class UmkmPembelianPemerikasaanBahanPage extends StatefulWidget {
   const UmkmPembelianPemerikasaanBahanPage({ Key? key, this.typeBahan = 'non-import' }) : super(key: key);
@@ -26,24 +28,29 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
   bool _adaDiDaftarBahanHalalModel = false;
   final _expDateBahanController = TextEditingController();
   DateTime? _expDateBahanModel;
-  bool _parafModel = false;
+  final _parafController = SignatureController(
+    penStrokeWidth: 5,
+  );
 
   final _titleTextStyle = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 16,
   );
 
-  void _addBahan() {
+  void _addBahan() async {
     if (
       _tanggalModel == null ||
       _namaMerkBahanController.text.isEmpty ||
       _namaNegaraProdusen.text.isEmpty ||
-      _expDateBahanModel == null
+      _expDateBahanModel == null ||
+      _parafController.isEmpty
     ) {
       final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
+
+    final parafBytes = await _parafController.toPngBytes();
 
     final bahan = UmkmPembelianPemeriksaanBahan(
       tanggal: _tanggalModel!,
@@ -51,7 +58,7 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
       namaMerkBahan: _namaMerkBahanController.text,
       namaNegaraProdusen: _namaNegaraProdusen.text,
       adaDiDaftarBahanHalal: _adaDiDaftarBahanHalalModel,
-      paraf: _parafModel
+      paraf: await uint8ListToFile(parafBytes!),
     );
 
     setState(() => _listBahan.add(bahan));
@@ -62,7 +69,7 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
     _namaMerkBahanController.text = '';
     _namaNegaraProdusen.text = '';
     _adaDiDaftarBahanHalalModel = false;
-    _parafModel = false;
+    _parafController.clear();
   }
 
   void _removeBahan(UmkmPembelianPemeriksaanBahan bahan) {
@@ -76,22 +83,35 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
       return;
     }
 
-    final document = await getUmkmDocument();
-    final params = {
-      'id': document!.id,
-      'created_at': DateTime.now().millisecondsSinceEpoch,
-      'data': _listBahan.map((bahan) => {
-        'tanggal': bahan.tanggal.millisecondsSinceEpoch,
-        'nama_dan_merk': bahan.namaMerkBahan,
-        'nama_dan_negara': bahan.namaNegaraProdusen,
-        'halal': bahan.adaDiDaftarBahanHalal,
-        'exp_bahan': bahan.expDateBahan.millisecondsSinceEpoch,
-        'paraf': bahan.paraf
-      }).toList()
-    };
-    
+    final core = CoreService();
+    final logger = Logger();
+
     try {
-      final core = CoreService();
+      for (int i = 0; i < _listBahan.length; i++) {
+        final bahan = _listBahan[i];
+        final formData = FormData.fromMap({
+          'image': await MultipartFile.fromFile(
+            bahan.paraf.path,
+            filename: bahan.paraf.path.split('/').last
+          )
+        });
+        final upload = await core.genericPost(ApiList.imageUpload, null, formData);
+        bahan.setParafUrl(upload.data);
+      }
+
+      final document = await getUmkmDocument();
+      final params = {
+        'id': document!.id,
+        'data': _listBahan.map((bahan) => {
+          'Tanggal': bahan.tanggal.millisecondsSinceEpoch,
+          'nama_dan_merk': bahan.namaMerkBahan,
+          'nama_dan_negara': bahan.namaNegaraProdusen,
+          'halal': bahan.adaDiDaftarBahanHalal,
+          'exp_bahan': bahan.expDateBahan.millisecondsSinceEpoch,
+          'paraf': bahan.parafUploadedUrl
+        }).toList()
+      };
+
       String url;
       if (widget.typeBahan == 'non-import') url = ApiList.umkmCreateFormPembelianPemeriksaan;
       else url = ApiList.umkmCreateFormPembelianPemeriksaanImport;
@@ -101,7 +121,8 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
-    catch(err) {
+    catch(err, stacktrace) {
+      logger.e(stacktrace);
       String message = 'Terjadi kesalahan';
       if (err is DioError) message = err.response?.data['detail'] ?? message;
       final snackBar = SnackBar(content: Text(message));
@@ -167,16 +188,16 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
                   ],
                 ),
                 SizedBox(height: 5),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text('Paraf', style: labelTextStyle),
-                    SizedBox(width: 10),
-                    bahan.paraf
-                      ? Icon(Icons.check, color: Colors.green)
-                      : Icon(Icons.close, color: Colors.red)
-                  ],
-                )
+                // Wrap(
+                //   crossAxisAlignment: WrapCrossAlignment.center,
+                //   children: [
+                //     Text('Paraf', style: labelTextStyle),
+                //     SizedBox(width: 10),
+                //     bahan.paraf
+                //       ? Icon(Icons.check, color: Colors.green)
+                //       : Icon(Icons.close, color: Colors.red)
+                //   ],
+                // )
               ],
             ),
           ),
@@ -302,19 +323,23 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
                 ),
                 getInputWrapper(
                   label: 'Paraf',
-                  input: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Switch(
-                        value: _parafModel,
-                        onChanged: (value) {
-                          setState(() => _parafModel = value);
-                        },
-                      ),
-                      SizedBox(width: 10),
-                      Text(_parafModel ? 'Ya' : 'Tidak')
-                    ],
-                  )
+                  // input: Wrap(
+                  //   crossAxisAlignment: WrapCrossAlignment.center,
+                  //   children: [
+                  //     Switch(
+                  //       value: _parafModel,
+                  //       onChanged: (value) {
+                  //         setState(() => _parafModel = value);
+                  //       },
+                  //     ),
+                  //     SizedBox(width: 10),
+                  //     Text(_parafModel ? 'Ya' : 'Tidak')
+                  //   ],
+                  // ),
+                  input: getInputSignature(
+                    controller: _parafController,
+                    context: context
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
