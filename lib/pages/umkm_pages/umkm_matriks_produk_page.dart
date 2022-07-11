@@ -138,9 +138,16 @@ class _UmkmMatriksProdukPageState extends State<UmkmMatriksProdukPage> {
     final params = {
       'id': document!.id,
       'data': _listMatriks.map((matriks) {
-        Map<String, dynamic> item = { 'nama_bahan': matriks.namaBahan };
-        matriks.produk.entries.forEach((element) => item[element.key] = element.value);
-        return item;
+        // Map<String, dynamic> item = { 'nama_bahan': matriks.namaBahan };
+        // matriks.produk.entries.forEach((element) => item[element.key] = element.value);
+        // return item;
+        return {
+          'nama_bahan': matriks.namaBahan,
+          'list_barang': matriks.produk.entries.map((e) => {
+            'barang': e.key,
+            'status': e.value
+          }).toList()
+        };
       }).toList()
     };
     
