@@ -23,13 +23,100 @@ class _UmkmTeamAssignPageState extends State<UmkmTeamAssignPage> {
 
   bool _loading = false;
 
-  void _addAssignment() {
-    if (
-      _namaController.text.isEmpty ||
-      _jabatanController.text.isEmpty ||
-      _positionController.text.isEmpty
-    ) return;
+  void _openMemberModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        )
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom
+          ),
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 20),
+                  Text('Tambah Anggota Team', style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Theme.of(context).primaryColor
+                  )),
+                  SizedBox(height: 20),
+                  getInputWrapper(
+                    label: 'Nama',
+                    input: TextFormField(
+                      controller: _namaController,
+                      decoration: getInputDecoration(label: 'Nama'),
+                      style: inputTextStyle,
+                      validator: validateRequired,
+                    ),
+                  ),
+                  getInputWrapper(
+                    label: 'Jabatan',
+                    input: TextFormField(
+                      controller: _jabatanController,
+                      decoration: getInputDecoration(label: 'Jabatan'),
+                      style: inputTextStyle,
+                      validator: validateRequired,
+                    ),
+                  ),
+                  getInputWrapper(
+                    label: 'Posisi',
+                    input: TextFormField(
+                      controller: _positionController,
+                      decoration: getInputDecoration(label: 'Posisi'),
+                      style: inputTextStyle,
+                      validator: validateRequired,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.person_add_outlined, color: Colors.black),
+                            SizedBox(width: 5),
+                            Text('Tambah', style: TextStyle(
+                              color: Colors.black
+                            )),
+                          ],
+                        ),
+                        onPressed: () {
+                          if (
+                            _namaController.text.isEmpty ||
+                            _jabatanController.text.isEmpty ||
+                            _positionController.text.isEmpty
+                          ) return;
 
+                          _addAssignment();
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey[200],
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      });
+  }
+
+  void _addAssignment() {
     final assignment = UmkmTeamAssignment(
       _namaController.text,
       _jabatanController.text,
@@ -138,39 +225,14 @@ class _UmkmTeamAssignPageState extends State<UmkmTeamAssignPage> {
                     ),
                   );
                 }),
-                SizedBox(height: 20),
-                Text('Tambah Anggota Team', style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Theme.of(context).primaryColor
-                )),
-                SizedBox(height: 20),
-                getInputWrapper(
-                  label: 'Nama',
-                  input: TextFormField(
-                    controller: _namaController,
-                    decoration: getInputDecoration(label: 'Nama'),
-                    style: inputTextStyle,
-                    validator: validateRequired,
-                  ),
-                ),
-                getInputWrapper(
-                  label: 'Jabatan',
-                  input: TextFormField(
-                    controller: _jabatanController,
-                    decoration: getInputDecoration(label: 'Jabatan'),
-                    style: inputTextStyle,
-                    validator: validateRequired,
-                  ),
-                ),
-                getInputWrapper(
-                  label: 'Posisi',
-                  input: TextFormField(
-                    controller: _positionController,
-                    decoration: getInputDecoration(label: 'Posisi'),
-                    style: inputTextStyle,
-                    validator: validateRequired,
-                  ),
+                if (_teamAssignment.isEmpty) Container(
+                  height: 300,
+                  alignment: Alignment.center,
+                  child: Text('Belum ada anggota tim', style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: Colors.grey[400]
+                  )),
                 ),
                 Container(
                   margin: EdgeInsets.only(bottom: 20),
@@ -186,7 +248,7 @@ class _UmkmTeamAssignPageState extends State<UmkmTeamAssignPage> {
                         )),
                       ],
                     ),
-                    onPressed: _addAssignment,
+                    onPressed: _openMemberModal,
                     style: ElevatedButton.styleFrom(
                       primary: Colors.grey[200],
                     ),
