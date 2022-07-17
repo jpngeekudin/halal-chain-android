@@ -309,3 +309,30 @@ class UmkmMatriks {
     required this.produk
   });
 }
+
+class UmkmSimulasiBahan {
+  String bahan;
+  bool halal;
+  int? nomorSertifikat;
+  DateTime inputDate;
+  DateTime updateDate ;
+
+  UmkmSimulasiBahan({
+    required this.bahan,
+    required this.halal,
+    this.nomorSertifikat,
+    inputDate,
+    updateDate
+  }) : inputDate = inputDate ?? DateTime.now(),
+    updateDate = updateDate ?? DateTime.now();
+
+  Map<String, dynamic> toJSON() {
+    return {
+      'bahan': bahan,
+      'halal': halal,
+      'nomor_sertifikat': nomorSertifikat ?? 0,
+      'input_date': inputDate.millisecondsSinceEpoch,
+      'update_date': inputDate.millisecondsSinceEpoch
+    };
+  }
+}

@@ -20,6 +20,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_pembelian_pemeriksaan_bahan_pa
 import 'package:halal_chain/pages/umkm_pages/umkm_pemusnahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_penilaian_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_produksi_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_simulasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_stok_barang_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_team_assign_page.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -362,6 +363,16 @@ class _HomePageState extends State<HomePage> {
                                       context: context,
                                       route: MaterialPageRoute(builder: (context) => UmkmMatriksProdukPage()),
                                       isDone: document.matriksProduk,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: _getMenuItem(
+                                      title: 'Simulasi SJH',
+                                      subtitle: 'Mengisi form simulasi SJH',
+                                      context: context,
+                                      route: MaterialPageRoute(builder: (context) => UmkmSimulasiPage()),
+                                      isDone: false
                                     ),
                                   )
                                 ],
