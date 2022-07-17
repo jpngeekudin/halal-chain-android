@@ -79,6 +79,23 @@ class UmkmDocument {
       'matriks_produk': matriksProduk
     };
   }
+
+  bool allFilled() {
+    return detailUmkm
+      && penetapanTim
+      && buktiPelaksanaan
+      && jawabanEvaluasi
+      && jawabanAudit
+      && daftarHasilKaji
+      && pembelian
+      && pembelianImport
+      && stokBarang
+      && formProduksi
+      && formPemusnahan
+      && formPengecekanKebersihan
+      && daftarBahanHalal
+      && matriksProduk;
+  }
 }
 
 class UmkmTeamAssignment {

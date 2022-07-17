@@ -33,6 +33,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool _enableSimulasiSJH = false;
+
   Widget _getMenuItem({
     required String title,
     required String subtitle,
@@ -117,6 +119,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<UmkmDocument?> _getUmkmDocument() async {
     try {
+      // final currentDocument = await getUmkmDocument();
+      // if (currentDocument != null) return currentDocument;
+
       final core = CoreService();
       final userData = await getUserData();
       final response = await core.genericGet(ApiList.umkmGetDocument, { 'creator_id': userData!.id });
@@ -124,6 +129,7 @@ class _HomePageState extends State<HomePage> {
       if (response.data != null) {
         final umkmDocument = UmkmDocument.fromJSON(response.data);
         setUmkmDocument(umkmDocument);
+        _enableSimulasiSJH = umkmDocument.allFilled();
         return umkmDocument;
       }
 
@@ -365,7 +371,7 @@ class _HomePageState extends State<HomePage> {
                                       isDone: document.matriksProduk,
                                     ),
                                   ),
-                                  Container(
+                                  if (_enableSimulasiSJH) Container(
                                     margin: EdgeInsets.only(bottom: 20),
                                     child: _getMenuItem(
                                       title: 'Simulasi SJH',
