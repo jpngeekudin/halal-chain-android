@@ -37,4 +37,9 @@ abstract class ApiList {
   static String simulasiInputBahan = '$apiPrefix/simulasi/input_bahan';
   static String simulasiUpdateBahan = '$apiPrefix/simulasi/update_bahan';
   static String simulasiSJH = '$apiPrefix/simulasi/simulasi_sjh';
+
+  static String coreRegistrationSjh = '$apiPrefix/core/registration_sjh';
+  static String coreGetUmkmRegistrationData = '$apiPrefix/core/umkm_registration_data';
+  static String coreBpjphCheckingData = '$apiPrefix/core/BPJPH_checking_data';
+  static String coreLphAppointment = '$apiPrefix/core/LPH_appointment';
 }
