@@ -139,7 +139,6 @@ class UserAuditorData {
   String expiredCertString() => defaultDateFormat.format(expiredCert);
 
   UserAuditorData.fromJSON(Map<String, dynamic> json) {
-    print(json);
     id = json['_id'] ?? json['id'];
     noKtp = json['no_ktp'];
     name = json['name'];

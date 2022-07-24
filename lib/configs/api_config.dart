@@ -42,5 +42,6 @@ abstract class ApiList {
   static String coreGetUmkmRegistered = '$apiPrefix/core/get_umkm_registered';
   static String coreGetUmkmRegistrationData = '$apiPrefix/core/umkm_registration_data';
   static String coreBpjphCheckingData = '$apiPrefix/core/BPJPH_checking_data';
+  static String coreGetLph = '$apiPrefix/core/get_LPH';
   static String coreLphAppointment = '$apiPrefix/core/LPH_appointment';
 }

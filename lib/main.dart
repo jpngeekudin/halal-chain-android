@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:halal_chain/pages/auditor_pages/auditor_appoint_lph_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_check_sjh_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_registrator_list_page.dart';
 import 'package:halal_chain/pages/home_page.dart';
@@ -98,6 +99,7 @@ class MyApp extends StatelessWidget {
 
         '/auditor/daftar-sjh': (context) => AuditorRegistratorListPage(),
         '/auditor/check-sjh': (context) => AuditorCheckSjhPage(),
+        '/auditor/appoint-lph': (context) => AuditorAppointLphPage(),
       },
       // home: FutureBuilder(
       //   future: _isLoggedIn(),
