@@ -118,7 +118,7 @@ class CoreService {
 
   // HTTP UTILS
 
-  Future<ApiResponse> genericGet(String url, Map<String, dynamic> params) async {
+  Future<ApiResponse> genericGet(String url, [Map<String, dynamic> params = const {}]) async {
     try {
       final response = await _dio.get(url, queryParameters: params);
       return _handleResponse(response);

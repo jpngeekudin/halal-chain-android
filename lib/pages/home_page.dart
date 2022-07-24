@@ -218,29 +218,44 @@ class _HomePageState extends State<HomePage> {
                             }
                           },
                         ),
+
+                      if (userData.role == 'auditor')
+                        ...[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: HomeItemWidget(
+                              title: 'Check UMKM',
+                              subtitle: 'Checking data UMKM yang sudah daftar SJH',
+                              isDone: true,
+                              route: '/auditor/daftar-sjh',
+                            ),
+                          ),
+                        ],
                         
                       if (userData.role != 'umkm')
-                        ...[Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: HomeItemWidget(
-                            title: 'Data SJH',
-                            subtitle: 'Kelola data SJH',
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: HomeItemWidget(
-                            title: 'Simulasi SJH',
-                            subtitle: 'Simulasikan data SJH yang sudah di masukkan',
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: HomeItemWidget(
-                            title: 'Daftar Sertifikat',
-                            subtitle: 'Daftarkan SJH untuk mendapatkan sertifikasi',
-                          ),
-                        )],
+                        ...[
+                          // Container(
+                          //   margin: EdgeInsets.only(bottom: 20),
+                          //   child: HomeItemWidget(
+                          //     title: 'Data SJH',
+                          //     subtitle: 'Kelola data SJH',
+                          //   ),
+                          // ),
+                          // Container(
+                          //   margin: EdgeInsets.only(bottom: 20),
+                          //   child: HomeItemWidget(
+                          //     title: 'Simulasi SJH',
+                          //     subtitle: 'Simulasikan data SJH yang sudah di masukkan',
+                          //   ),
+                          // ),
+                          // Container(
+                          //   margin: EdgeInsets.only(bottom: 20),
+                          //   child: HomeItemWidget(
+                          //     title: 'Daftar Sertifikat',
+                          //     subtitle: 'Daftarkan SJH untuk mendapatkan sertifikasi',
+                          //   ),
+                          // )
+                        ],
                     ],
                   );
                 }
