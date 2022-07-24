@@ -35,21 +35,15 @@ class RegisterPage extends StatelessWidget {
 
   void _navigateToRegister(BuildContext context, String type) {
     if (type == 'umkm') {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => RegisterUmkmPage())
-      );
+      Navigator.of(context).pushNamed('/auth/register/umkm');
     }
 
     else if (type == 'auditor') {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => RegisterAuditorPage())
-      );
+      Navigator.of(context).pushNamed('/auth/register/auditor');
     }
 
     else if (type == 'consumen') {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => RegisterConsumenPage())
-      );
+      Navigator.of(context).pushNamed('/auth/register/consument');
     }
   }
 

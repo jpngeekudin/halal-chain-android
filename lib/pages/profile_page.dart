@@ -15,9 +15,7 @@ class ProfilePage extends StatelessWidget {
   const ProfilePage({ Key? key }) : super(key: key);
 
   void _navigateToProfileDetail(context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => ProfileDetailPage()),
-    );
+    Navigator.of(context).pushNamed('/profile/detail');
   }
 
   void _navigateToEditProfile(BuildContext context, String role) async {

@@ -3,6 +3,15 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:halal_chain/pages/home_page.dart';
 import 'package:halal_chain/pages/login_page.dart';
+import 'package:halal_chain/pages/profile_detail_page.dart';
+import 'package:halal_chain/pages/profile_edit_auditor_page.dart';
+import 'package:halal_chain/pages/profile_edit_consument_page.dart';
+import 'package:halal_chain/pages/profile_edit_umkm_page.dart';
+import 'package:halal_chain/pages/profile_page.dart';
+import 'package:halal_chain/pages/register_auditor_page.dart';
+import 'package:halal_chain/pages/register_consumen_page.dart';
+import 'package:halal_chain/pages/register_page.dart';
+import 'package:halal_chain/pages/register_umkm_page.dart';
 import 'package:halal_chain/pages/splash_screen_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_audit_internal_2_page.dart';
@@ -19,6 +28,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_produksi_p
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_simulasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_stok_barang_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_team_assign_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_registrasi_sjh_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -54,6 +64,17 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
 
+        '/auth/register': (context) => RegisterPage(),
+        '/auth/register/umkm': (context) => RegisterUmkmPage(),
+        '/auth/register/auditor': (context) => RegisterAuditorPage(),
+        '/auth/register/consument': (context) => RegisterConsumenPage(),
+
+        '/profile': (context) => ProfilePage(),
+        '/profile/detail': (context) => ProfileDetailPage(),
+        // '/profile/edit/umkm': (context) => ProfileEditUmkmPage(),
+        // '/profile/edit/auditor': (context) => ProfileEditAuditorPage(),
+        // '/profile/edit/consument': (context) => ProfileEditConsumentPage(),
+
         '/umkm/data-sjh': (context) => UmkmDataSjhPage(),
         '/umkm/data-sjh/detail-umkm': (context) => UmkmDetailInsertPage(),
         '/umkm/data-sjh/penetapan-tim': (context) => UmkmTeamAssignPage(),
@@ -71,6 +92,7 @@ class MyApp extends StatelessWidget {
         '/umkm/data-sjh/matriks': (context) => UmkmMatriksProdukPage(),
 
         '/umkm/simulasi': (context) => UmkmSimulasiPage(),
+        '/umkm/registrasi-sjh': (context) => UmkmRegistrasiSjhPage(),
       },
       // home: FutureBuilder(
       //   future: _isLoggedIn(),

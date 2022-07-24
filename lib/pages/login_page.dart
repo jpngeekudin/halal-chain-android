@@ -26,9 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _loading = false;
 
   void _navigateToRegister() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => RegisterPage())
-    );
+    Navigator.of(context).pushNamed('/auth/register');
   }
 
   void _login() async {

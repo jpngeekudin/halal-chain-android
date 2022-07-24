@@ -40,9 +40,7 @@ class _HomePageState extends State<HomePage> {
 
   void _navigateToProfile(BuildContext context) {
     SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => ProfilePage())
-      );
+      Navigator.of(context).pushNamed('/profile');
     });
   }
 
@@ -191,7 +189,16 @@ class _HomePageState extends State<HomePage> {
                                       route: '/umkm/simulasi',
                                       isDone: false
                                     ),
-                                  )
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: HomeItemWidget(
+                                      title: 'Registrasi SJH',
+                                      subtitle: 'Mendaftar SJH',
+                                      isDone: true,
+                                      route: '/umkm/registrasi-sjh',
+                                    ),
+                                  ),
                                 ],
                               );
                             }
