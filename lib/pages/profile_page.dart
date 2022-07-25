@@ -46,9 +46,7 @@ class ProfilePage extends StatelessWidget {
   void _logout(BuildContext context) async {
     final storage = FlutterSecureStorage();
     await storage.deleteAll();
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => LoginPage())
-    );
+    Navigator.of(context).pushReplacementNamed('/auth/login');
   }
 
   Widget _getMenuItem(String label, IconData icon) {

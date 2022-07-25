@@ -63,10 +63,12 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: _theme(context),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/auth/login',
       routes: {
-        '/': (context) => HomePage(),
+        '/': (context) => SplashScreenPage(),
+        '/home': (context) => HomePage(),
 
+        '/auth/login': (context) => LoginPage(),
         '/auth/register': (context) => RegisterPage(),
         '/auth/register/umkm': (context) => RegisterUmkmPage(),
         '/auth/register/auditor': (context) => RegisterAuditorPage(),
