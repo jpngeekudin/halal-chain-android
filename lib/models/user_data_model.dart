@@ -104,7 +104,7 @@ class UserAuditorData {
   late String name;
   late String username;
   String? password;
-  late String type;
+  late UserAuditorType type;
   late String role;
   late String religion;
   late String address;
@@ -144,7 +144,11 @@ class UserAuditorData {
     name = json['name'];
     username = json['username'];
     password = json['password'];
-    type = json['type'];
+
+    if (json['type'] == 'lph') type = UserAuditorType.lph;
+    else if (json['type'] == 'bpjph') type = UserAuditorType.bpjph;
+    else type = UserAuditorType.lph;
+
     role = json['role'] ?? 'auditor';
     religion = json['religion'];
     address = json['address'];
@@ -164,7 +168,7 @@ class UserAuditorData {
       'name': name,
       'username': username,
       'password': password,
-      'type': type,
+      'type': type.toString().replaceFirst('UserAuditorType.', ''),
       'role': role,
       'religion': religion,
       'address': address,
@@ -177,6 +181,15 @@ class UserAuditorData {
       'created_at': createdAt.millisecondsSinceEpoch
     };
   }
+
+  String getType() {
+    return type.toString().replaceFirst('UserAuditorType.', '');
+  }
+}
+
+enum UserAuditorType {
+  bpjph,
+  lph,
 }
 
 class UserConsumentData {

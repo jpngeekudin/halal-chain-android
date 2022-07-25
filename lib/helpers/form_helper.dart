@@ -237,6 +237,7 @@ Widget buildFormList({
         decoration: getInputDecoration(label: config.label),
         isDense: true,
         value: config.value,
+        // validator: config.validator as dynamic,
       );
     }
 

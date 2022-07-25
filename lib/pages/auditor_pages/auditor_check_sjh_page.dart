@@ -4,6 +4,8 @@ import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/auth_helper.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/models/api_model.dart';
+import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
 import 'package:recase/recase.dart';
@@ -65,16 +67,30 @@ class _AuditorCheckSjhPageState extends State<AuditorCheckSjhPage> {
     try {
       final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       final umkmId = args['id'];
+      final String checkType = args['checkType'];
       final user = await getUserData();
 
       final core = CoreService();
-      final params = {
+      Map<String, dynamic> params;
+      if (checkType == 'check-bpjph') params = {
         'umkm_id': umkmId,
         'BPJPH_id': user!.id,
         'result': _resultModel,
         'description': _descriptionController.text
       };
-      final response = await core.genericPost(ApiList.coreBpjphCheckingData, null, params);
+      else params = {
+        'umkm_id': umkmId,
+        'lph_id': user!.id,
+        'result': _resultModel,
+        'description': _descriptionController.text
+      };
+
+      String url;
+      if (checkType == 'check-bpjph') url = ApiList.coreBpjphCheckingData;
+      else if (checkType == 'check-lph') url = ApiList.coreLphCheckingData;
+      else url = ApiList.coreBpjphCheckingData;
+
+      final response = await core.genericPost(url, null, params);
       Navigator.pop(context);
       final snackBar = SnackBar(content: Text('Sukses menyimpan data!'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -101,9 +117,16 @@ class _AuditorCheckSjhPageState extends State<AuditorCheckSjhPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final String checkType = args['checkType'];
+
+    String title;
+    if (checkType == 'review-place') title = 'Review Tempat Bisnis';
+    else title = 'Check SJH';
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Check SJH'),
+        title: Text(title),
       ),
       body: SafeArea(
         child: _error == null
@@ -155,11 +178,11 @@ class _AuditorCheckSjhPageState extends State<AuditorCheckSjhPage> {
                         items: [
                           DropdownMenuItem(
                             child: Text('Data sudah valid'),
-                            value: 'valid',
+                            value: 'approved',
                           ),
                           DropdownMenuItem(
                             child: Text('Data belum valid'),
-                            value: 'invalid'
+                            value: 'declined'
                           )
                         ],
                         value: _resultModel,

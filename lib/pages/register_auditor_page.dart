@@ -20,8 +20,7 @@ class _RegisterAuditorPageState extends State<RegisterAuditorPage> {
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  String? _religionModel;
-  final _typeController = TextEditingController();
+  String? _typeModel;
   final _addressController = TextEditingController();
   final _institutionController = TextEditingController();
   final _competenceController = TextEditingController();
@@ -41,8 +40,8 @@ class _RegisterAuditorPageState extends State<RegisterAuditorPage> {
         'name': _nameController.text,
         'username': _usernameController.text,
         'password': _passwordController.text,
-        'religion': _religionModel,
-        'type': _typeController.text,
+        'religion': 'islam',
+        'types': _typeModel,
         'address': _addressController.text,
         'institution': _institutionController.text,
         'competence': _competenceController.text,
@@ -57,7 +56,7 @@ class _RegisterAuditorPageState extends State<RegisterAuditorPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Error'),
+            title: Text('Sukses'),
             content: Text('Sukses membuat akun!')
           );
         }
@@ -100,22 +99,14 @@ class _RegisterAuditorPageState extends State<RegisterAuditorPage> {
         validator: validateRequired
       ),
       FormConfig(
-        label: 'Religion',
-        type: FormConfigType.select,
-        onChanged: (value) => _religionModel = value,
-        options: [
-          FormConfigOption('islam', 'Islam'),
-          FormConfigOption('protestan', 'Protestan'),
-          FormConfigOption('katolik', 'Katolik'),
-          FormConfigOption('hindu', 'Hindu'),
-          FormConfigOption('buddha', 'Buddha'),
-          FormConfigOption('khonghucu', 'Khonghucu'),
-        ]
-      ),
-      FormConfig(
         label: 'Type',
-        controller: _typeController,
+        type: FormConfigType.select,
+        onChanged: (value) => _typeModel = value,
         validator: validateRequired,
+        options: [
+          FormConfigOption('lph', 'LPH'),
+          FormConfigOption('bpjph', 'BPJPH'),
+        ]
       ),
       FormConfig(
         label: 'Address',

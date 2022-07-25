@@ -96,7 +96,7 @@ class _ProfileEditAuditorPageState extends State<ProfileEditAuditorPage> {
     _nameController.text = widget.userAuditorData.name;
     _usernameController.text = widget.userAuditorData.username;
     _religionModel = widget.userAuditorData.religion;
-    _typeController.text = widget.userAuditorData.type;
+    _typeController.text = widget.userAuditorData.getType();
     _addressController.text = widget.userAuditorData.address;
     _institutionController.text = widget.userAuditorData.institution;
     _competenceController.text = widget.userAuditorData.competence;
