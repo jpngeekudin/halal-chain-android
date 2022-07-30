@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
+import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/helpers/utils_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
@@ -37,19 +39,175 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
     fontSize: 16,
   );
 
-  void _addBahan() async {
-    if (
-      _tanggalModel == null ||
-      _namaMerkBahanController.text.isEmpty ||
-      _namaNegaraProdusen.text.isEmpty ||
-      _expDateBahanModel == null ||
-      _parafController.isEmpty
-    ) {
-      final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
-    }
+  void _showModalPembelian() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return getModalBottomSheetWrapper(
+          context: context,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  getHeader(
+                    context: context,
+                    text: 'Tambah Bahan'
+                  ),
+                  getInputWrapper(
+                    label: 'Tanggal Datang / Dibeli',
+                    input: TextFormField(
+                      controller: _tanggalController,
+                      decoration: getInputDecoration(label: 'Tanggal Datang / Dibeli'),
+                      style: inputTextStyle,
+                      onTap: () async {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: _tanggalController.text.isNotEmpty
+                            ? defaultDateFormat.parse(_tanggalController.text)
+                            : DateTime.now(),
+                          firstDate: DateTime(2016),
+                          lastDate: DateTime(2100),
+                        );
 
+                        if (picked != null) {
+                          setState(() => _tanggalModel = picked);
+                          _tanggalController.text = defaultDateFormat.format(picked);
+                        }
+                      },
+                    ),
+                  ),
+                  getInputWrapper(
+                    label: 'Nama / Merk Bahan',
+                    input: TextField(
+                      controller: _namaMerkBahanController,
+                      decoration: getInputDecoration(label: 'Nama / Merk Bahan'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Nama & Negara Produsen',
+                    input: TextField(
+                      controller: _namaNegaraProdusen,
+                      decoration: getInputDecoration(label: 'Nama & Negara Produsen'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Ada di Daftar Bahan Halal',
+                    input: StatefulBuilder(
+                      builder: (context, setSwitchState) {
+                        return Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Switch(
+                              value: _adaDiDaftarBahanHalalModel,
+                              onChanged: (value) {
+                                setSwitchState(() => _adaDiDaftarBahanHalalModel = value);
+                              },
+                            ),
+                            SizedBox(width: 10),
+                            Text(_adaDiDaftarBahanHalalModel ? 'Ya' : 'Tidak')
+                          ],
+                        );
+                      }
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Exp. Date Bahan',
+                    input: TextFormField(
+                      controller: _expDateBahanController,
+                      decoration: getInputDecoration(label: 'Exp. Date Bahan'),
+                      style: inputTextStyle,
+                      onTap: () async {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: _expDateBahanController.text.isNotEmpty
+                            ? defaultDateFormat.parse(_expDateBahanController.text)
+                            : DateTime.now(),
+                          firstDate: DateTime(2016),
+                          lastDate: DateTime(2100),
+                        );
+
+                        if (picked != null) {
+                          setState(() => _expDateBahanModel = picked);
+                          _expDateBahanController.text = defaultDateFormat.format(picked);
+                        }
+                      },
+                    ),
+                  ),
+                  getInputWrapper(
+                    label: 'Paraf',
+                    // input: Wrap(
+                    //   crossAxisAlignment: WrapCrossAlignment.center,
+                    //   children: [
+                    //     Switch(
+                    //       value: _parafModel,
+                    //       onChanged: (value) {
+                    //         setState(() => _parafModel = value);
+                    //       },
+                    //     ),
+                    //     SizedBox(width: 10),
+                    //     Text(_parafModel ? 'Ya' : 'Tidak')
+                    //   ],
+                    // ),
+                    input: getInputSignature(
+                      controller: _parafController,
+                      context: context
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.add_circle_outline, color: Colors.black),
+                            SizedBox(width: 10),
+                            Text('Tambah', style: TextStyle(
+                              color: Colors.black
+                            ))
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey[200],
+                        ),
+                        onPressed: () {
+                          if (
+                            _tanggalModel == null ||
+                            _namaMerkBahanController.text.isEmpty ||
+                            _namaNegaraProdusen.text.isEmpty ||
+                            _expDateBahanModel == null ||
+                            _parafController.isEmpty
+                          ) {
+                            final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+
+                          _addBahan();
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          )
+        );
+      }
+    );
+  }
+
+  void _addBahan() async {
     final parafBytes = await _parafController.toPngBytes();
 
     final bahan = UmkmPembelianPemeriksaanBahan(
@@ -229,138 +387,34 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.typeBahan != 'import'
-                  ? 'List Bahan'
-                  : 'List Bahan Import',
-                  style: _titleTextStyle
-                ),
-                SizedBox(height: 10),
-                if (_listBahan.isNotEmpty) ..._listBahan.map((bahan) => _getBahanCard(bahan)).toList()
-                else Text('Belum ada list bahan.'),
-                SizedBox(height: 30),
-
-                Text('Tambah Bahan', style: _titleTextStyle),
-                SizedBox(height: 10),
-                getInputWrapper(
-                  label: 'Tanggal Datang / Dibeli',
-                  input: TextFormField(
-                    controller: _tanggalController,
-                    decoration: getInputDecoration(label: 'Tanggal Datang / Dibeli'),
-                    style: inputTextStyle,
-                    onTap: () async {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _tanggalController.text.isNotEmpty
-                          ? defaultDateFormat.parse(_tanggalController.text)
-                          : DateTime.now(),
-                        firstDate: DateTime(2016),
-                        lastDate: DateTime(2100),
-                      );
-
-                      if (picked != null) {
-                        setState(() => _tanggalModel = picked);
-                        _tanggalController.text = defaultDateFormat.format(picked);
-                      }
-                    },
-                  ),
-                ),
-                getInputWrapper(
-                  label: 'Nama / Merk Bahan',
-                  input: TextField(
-                    controller: _namaMerkBahanController,
-                    decoration: getInputDecoration(label: 'Nama / Merk Bahan'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Nama & Negara Produsen',
-                  input: TextField(
-                    controller: _namaNegaraProdusen,
-                    decoration: getInputDecoration(label: 'Nama & Negara Produsen'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Ada di Daftar Bahan Halal',
-                  input: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Switch(
-                        value: _adaDiDaftarBahanHalalModel,
-                        onChanged: (value) {
-                          setState(() => _adaDiDaftarBahanHalalModel = value);
-                        },
-                      ),
-                      SizedBox(width: 10),
-                      Text(_adaDiDaftarBahanHalalModel ? 'Ya' : 'Tidak')
-                    ],
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Exp. Date Bahan',
-                  input: TextFormField(
-                    controller: _expDateBahanController,
-                    decoration: getInputDecoration(label: 'Exp. Date Bahan'),
-                    style: inputTextStyle,
-                    onTap: () async {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _expDateBahanController.text.isNotEmpty
-                          ? defaultDateFormat.parse(_expDateBahanController.text)
-                          : DateTime.now(),
-                        firstDate: DateTime(2016),
-                        lastDate: DateTime(2100),
-                      );
-
-                      if (picked != null) {
-                        setState(() => _expDateBahanModel = picked);
-                        _expDateBahanController.text = defaultDateFormat.format(picked);
-                      }
-                    },
-                  ),
-                ),
-                getInputWrapper(
-                  label: 'Paraf',
-                  // input: Wrap(
-                  //   crossAxisAlignment: WrapCrossAlignment.center,
-                  //   children: [
-                  //     Switch(
-                  //       value: _parafModel,
-                  //       onChanged: (value) {
-                  //         setState(() => _parafModel = value);
-                  //       },
-                  //     ),
-                  //     SizedBox(width: 10),
-                  //     Text(_parafModel ? 'Ya' : 'Tidak')
-                  //   ],
-                  // ),
-                  input: getInputSignature(
-                    controller: _parafController,
-                    context: context
-                  ),
-                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(
+                    Text(widget.typeBahan != 'import'
+                      ? 'List Bahan'
+                      : 'List Bahan Import',
+                      style: _titleTextStyle
+                    ),
+                    TextButton(
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Icon(Icons.add_circle_outline, color: Colors.black),
+                          Icon(Icons.add_circle_outline),
                           SizedBox(width: 10),
-                          Text('Tambah', style: TextStyle(
-                            color: Colors.black
-                          ))
+                          Text('Tambah')
                         ],
                       ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey[200],
-                      ),
-                      onPressed: () => _addBahan(),
+                      onPressed: _showModalPembelian,
                     )
                   ],
+                ),
+                SizedBox(height: 10),
+                if (_listBahan.isNotEmpty) ..._listBahan.map((bahan) => _getBahanCard(bahan)).toList()
+                else Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: getPlaceholder(text: 'Belum ada list bahan'),
                 ),
                 SizedBox(height: 30),
                 
