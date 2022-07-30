@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
+import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -29,17 +31,116 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
   final _tanggalController = TextEditingController();
   final _pemateriController = TextEditingController();
 
-  void _addAssignment() {
-    final valid = _teamMemberFormKey.currentState!.validate();
-    if (!valid) return;
-    
-    if (
-      _namaController.text.isEmpty ||
-      // _jabatanController.text.isEmpty ||
-      _positionController.text.isEmpty ||
-      _nilaiController.text.isEmpty
-    ) return;
+  void _showAssignmentModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return getModalBottomSheetWrapper(
+          context: context,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  getHeader(text: 'Tambah Anggota Tim', context: context),
+                  Form(
+                    key: _teamMemberFormKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        getInputWrapper(
+                          label: 'Nama',
+                          input: TextFormField(
+                            controller: _namaController,
+                            decoration: getInputDecoration(label: 'Nama'),
+                            style: inputTextStyle,
+                            validator: validateRequired,
+                          ),
+                        ),
+                        // getInputWrapper(
+                        //   label: 'Jabatan',
+                        //   input: TextFormField(
+                        //     controller: _jabatanController,
+                        //     decoration: getInputDecoration(label: 'Jabatan'),
+                        //     style: inputTextStyle,
+                        //     validator: validateRequired,
+                        //   ),
+                        // ),
+                        getInputWrapper(
+                          label: 'Posisi',
+                          input: TextFormField(
+                            controller: _positionController,
+                            decoration: getInputDecoration(label: 'Posisi'),
+                            style: inputTextStyle,
+                            validator: validateRequired,
+                          ),
+                        ),
+                        getInputWrapper(
+                          label: 'Nilai',
+                          input: TextFormField(
+                            controller: _nilaiController,
+                            decoration: getInputDecoration(label: 'Nilai'),
+                            style: inputTextStyle,
+                            validator: (valueStr) {
+                              if (valueStr == null || valueStr.isEmpty) return 'Please fill this field!';
+                              final value = int.parse(valueStr);
+                              if (value < 0 || value > 100) return 'Please insert value between 0 to 100';
+                              else return null;
+                            },
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.person_add_outlined, color: Colors.black),
+                            SizedBox(width: 5),
+                            Text('Tambah', style: TextStyle(
+                              color: Colors.black
+                            )),
+                          ],
+                        ),
+                        onPressed: () {
+                          final valid = _teamMemberFormKey.currentState!.validate();
+                          if (!valid) return;
+                          
+                          if (
+                            _namaController.text.isEmpty ||
+                            // _jabatanController.text.isEmpty ||
+                            _positionController.text.isEmpty ||
+                            _nilaiController.text.isEmpty
+                          ) return;
 
+                          _addAssignment();
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey[200],
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          )
+        );
+      }
+    );
+  }
+
+  void _addAssignment() {
     // final assignment = UmkmTeamAssignmentWithScore(
     //   _namaController.text,
     //   _jabatanController.text,
@@ -112,11 +213,10 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Data Bukti Pelaksanaan', style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Theme.of(context).primaryColor
-                )),
+                getHeader(
+                  text: 'Data Bukti Pelaksanaan',
+                  context: context
+                ),
                 SizedBox(height: 20),
                 Form(
                   key: _dataPelaksanaanFormKey,
@@ -160,12 +260,10 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
                     ],
                   ),
                 ),
-                Text('Tambah Anggota Team', style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Theme.of(context).primaryColor
-                )),
-                SizedBox(height: 20),
+                getHeader(
+                  context: context,
+                  text: 'Daftar Anggota Tim'
+                ),
                 ..._teamAssignment.map((ass) {
                   return Container(
                     padding: EdgeInsets.all(20),
@@ -226,57 +324,12 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
                     ),
                   );
                 }),
-                SizedBox(height: 20),
-                Form(
-                  key: _teamMemberFormKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      getInputWrapper(
-                        label: 'Nama',
-                        input: TextFormField(
-                          controller: _namaController,
-                          decoration: getInputDecoration(label: 'Nama'),
-                          style: inputTextStyle,
-                          validator: validateRequired,
-                        ),
-                      ),
-                      // getInputWrapper(
-                      //   label: 'Jabatan',
-                      //   input: TextFormField(
-                      //     controller: _jabatanController,
-                      //     decoration: getInputDecoration(label: 'Jabatan'),
-                      //     style: inputTextStyle,
-                      //     validator: validateRequired,
-                      //   ),
-                      // ),
-                      getInputWrapper(
-                        label: 'Posisi',
-                        input: TextFormField(
-                          controller: _positionController,
-                          decoration: getInputDecoration(label: 'Posisi'),
-                          style: inputTextStyle,
-                          validator: validateRequired,
-                        ),
-                      ),
-                      getInputWrapper(
-                        label: 'Nilai',
-                        input: TextFormField(
-                          controller: _nilaiController,
-                          decoration: getInputDecoration(label: 'Nilai'),
-                          style: inputTextStyle,
-                          validator: (valueStr) {
-                            if (valueStr == null || valueStr.isEmpty) return 'Please fill this field!';
-                            final value = int.parse(valueStr);
-                            if (value < 0 || value > 100) return 'Please insert value between 0 to 100';
-                            else return null;
-                          },
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                    ],
-                  ),
+                if (_teamAssignment.isEmpty) Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: getPlaceholder(text: 'Belum ada anggota tim'),
                 ),
+                SizedBox(height: 20),
                 Container(
                   margin: EdgeInsets.only(bottom: 20),
                   alignment: Alignment.centerRight,
@@ -291,7 +344,7 @@ class _UmkmPenilaianPageState extends State<UmkmPenilaianPage> {
                         )),
                       ],
                     ),
-                    onPressed: _addAssignment,
+                    onPressed: _showAssignmentModal,
                     style: ElevatedButton.styleFrom(
                       primary: Colors.grey[200],
                     ),

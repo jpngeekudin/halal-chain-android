@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -27,17 +28,10 @@ class _UmkmTeamAssignPageState extends State<UmkmTeamAssignPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-        )
-      ),
+      shape: ModalBottomSheetShape,
       builder: (context) {
-        return Container(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom
-          ),
+        return getModalBottomSheetWrapper(
+          context: context,
           child: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(20),

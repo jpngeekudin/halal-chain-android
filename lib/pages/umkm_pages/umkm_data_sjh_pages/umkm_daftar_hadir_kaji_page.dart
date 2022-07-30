@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
+import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -34,6 +36,151 @@ class _UmkmDaftarHadirKajiPageState extends State<UmkmDaftarHadirKajiPage> {
     fontWeight: FontWeight.bold,
     fontSize: 16,
   );
+
+  void _showModalKehadiran() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return getModalBottomSheetWrapper(
+          context: context,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  SizedBox(height: 20),
+                  getHeader(context: context, text: 'Tambah Kehadiran'),
+                  getInputWrapper(
+                    label: 'Nama',
+                    input: TextField(
+                      controller: _namaController,
+                      decoration: getInputDecoration(label: 'Nama'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Jabatan',
+                    input: TextField(
+                      controller: _jabatanController,
+                      decoration: getInputDecoration(label: 'Jabatan'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.person_add, color: Colors.black),
+                            SizedBox(width: 10),
+                            Text('Tambah', style: TextStyle(color: Colors.black)),
+                          ],
+                        ),
+                        onPressed: () {
+                          if (
+                            _namaController.text.isEmpty ||
+                            _jabatanController.text.isEmpty
+                          ) {
+                            final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan.'));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+
+                          _addKehadiran();
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey[200],
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          )
+        );
+      }
+    );
+  }
+
+  void _showModalPembahasan() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return getModalBottomSheetWrapper(
+          context: context,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  getHeader(context: context, text: 'Tambah Pembahasan'),
+                  getInputWrapper(
+                    label: 'Pembahasan',
+                    input: TextField(
+                      controller: _pembahasanController,
+                      decoration: getInputDecoration(label: 'Pembahasan'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Perbaikan',
+                    input: TextField(
+                      controller: _perbaikanController,
+                      decoration: getInputDecoration(label: 'Perbaikan'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.add_box, color: Colors.black),
+                            SizedBox(width: 10),
+                            Text('Tambah', style: TextStyle(
+                              color: Colors.black
+                            ))
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey[200]
+                        ),
+                        onPressed: () {
+                          if (
+                            _pembahasanController.text.isEmpty ||
+                            _perbaikanController.text.isEmpty
+                          ) {
+                            final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan.'));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+
+                          _addPembahasan();
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            )
+          )
+        );
+      }
+    );
+  }
 
   Widget _getHadirItem(UmkmDaftarHadirKaji kehadiran) {
     return Container(
@@ -132,15 +279,6 @@ class _UmkmDaftarHadirKajiPageState extends State<UmkmDaftarHadirKajiPage> {
   }
 
   void _addKehadiran() {
-    if (
-      _namaController.text.isEmpty ||
-      _jabatanController.text.isEmpty
-    ) {
-      final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan.'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
-    }
-
     final kehadiran = UmkmDaftarHadirKaji(_namaController.text, _jabatanController.text, '');
     setState(() => _daftarHadir.add(kehadiran));
 
@@ -154,15 +292,6 @@ class _UmkmDaftarHadirKajiPageState extends State<UmkmDaftarHadirKajiPage> {
   }
 
   void _addPembahasan() {
-    if (
-      _pembahasanController.text.isEmpty ||
-      _perbaikanController.text.isEmpty
-    ) {
-      final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan.'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
-    }
-
     final pembahasan = UmkmDaftarHadirKajiPembahasan(_pembahasanController.text, _perbaikanController.text);
     setState(() => _daftarPembahasan.add(pembahasan));
     
@@ -257,106 +386,58 @@ class _UmkmDaftarHadirKajiPageState extends State<UmkmDaftarHadirKajiPage> {
                 ),
                 SizedBox(height: 30),
 
-                Text('Daftar Hadir', style: _titleTextStyle),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Daftar Hadir', style: _titleTextStyle),
+                    TextButton(
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Icon(Icons.person_add),
+                          SizedBox(width: 10),
+                          Text('Tambah'),
+                        ],
+                      ),
+                      onPressed: () => _showModalKehadiran(),
+                    )
+                  ],
+                ),
                 SizedBox(height: 10),
-                if (_daftarHadir.isEmpty) Text('Belum ada daftar hadir')
+                if (_daftarHadir.isEmpty) Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: getPlaceholder(text: 'Belum ada daftar hadir'),
+                )
                 else ..._daftarHadir.map((hadir) => _getHadirItem(hadir)),
                 SizedBox(height: 30),
 
-                Text('Tambah Kehadiran', style: _titleTextStyle),
-                SizedBox(height: 10),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: getInputWrapper(
-                        label: 'Nama',
-                        input: TextField(
-                          controller: _namaController,
-                          decoration: getInputDecoration(label: 'Nama'),
-                          style: inputTextStyle,
-                        )
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: getInputWrapper(
-                        label: 'Jabatan',
-                        input: TextField(
-                          controller: _jabatanController,
-                          decoration: getInputDecoration(label: 'Jabatan'),
-                          style: inputTextStyle,
-                        )
-                      ),
-                    )
-                  ]
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
+                    Text('Daftar Pembahasan', style: _titleTextStyle),
+                    TextButton(
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Icon(Icons.person_add, color: Colors.black),
+                          Icon(Icons.add_circle_outline),
                           SizedBox(width: 10),
-                          Text('Tambah', style: TextStyle(color: Colors.black)),
+                          Text('Tambah')
                         ],
                       ),
-                      onPressed: () => _addKehadiran(),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey[200],
-                      ),
+                      onPressed: _showModalPembahasan,
                     )
                   ],
                 ),
-                SizedBox(height: 30),
-
-                Text('Daftar Pembahasan', style: _titleTextStyle),
                 SizedBox(height: 10),
-                if (_daftarPembahasan.isEmpty) Text('Belum ada pembahasan')
+                if (_daftarPembahasan.isEmpty) Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: getPlaceholder(text: 'Belum ada pembahasan'),
+                )
                 else _getTablePembahsan(_daftarPembahasan),
-                SizedBox(height: 30),
-
-                Text('Tambah Pembahasan', style: _titleTextStyle),
-                SizedBox(height: 10),
-                getInputWrapper(
-                  label: 'Pembahasan',
-                  input: TextField(
-                    controller: _pembahasanController,
-                    decoration: getInputDecoration(label: 'Pembahasan'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Perbaikan',
-                  input: TextField(
-                    controller: _perbaikanController,
-                    decoration: getInputDecoration(label: 'Perbaikan'),
-                    style: inputTextStyle,
-                  )
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Icon(Icons.add_box, color: Colors.black),
-                          SizedBox(width: 10),
-                          Text('Tambah', style: TextStyle(
-                            color: Colors.black
-                          ))
-                        ],
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey[200]
-                      ),
-                      onPressed: () => _addPembahasan(),
-                    )
-                  ],
-                ),
                 SizedBox(height: 30),
 
                 SizedBox(

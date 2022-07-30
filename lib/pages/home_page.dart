@@ -39,9 +39,7 @@ class _HomePageState extends State<HomePage> {
   bool _enableSimulasiSJH = false;
 
   void _navigateToProfile(BuildContext context) {
-    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-      Navigator.of(context).pushNamed('/profile');
-    });
+    Navigator.of(context).pushNamed('/profile');
   }
 
   Future<Map<String, dynamic>?> _getUserData(BuildContext context) async {
