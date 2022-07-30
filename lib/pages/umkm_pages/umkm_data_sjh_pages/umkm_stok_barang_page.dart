@@ -371,7 +371,7 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    child: Text('Subtmit'),
+                    child: Text('Submit'),
                     onPressed: () => _submit(),
                   ),
                 )

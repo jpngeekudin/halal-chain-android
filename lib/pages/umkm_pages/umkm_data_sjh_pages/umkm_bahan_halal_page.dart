@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
+import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -33,6 +35,141 @@ class _UmkmBahanHalalPageState extends State<UmkmBahanHalalPage> {
   DateTime? _masaBerlakuModel;
   final _dokumenLainController = TextEditingController();
   final _keteranganController = TextEditingController();
+
+  void _showModalBahan() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return getModalBottomSheetWrapper(
+          context: context,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  getHeader(
+                    context: context,
+                    text: 'Tambah Bahan Halal'
+                  ),
+                  getInputWrapper(
+                    label: 'Nama / Merk / Kode Bahan',
+                    input: TextField(
+                      controller: _namaMerkController,
+                      decoration: getInputDecoration(label: 'Nama / Merk / Kode Bahan'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Nama dan Negara Produsen',
+                    input: TextField(
+                      controller: _namaNegaraController,
+                      decoration: getInputDecoration(label: 'Nama / Merk / Kode Bahan'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Pemasok',
+                    input: TextField(
+                      controller: _pemasokController,
+                      decoration: getInputDecoration(label: 'Pemasok'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Lembaga Penerbit Sertifikat Halal',
+                    input: TextField(
+                      controller: _penerbitController,
+                      decoration: getInputDecoration(label: 'Lembaga Penerbit'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Nomor Sertifikat Halal',
+                    input: TextField(
+                      controller: _nomorController,
+                      decoration: getInputDecoration(label: 'Nomor Sertifikat Halal'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Masa Berlaku Sertifikat Halal',
+                    input: getInputDate(
+                      label: 'Masa Berlaku Sertifikat Halal',
+                      controller: _masaBerlakuController,
+                      context: context,
+                      onChanged: (value) {
+                        setState(() => _masaBerlakuModel = value);
+                      }
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Dokumen Lain',
+                    input: TextField(
+                      controller: _dokumenLainController,
+                      decoration: getInputDecoration(label: 'Dokumen Lain'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Keterangan',
+                    input: TextField(
+                      controller: _keteranganController,
+                      decoration: getInputDecoration(label: 'Keterangan'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          if (
+                            _namaMerkController.text.isEmpty ||
+                            _namaNegaraController.text.isEmpty ||
+                            _pemasokController.text.isEmpty ||
+                            _penerbitController.text.isEmpty ||
+                            _nomorController.text.isEmpty ||
+                            _masaBerlakuController.text.isEmpty ||
+                            _masaBerlakuModel == null ||
+                            _dokumenLainController.text.isEmpty ||
+                            _keteranganController.text.isEmpty
+                          ) {
+                            final snackBar = SnackBar(content: Text('Harap isi seluruh field yang dibutuhkan'));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+
+                          _addBahan();
+                          Navigator.of(context).pop();
+                        },
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.add_circle, color: Colors.black),
+                            SizedBox(width: 10),
+                            Text('Tambah', style: TextStyle(
+                              color: Colors.black
+                            ))
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey[200]
+                        )
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          )
+        );
+      }
+    );
+  }
 
   Widget _getBahanCard(UmkmBahanHalal bahan) {
     final _labelTextStyle = TextStyle(
@@ -128,22 +265,6 @@ class _UmkmBahanHalalPageState extends State<UmkmBahanHalalPage> {
   }
 
   void _addBahan() {
-    if (
-      _namaMerkController.text.isEmpty ||
-      _namaNegaraController.text.isEmpty ||
-      _pemasokController.text.isEmpty ||
-      _penerbitController.text.isEmpty ||
-      _nomorController.text.isEmpty ||
-      _masaBerlakuController.text.isEmpty ||
-      _masaBerlakuModel == null ||
-      _dokumenLainController.text.isEmpty ||
-      _keteranganController.text.isEmpty
-    ) {
-      final snackBar = SnackBar(content: Text('Harap isi seluruh field yang dibutuhkan'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
-    }
-
     final bahan = UmkmBahanHalal(
       namaMerk: _namaMerkController.text,
       namaNegara: _namaNegaraController.text,
@@ -224,102 +345,31 @@ class _UmkmBahanHalalPageState extends State<UmkmBahanHalalPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Daftar Bahan Halal', style: _titleTextStyle),
-                SizedBox(height: 10),
-                if (_listBahan.isEmpty) Text('Belum ada daftar bahan halah')
-                else ..._listBahan.map((bahan) => _getBahanCard(bahan)).toList(),
-                SizedBox(height: 30),
-
-                Text('Tambah Bahan Halal', style: _titleTextStyle),
-                SizedBox(height: 10),
-                getInputWrapper(
-                  label: 'Nama / Merk / Kode Bahan',
-                  input: TextField(
-                    controller: _namaMerkController,
-                    decoration: getInputDecoration(label: 'Nama / Merk / Kode Bahan'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Nama dan Negara Produsen',
-                  input: TextField(
-                    controller: _namaNegaraController,
-                    decoration: getInputDecoration(label: 'Nama / Merk / Kode Bahan'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Pemasok',
-                  input: TextField(
-                    controller: _pemasokController,
-                    decoration: getInputDecoration(label: 'Pemasok'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Lembaga Penerbit Sertifikat Halal',
-                  input: TextField(
-                    controller: _penerbitController,
-                    decoration: getInputDecoration(label: 'Lembaga Penerbit'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Nomor Sertifikat Halal',
-                  input: TextField(
-                    controller: _nomorController,
-                    decoration: getInputDecoration(label: 'Nomor Sertifikat Halal'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Masa Berlaku Sertifikat Halal',
-                  input: getInputDate(
-                    label: 'Masa Berlaku Sertifikat Halal',
-                    controller: _masaBerlakuController,
-                    context: context,
-                    onChanged: (value) {
-                      setState(() => _masaBerlakuModel = value);
-                    }
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Dokumen Lain',
-                  input: TextField(
-                    controller: _dokumenLainController,
-                    decoration: getInputDecoration(label: 'Dokumen Lain'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Keterangan',
-                  input: TextField(
-                    controller: _keteranganController,
-                    decoration: getInputDecoration(label: 'Keterangan'),
-                    style: inputTextStyle,
-                  )
-                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => _addBahan(),
+                    Text('Daftar Bahan Halal', style: _titleTextStyle),
+                    TextButton(
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Icon(Icons.add_circle, color: Colors.black),
+                          Icon(Icons.add_circle),
                           SizedBox(width: 10),
-                          Text('Tambah', style: TextStyle(
-                            color: Colors.black
-                          ))
+                          Text('Tambah')
                         ],
                       ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey[200]
-                      )
+                      onPressed: _showModalBahan,
                     )
                   ],
                 ),
+                SizedBox(height: 10),
+                if (_listBahan.isEmpty) Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: getPlaceholder(text: 'Belum ada daftar bahan halal'),
+                )
+                else ..._listBahan.map((bahan) => _getBahanCard(bahan)).toList(),
                 SizedBox(height: 30),
 
                 SizedBox(

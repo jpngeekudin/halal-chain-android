@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
+import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -30,6 +32,139 @@ class _UmkmKebersihanPageState extends State<UmkmKebersihanPage> {
   final _titleTextStyle = TextStyle(
     fontWeight: FontWeight.bold
   );
+
+  void _showModalKebersihan() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return getModalBottomSheetWrapper(
+          context: context,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: StatefulBuilder(
+                builder: (context, setFormState) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 20),
+                      getHeader(
+                        context: context,
+                        text: 'Tambah Pengecekan Kebersihan'
+                      ),
+                      getInputWrapper(
+                        label: 'Tanggal',
+                        input: getInputDate(
+                          label: 'Tanggal',
+                          controller: _tanggalController,
+                          context: context,
+                          onChanged: (picked) {
+                            setState(() => _tanggalModel = picked);
+                          },
+                        )
+                      ),
+                      getInputWrapper(
+                        label: 'Penanggungjawab',
+                        input: TextField(
+                          controller: _penanggungjawabController,
+                          decoration: getInputDecoration(label: 'Penanggungjawab'),
+                          style: inputTextStyle,
+                        )
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('Ruang Produksi'),
+                          Switch(
+                            value: _produksiModel,
+                            onChanged: (value) {
+                              setFormState(() => _produksiModel = value);
+                            },
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('Ruang Gudang'),
+                          Switch(
+                            value: _gudangModel,
+                            onChanged: (value) {
+                              setFormState(() => _gudangModel = value);
+                            },
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('Peralatan dan Mesin Produksi'),
+                          Switch(
+                            value: _mesinModel,
+                            onChanged: (value) {
+                              setFormState(() => _mesinModel = value);
+                            },
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('Kebersihan Kendaraan'),
+                          Switch(
+                            value: _kendaraanModel,
+                            onChanged: (value) {
+                              setFormState(() => _kendaraanModel = value);
+                            },
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_tanggalModel == null || _penanggungjawabController.text.isEmpty) {
+                                final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
+                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                return;
+                              }
+
+                              _addKebersihan();
+                              Navigator.of(context).pop();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.grey[200]
+                            ),
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Icon(Icons.add_circle, color: Colors.black),
+                                SizedBox(width: 10),
+                                Text('Tambah', style: TextStyle(
+                                  color: Colors.black
+                                ))
+                              ],
+                            )
+                          )
+                        ],
+                      ),
+                    ],
+                  );
+                }
+              ),
+            )
+          )
+        );
+      }
+    );
+  }
 
   Widget _getKebersihanCard(UmkmKebersihan kebersihan) {
     final _labelTextStyle = TextStyle(
@@ -120,12 +255,6 @@ class _UmkmKebersihanPageState extends State<UmkmKebersihanPage> {
   }
 
   void _addKebersihan() {
-    if (_tanggalModel == null || _penanggungjawabController.text.isEmpty) {
-      final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
-    }
-
     final kebersihan = UmkmKebersihan(
       tanggal: _tanggalModel!,
       produksi: _produksiModel,
@@ -200,106 +329,31 @@ class _UmkmKebersihanPageState extends State<UmkmKebersihanPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Daftar Pengecekan Kebersihan', style: _titleTextStyle),
-                SizedBox(height: 10),
-                if (_listKebersihan.isEmpty) Text('Belum ada daftar pengecekan kebersihan')
-                else ..._listKebersihan.map((kebersihan) => _getKebersihanCard(kebersihan)).toList(),
-                SizedBox(height: 30),
-
-                Text('Tambah Pengecekan Kebersihan', style: _titleTextStyle),
-                SizedBox(height: 10),
-                getInputWrapper(
-                  label: 'Tanggal',
-                  input: getInputDate(
-                    label: 'Tanggal',
-                    controller: _tanggalController,
-                    context: context,
-                    onChanged: (picked) {
-                      setState(() => _tanggalModel = picked);
-                    },
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Penanggungjawab',
-                  input: TextField(
-                    controller: _penanggungjawabController,
-                    decoration: getInputDecoration(label: 'Penanggungjawab'),
-                    style: inputTextStyle,
-                  )
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Ruang Produksi'),
-                    Switch(
-                      value: _produksiModel,
-                      onChanged: (value) {
-                        setState(() => _produksiModel = value);
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('Ruang Gudang'),
-                    Switch(
-                      value: _gudangModel,
-                      onChanged: (value) {
-                        setState(() => _gudangModel = value);
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('Peralatan dan Mesin Produksi'),
-                    Switch(
-                      value: _mesinModel,
-                      onChanged: (value) {
-                        setState(() => _mesinModel = value);
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('Kebersihan Kendaraan'),
-                    Switch(
-                      value: _kendaraanModel,
-                      onChanged: (value) {
-                        setState(() => _kendaraanModel = value);
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => _addKebersihan(),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey[200]
-                      ),
-                      child: Wrap(
+                    Text('Daftar Pengecekan Kebersihan', style: _titleTextStyle),
+                    TextButton(
+                      child:  Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Icon(Icons.add_circle, color: Colors.black),
+                          Icon(Icons.add_circle),
                           SizedBox(width: 10),
-                          Text('Tambah', style: TextStyle(
-                            color: Colors.black
-                          ))
+                          Text('Tambah')
                         ],
-                      )
+                      ),
+                      onPressed: _showModalKebersihan,
                     )
                   ],
                 ),
+                SizedBox(height: 10),
+                if (_listKebersihan.isEmpty) Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: getPlaceholder(text: 'Belum ada list pengecekan kebersihan'),
+                )
+                else ..._listKebersihan.map((kebersihan) => _getKebersihanCard(kebersihan)).toList(),
                 SizedBox(height: 30),
 
                 SizedBox(

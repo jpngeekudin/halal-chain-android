@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
+import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -32,6 +34,125 @@ class _UmkmPemusnahanPageState extends State<UmkmPemusnahanPage> {
     fontWeight: FontWeight.bold,
     fontSize: 16
   );
+
+  void _showModalPemusnahan() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return getModalBottomSheetWrapper(
+          context: context,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20),
+                  getHeader(
+                    context: context,
+                    text: 'Tambah Pemusnahan'
+                  ),
+                  getInputWrapper(
+                    label: 'Nama Produk',
+                    input: TextField(
+                      controller: _namaProdukController,
+                      decoration: getInputDecoration(label: 'Nama Produk'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Tanggal Produksi',
+                    input: getInputDate(
+                      label: 'Tanggal Produksi',
+                      controller: _tanggalProduksiController,
+                      context: context,
+                      onChanged: (picked) {
+                        setState(() => _tanggalProduksiModel = picked);
+                      },
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Jumlah',
+                    input: TextField(
+                      controller: _jumlahController,
+                      decoration: getInputDecoration(label: 'Jumlah'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Penyebab',
+                    input: TextField(
+                      controller: _penyebabController,
+                      decoration: getInputDecoration(label: 'Penyebab'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Tanggal Pemusnahan',
+                    input: getInputDate(
+                      label: 'Tanggal Pemusnahan',
+                      controller: _tanggalPemusnahanController,
+                      context: context,
+                      onChanged: (picked) {
+                        setState(() => _tanggalPemusnahanModel = picked);
+                      },
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Penanggungjawab',
+                    input: TextField(
+                      controller: _penanggungjawabController,
+                      decoration: getInputDecoration(label: 'Penanggungjawab'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          if (
+                            _tanggalProduksiModel == null ||
+                            _tanggalPemusnahanModel == null ||
+                            _namaProdukController.text.isEmpty ||
+                            _jumlahController.text.isEmpty ||
+                            _penyebabController.text.isEmpty ||
+                            _penanggungjawabController.text.isEmpty
+                          ) {
+                            final snackBar = SnackBar(content: Text('Harap isi seluruh field yang dibutuhkan!'));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+
+                          _addPemusnahan();
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey[200]
+                        ),
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.add_circle, color: Colors.black),
+                            SizedBox(width: 10),
+                            Text('Tambah', style: TextStyle(
+                              color: Colors.black
+                            ))
+                          ],
+                        )
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          )
+        );
+      }
+    );
+  }
 
   Widget _getPemusnahanCard(UmkmPemusnahan pemusnahan) {
     final _labelTextStyle = TextStyle(
@@ -113,19 +234,6 @@ class _UmkmPemusnahanPageState extends State<UmkmPemusnahanPage> {
   }
 
   void _addPemusnahan() {
-    if (
-      _tanggalProduksiModel == null ||
-      _tanggalPemusnahanModel == null ||
-      _namaProdukController.text.isEmpty ||
-      _jumlahController.text.isEmpty ||
-      _penyebabController.text.isEmpty ||
-      _penanggungjawabController.text.isEmpty
-    ) {
-      final snackBar = SnackBar(content: Text('Harap isi seluruh field yang dibutuhkan!'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
-    }
-
     final pemusnahan = UmkmPemusnahan(
       namaProduk: _namaProdukController.text,
       jumlah: _jumlahController.text,
@@ -199,89 +307,31 @@ class _UmkmPemusnahanPageState extends State<UmkmPemusnahanPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Daftar Pemusnahan', style: _titleTextStyle),
-                SizedBox(height: 10),
-                if (_listPemusnahan.isEmpty) Text('Belum ada daftar pemusnahan')
-                else ..._listPemusnahan.map((pemusnahan) => _getPemusnahanCard(pemusnahan)).toList(),
-                SizedBox(height: 30),
-
-                Text('Tambah Pemusnahan', style: _titleTextStyle),
-                SizedBox(height: 10),
-                getInputWrapper(
-                  label: 'Nama Produk',
-                  input: TextField(
-                    controller: _namaProdukController,
-                    decoration: getInputDecoration(label: 'Nama Produk'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Tanggal Produksi',
-                  input: getInputDate(
-                    label: 'Tanggal Produksi',
-                    controller: _tanggalProduksiController,
-                    context: context,
-                    onChanged: (picked) {
-                      setState(() => _tanggalProduksiModel = picked);
-                    },
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Jumlah',
-                  input: TextField(
-                    controller: _jumlahController,
-                    decoration: getInputDecoration(label: 'Jumlah'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Penyebab',
-                  input: TextField(
-                    controller: _penyebabController,
-                    decoration: getInputDecoration(label: 'Penyebab'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Tanggal Pemusnahan',
-                  input: getInputDate(
-                    label: 'Tanggal Pemusnahan',
-                    controller: _tanggalPemusnahanController,
-                    context: context,
-                    onChanged: (picked) {
-                      setState(() => _tanggalPemusnahanModel = picked);
-                    },
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Penanggungjawab',
-                  input: TextField(
-                    controller: _penanggungjawabController,
-                    decoration: getInputDecoration(label: 'Penanggungjawab'),
-                    style: inputTextStyle,
-                  )
-                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => _addPemusnahan(),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey[200]
-                      ),
+                    Text('Daftar Pemusnahan', style: _titleTextStyle),
+                    TextButton(
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Icon(Icons.add_circle, color: Colors.black),
+                          Icon(Icons.add_circle),
                           SizedBox(width: 10),
-                          Text('Tambah', style: TextStyle(
-                            color: Colors.black
-                          ))
+                          Text('Tambah')
                         ],
-                      )
+                      ),
+                      onPressed: _showModalPemusnahan,
                     )
                   ],
                 ),
+                SizedBox(height: 10),
+                if (_listPemusnahan.isEmpty) Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: getPlaceholder(text: 'Belum ada daftar pemusnahan'),
+                )
+                else ..._listPemusnahan.map((pemusnahan) => _getPemusnahanCard(pemusnahan)).toList(),
                 SizedBox(height: 30),
 
                 SizedBox(
