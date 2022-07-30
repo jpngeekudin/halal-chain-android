@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
+import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/helpers/utils_helper.dart';
 import 'package:halal_chain/models/umkm_model.dart';
@@ -34,6 +36,142 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
     fontWeight: FontWeight.bold,
     fontSize: 16
   );
+
+  void _showModalStok() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return getModalBottomSheetWrapper(
+          context: context,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  getHeader(
+                    context: context,
+                    text: 'Tambah Stok Bahan'
+                  ),
+                  getInputWrapper(
+                    label: 'Nama Bahan',
+                    input: TextField(
+                      controller: _namaBahanController,
+                      decoration: getInputDecoration(label: 'Nama Bahan'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Tanggal Pembelian',
+                    input: TextFormField(
+                      controller: _tanggalBeliController,
+                      decoration: getInputDecoration(label: 'Tanggal Pembelian'),
+                      style: inputTextStyle,
+                      onTap: () async {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: _tanggalBeliModel ?? DateTime.now(),
+                          firstDate: DateTime(2016),
+                          lastDate: DateTime(2100),
+                        );
+
+                        if (picked != null) {
+                          setState(() => _tanggalBeliModel = picked);
+                          _tanggalBeliController.text = defaultDateFormat.format(picked);
+                        }
+                      },
+                    ),
+                  ),
+                  getInputWrapper(
+                    label: 'Jumlah Bahan Masuk',
+                    input: TextField(
+                      controller: _jumlahBahanController,
+                      decoration: getInputDecoration(label: 'Jumlah Bahan Masuk'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Jumlah Bahan Keluar',
+                    input: TextField(
+                      controller: _jumlahKeluarController,
+                      decoration: getInputDecoration(label: 'Jumlah Bahan Keluar'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Sisa Stok',
+                    input: TextField(
+                      controller: _stokSisaController,
+                      decoration: getInputDecoration(label: 'Sisa Stok'),
+                      style: inputTextStyle,
+                    )
+                  ),
+                  getInputWrapper(
+                    label: 'Paraf',
+                    // input: Wrap(
+                    //   crossAxisAlignment: WrapCrossAlignment.center,
+                    //   children: [
+                    //     Switch(
+                    //       value: _parafModel,
+                    //       onChanged: (value) {
+                    //         setState(() => _parafModel = value);
+                    //       },
+                    //     )
+                    //   ],
+                    // ),
+                    input: getInputSignature(
+                      controller: _parafController,
+                      context: context
+                    )
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          if (
+                            _tanggalBeliModel == null ||
+                            _namaBahanController.text.isEmpty ||
+                            _jumlahBahanController.text.isEmpty ||
+                            _jumlahKeluarController.text.isEmpty ||
+                            _stokSisaController.text.isEmpty
+                          ) {
+                            final snackBar = SnackBar(content: Text('Harap isi semua field yang diperlukan'));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+
+                          _addStok();
+                          Navigator.of(context).pop();
+                        },
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.add_circle_outline, color: Colors.black),
+                            SizedBox(width: 10),
+                            Text('Tambah', style: TextStyle(
+                              color: Colors.black
+                            ))
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey[200]
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              )
+            )
+          )
+        );
+      }
+    );
+  }
 
   Widget _getStokCard(UmkmStokBarang stok) {
     final _labelTextStyle = TextStyle(
@@ -117,18 +255,6 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
   }
 
   void _addStok() async {
-    if (
-      _tanggalBeliModel == null ||
-      _namaBahanController.text.isEmpty ||
-      _jumlahBahanController.text.isEmpty ||
-      _jumlahKeluarController.text.isEmpty ||
-      _stokSisaController.text.isEmpty
-    ) {
-      final snackBar = SnackBar(content: Text('Harap isi semua field yang diperlukan'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
-    }
-
     final parafBytes = await _parafController.toPngBytes();
 
     final stok = UmkmStokBarang(
@@ -215,107 +341,31 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Stok Bahan', style: _titleTextStyle),
-                SizedBox(height: 10),
-                if (_listStok.isEmpty) Text('Belum ada stok bahan')
-                else ..._listStok.map((stok) => _getStokCard(stok)).toList(),
-                SizedBox(height: 30),
-
-                Text('Tambah Stok Bahan', style: _titleTextStyle),
-                SizedBox(height: 10),
-                getInputWrapper(
-                  label: 'Nama Bahan',
-                  input: TextField(
-                    controller: _namaBahanController,
-                    decoration: getInputDecoration(label: 'Nama Bahan'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Tanggal Pembelian',
-                  input: TextFormField(
-                    controller: _tanggalBeliController,
-                    decoration: getInputDecoration(label: 'Tanggal Pembelian'),
-                    style: inputTextStyle,
-                    onTap: () async {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _tanggalBeliModel ?? DateTime.now(),
-                        firstDate: DateTime(2016),
-                        lastDate: DateTime(2100),
-                      );
-
-                      if (picked != null) {
-                        setState(() => _tanggalBeliModel = picked);
-                        _tanggalBeliController.text = defaultDateFormat.format(picked);
-                      }
-                    },
-                  ),
-                ),
-                getInputWrapper(
-                  label: 'Jumlah Bahan Masuk',
-                  input: TextField(
-                    controller: _jumlahBahanController,
-                    decoration: getInputDecoration(label: 'Jumlah Bahan Masuk'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Jumlah Bahan Keluar',
-                  input: TextField(
-                    controller: _jumlahKeluarController,
-                    decoration: getInputDecoration(label: 'Jumlah Bahan Keluar'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Sisa Stok',
-                  input: TextField(
-                    controller: _stokSisaController,
-                    decoration: getInputDecoration(label: 'Sisa Stok'),
-                    style: inputTextStyle,
-                  )
-                ),
-                getInputWrapper(
-                  label: 'Paraf',
-                  // input: Wrap(
-                  //   crossAxisAlignment: WrapCrossAlignment.center,
-                  //   children: [
-                  //     Switch(
-                  //       value: _parafModel,
-                  //       onChanged: (value) {
-                  //         setState(() => _parafModel = value);
-                  //       },
-                  //     )
-                  //   ],
-                  // ),
-                  input: getInputSignature(
-                    controller: _parafController,
-                    context: context
-                  )
-                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => _addStok(),
+                    Text('Stok Bahan', style: _titleTextStyle),
+                    TextButton(
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Icon(Icons.add_circle_outline, color: Colors.black),
+                          Icon(Icons.add_circle_outline),
                           SizedBox(width: 10),
-                          Text('Tambah', style: TextStyle(
-                            color: Colors.black
-                          ))
+                          Text('Tambah')
                         ],
                       ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey[200]
-                      ),
+                      onPressed: _showModalStok,
                     )
                   ],
                 ),
+                SizedBox(height: 10),
+                if (_listStok.isEmpty) Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: getPlaceholder(text: 'Belum ada list stok bahan'),
+                )
+                else ..._listStok.map((stok) => _getStokCard(stok)).toList(),
                 SizedBox(height: 30),
 
                 SizedBox(
