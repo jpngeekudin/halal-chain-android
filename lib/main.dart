@@ -5,6 +5,7 @@ import 'package:halal_chain/pages/auditor_pages/auditor_appoint_lph_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_check_sjh_mui_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_check_sjh_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_registrator_list_page.dart';
+import 'package:halal_chain/pages/auditor_pages/auditor_upload_cert_page.dart';
 import 'package:halal_chain/pages/home_page.dart';
 import 'package:halal_chain/pages/login_page.dart';
 import 'package:halal_chain/pages/profile_detail_page.dart';
@@ -104,6 +105,7 @@ class MyApp extends StatelessWidget {
         '/auditor/check-sjh': (context) => AuditorCheckSjhPage(),
         '/auditor/check-sjh-mui': (context) => AuditorCheckSjhMuiPage(),
         '/auditor/appoint-lph': (context) => AuditorAppointLphPage(),
+        '/auditor/upload-cert': (context) => AuditorUploadCertPage(),
       },
       // home: FutureBuilder(
       //   future: _isLoggedIn(),

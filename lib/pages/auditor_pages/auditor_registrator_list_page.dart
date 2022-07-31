@@ -143,7 +143,11 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                         PopupMenuItem(
                           child: Text('Check SJH by MUI', style: popupItemStyle),
                           value: 'check-sjh-mui'
-                        )
+                        ),
+                        PopupMenuItem(
+                          child: Text('Upload Certificate', style: popupItemStyle),
+                          value: 'upload-cert'
+                        ),
                       ],
                       onSelected: (String value) {
                         switch (value) {
@@ -167,6 +171,11 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                             break;
                           case 'check-sjh-mui':
                             Navigator.of(context).pushNamed('/auditor/check-sjh-mui',
+                              arguments: { 'id': reg.id }
+                            );
+                            break;
+                          case 'upload-cert':
+                            Navigator.of(context).pushNamed('/auditor/upload-cert',
                               arguments: { 'id': reg.id }
                             );
                             break;
