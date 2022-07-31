@@ -190,6 +190,7 @@ class UserAuditorData {
 enum UserAuditorType {
   bpjph,
   lph,
+  mui,
 }
 
 class UserConsumentData {

@@ -46,4 +46,6 @@ abstract class ApiList {
   static String coreLphAppointment = '$apiPrefix/core/LPH_appointment';
   static String coreLphCheckingData = '$apiPrefix/core/LPH_Checking_data';
   static String coreReviewBussinessPlace = '$apiPrefix/core/review_bussiness_place';
+  static String coreMuiGetData = '$apiPrefix/core/mui_get_data';
+  static String coreMuiCheckingData = '$apiPrefix/core/mui_checking_data';
 }

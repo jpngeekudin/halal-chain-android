@@ -44,6 +44,7 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
     String byLabel = '';
     if (_auditorType == UserAuditorType.bpjph) byLabel = ' by BPJPH';
     else if (_auditorType == UserAuditorType.lph) byLabel = ' by LPH';
+    else if (_auditorType == UserAuditorType.mui) byLabel = ' by MUI';
 
     final checkedWidget = Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
@@ -74,6 +75,11 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
 
     else if (_auditorType == UserAuditorType.lph) {
       if (reg.statusLphCheckField) return checkedWidget;
+      else return uncheckedWidget;
+    }
+
+    else if (_auditorType == UserAuditorType.mui) {
+      if (reg.statusCheckedMui) return checkedWidget;
       else return uncheckedWidget;
     }
 
@@ -133,6 +139,10 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                         PopupMenuItem(
                           child: Text('Review Tempat Bisnis', style: popupItemStyle),
                           value: 'review-place'
+                        ),
+                        PopupMenuItem(
+                          child: Text('Check SJH by MUI', style: popupItemStyle),
+                          value: 'check-sjh-mui'
                         )
                       ],
                       onSelected: (String value) {
@@ -153,6 +163,11 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                           case 'review-place':
                             Navigator.of(context).pushNamed('/auditor/check-sjh',
                               arguments: { 'id': reg.id, 'checkType': 'review-place' }
+                            );
+                            break;
+                          case 'check-sjh-mui':
+                            Navigator.of(context).pushNamed('/auditor/check-sjh-mui',
+                              arguments: { 'id': reg.id }
                             );
                             break;
                         }
