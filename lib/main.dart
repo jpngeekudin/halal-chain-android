@@ -33,6 +33,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_produksi_p
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_simulasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_stok_barang_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_team_assign_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_qr_view_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_registrasi_sjh_page.dart';
 
 void main() {
@@ -100,6 +101,7 @@ class MyApp extends StatelessWidget {
 
         '/umkm/simulasi': (context) => UmkmSimulasiPage(),
         '/umkm/registrasi-sjh': (context) => UmkmRegistrasiSjhPage(),
+        '/umkm/qr-view': (context) => UmkmQrViewPage(),
 
         '/auditor/daftar-sjh': (context) => AuditorRegistratorListPage(),
         '/auditor/check-sjh': (context) => AuditorCheckSjhPage(),

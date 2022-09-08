@@ -1,3 +1,5 @@
+import 'package:halal_chain/helpers/utils_helper.dart';
+
 class UmkmRegistrator {
   late String id;
   late String username;
@@ -22,7 +24,7 @@ class UmkmRegistrator {
     username = json['username'];
     statusRegistration = json['status_registration'];
     statusCheckByBpjph = json['status_check_by_BPJPH'];
-    statusLphCheckField = json['status_LPH_check_field'];
+    statusLphCheckField = toBool(json['status_LPH_check_field']);
     statusCheckedMui = json['status_checked_MUI'];
     certificateStatus = json['Certificate_status'];
   }

@@ -49,4 +49,5 @@ abstract class ApiList {
   static String coreMuiGetData = '$apiPrefix/core/mui_get_data';
   static String coreMuiCheckingData = '$apiPrefix/core/mui_checking_data';
   static String coreBpjphInsertCert = '$apiPrefix/core/bpjph_insert_certificate_data';
+  static String coreQrDetail = '$apiPrefix/core/qr_detail';
 }

@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -34,4 +35,8 @@ Future<File> uint8ListToFile(Uint8List src) async {
   final file = await File('${tempDir.path}/image.png').create();
   file.writeAsBytesSync(src);
   return file;
+}
+
+bool toBool(dynamic value) {
+  return ["", null, false, 0].contains(value);
 }

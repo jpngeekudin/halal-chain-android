@@ -30,9 +30,9 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
       });
     }
 
-    catch(err) {
+    catch(err, trace) {
       final logger = Logger();
-      logger.e(err);
+      logger.e(trace);
       String message = 'Terjadi kesalahan';
       if (err is DioError) message = err.response?.data?['message'] ?? message;
       final snackBar = SnackBar(content: Text(message));

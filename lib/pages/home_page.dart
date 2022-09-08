@@ -197,6 +197,15 @@ class _HomePageState extends State<HomePage> {
                                       route: '/umkm/registrasi-sjh',
                                     ),
                                   ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: HomeItemWidget(
+                                      title: 'Lihat QR',
+                                      subtitle: 'Lihat QR dari sertifikat yang sudah dibuat',
+                                      isDone: true,
+                                      route: '/umkm/qr-view',
+                                    ),
+                                  ),
                                 ],
                               );
                             }
