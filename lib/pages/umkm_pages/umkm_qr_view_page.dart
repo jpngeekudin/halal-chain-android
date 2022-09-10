@@ -15,6 +15,7 @@ class UmkmQrViewPage extends StatefulWidget {
 }
 
 class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
+
   final _logger = Logger();
 
   Future _getQrDetail() async {
@@ -44,18 +45,22 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
         title: Text('View QR'),
       ),
       body: SafeArea(
-        child: Center(
-          child: FutureBuilder(
-            future: _getQrDetail(),
-            builder:(context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                QrDetail qrDetail = snapshot.data;
-                return Wrap(
-                  direction: Axis.vertical,
-                  crossAxisAlignment: WrapCrossAlignment.center,
+        child: FutureBuilder(
+          future: _getQrDetail(),
+          builder:(context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              QrDetail qrDetail = snapshot.data;
+              final umkmId = qrDetail.profile.id;
+              final certified = qrDetail.core.certificate.status;
+              final certificateImageUrl = ApiList.utilLoadFile + '?image_name=' + qrDetail.core.certificate.data;
+
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    SizedBox(height: 100),
                     QrImage(
-                      data: 'hibikekoinouta',
+                      data: umkmId,
                       version: QrVersions.auto,
                       size: 200
                     ),
@@ -64,15 +69,38 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
                       fontWeight: FontWeight.bold,
                       fontSize: 24
                     )),
+                    SizedBox(height: 10),
+                    certified
+                      ? Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Icon(Icons.check_circle_outline, color: Colors.green),
+                          SizedBox(width: 5),
+                          Text('Certified')
+                        ],
+                      )
+                      : Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Icon(Icons.close_rounded, color: Colors.red),
+                          SizedBox(width: 5),
+                          Text('Not Certified')
+                        ],
+                      ),
+                    SizedBox(height: 50),
+                    Image.network(certificateImageUrl, width: 400,),
+                    SizedBox(height: 50)
                   ],
-                );
-              }
+                ),
+              );
+            }
 
-              else {
-                return CircularProgressIndicator();
-              }
-            },
-          ),
+            else {
+              return Center(
+                child: CircularProgressIndicator()
+              );
+            }
+          },
         ),
       ),
     );

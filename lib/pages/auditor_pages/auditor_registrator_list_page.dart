@@ -60,7 +60,7 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
     final uncheckedWidget = Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        Icon(Icons.watch_later_outlined, color: Colors.grey[600]),
+        Icon(Icons.watch_later_outlined, color: Colors.grey[600], size: 16),
         SizedBox(width: 5),
         Text('Not Checked' + byLabel, style: TextStyle(
           fontSize: 10
@@ -69,21 +69,36 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
     );
 
     if (_auditorType == UserAuditorType.bpjph) {
-      if (reg.statusCheckByBpjph) return checkedWidget;
+      if (reg.statusCheckByBpjph && reg.lphId.isNotEmpty) return checkedWidget;
       else return uncheckedWidget;
     }
 
     else if (_auditorType == UserAuditorType.lph) {
-      if (reg.statusLphCheckField) return checkedWidget;
+      if (reg.statusCheckByLph && reg.statusLphCheckField == 'approved') return checkedWidget;
       else return uncheckedWidget;
     }
 
     else if (_auditorType == UserAuditorType.mui) {
-      if (reg.statusCheckedMui) return checkedWidget;
+      if (reg.statusCheckedMui && reg.certificateStatus) return checkedWidget;
       else return uncheckedWidget;
     }
 
     else return Container();
+  }
+
+  PopupMenuItem<String> _getPopupMenuItem(String value, String label, [bool done = false]) {
+    return PopupMenuItem(
+      child: Wrap(
+        children: [
+          done
+            ? Icon(Icons.check_circle_outline, size: 16, color: Colors.green)
+            : Icon(Icons.watch_later_outlined, size: 16),
+          SizedBox(width: 5),
+          Text(label, style: popupItemStyle),
+        ],
+      ),
+      value: value
+    );
   }
 
   Future _getAuditorType() async {
@@ -124,59 +139,56 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                     trailing: PopupMenuButton(
                       icon: Icon(Icons.more_horiz_outlined),
                       itemBuilder: (context) => [
-                        PopupMenuItem(
-                          child: Text('Check SJH by BPJPH', style: popupItemStyle),
-                          value: 'check-sjh-bpjph'
-                        ),
-                        PopupMenuItem(
-                          child: Text('Appoint LPH', style: popupItemStyle),
-                          value: 'appoint-lph'
-                        ),
-                        PopupMenuItem(
-                          child: Text('Check SJH by LPH', style: popupItemStyle),
-                          value: 'check-sjh-lph'
-                        ),
-                        PopupMenuItem(
-                          child: Text('Review Tempat Bisnis', style: popupItemStyle),
-                          value: 'review-place'
-                        ),
-                        PopupMenuItem(
-                          child: Text('Check SJH by MUI', style: popupItemStyle),
-                          value: 'check-sjh-mui'
-                        ),
-                        PopupMenuItem(
-                          child: Text('Upload Certificate', style: popupItemStyle),
-                          value: 'upload-cert'
-                        ),
+
+                        // if user bpjph
+                        if (_auditorType == UserAuditorType.bpjph)
+                          ...[
+                            _getPopupMenuItem('check-sjh-bpjph', 'Check SJH by BPJPH', reg.statusCheckByBpjph),
+                            _getPopupMenuItem('appoint-lph', 'Appoint LPH', reg.lphId.isNotEmpty),
+                          ]
+
+                        // if user lph
+                        else if (_auditorType == UserAuditorType.lph)
+                          ...[
+                            _getPopupMenuItem('check-sjh-lph', 'Check SJH by LPH',  reg.statusCheckByLph),
+                            _getPopupMenuItem('review-place', 'Review Tempat Bisnis', reg.statusLphCheckField == 'approved'),
+                          ]
+
+                        // if user mui
+                        else if (_auditorType == UserAuditorType.mui)
+                          ...[
+                            _getPopupMenuItem('check-sjh-mui', 'Check SJH by MUI', reg.statusCheckedMui),
+                            _getPopupMenuItem('upload-cert', 'Upload Certificate', reg.certificateStatus),
+                          ],
                       ],
                       onSelected: (String value) {
                         switch (value) {
                           case 'check-sjh-bpjph':
                             Navigator.of(context).pushNamed('/auditor/check-sjh',
-                              arguments: { 'id': reg.id, 'checkType': 'check-bpjph' }
+                              arguments: { 'id': reg.umkmId, 'checkType': 'check-bpjph' }
                             );
                             break;
                           case 'appoint-lph':
-                            Navigator.of(context).pushNamed('/auditor/appoint-lph', arguments: { 'id': reg.id });
+                            Navigator.of(context).pushNamed('/auditor/appoint-lph', arguments: { 'id': reg.umkmId });
                             break;
                           case 'check-sjh-lph':
                             Navigator.of(context).pushNamed('/auditor/check-sjh',
-                              arguments: { 'id': reg.id, 'checkType': 'check-lph' }
+                              arguments: { 'id': reg.umkmId, 'checkType': 'check-lph' }
                             );
                             break;
                           case 'review-place':
                             Navigator.of(context).pushNamed('/auditor/check-sjh',
-                              arguments: { 'id': reg.id, 'checkType': 'review-place' }
+                              arguments: { 'id': reg.umkmId, 'checkType': 'review-place' }
                             );
                             break;
                           case 'check-sjh-mui':
                             Navigator.of(context).pushNamed('/auditor/check-sjh-mui',
-                              arguments: { 'id': reg.id }
+                              arguments: { 'id': reg.umkmId }
                             );
                             break;
                           case 'upload-cert':
                             Navigator.of(context).pushNamed('/auditor/upload-cert',
-                              arguments: { 'id': reg.id }
+                              arguments: { 'id': reg.umkmId }
                             );
                             break;
                         }

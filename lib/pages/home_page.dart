@@ -27,6 +27,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_stok_baran
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_team_assign_page.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:halal_chain/widgets/home_item_widget.dart';
+import 'package:logger/logger.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({ Key? key }) : super(key: key);
@@ -43,18 +44,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Map<String, dynamic>?> _getUserData(BuildContext context) async {
-    final storage = FlutterSecureStorage();
-    final userDataStr = await storage.read(key: 'user');
-    if (userDataStr == null) {
-      return { 'username': 'N/A' };
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(builder: (context) => LoginPage()),
-      // );
+    try {
+      final storage = FlutterSecureStorage();
+      final userDataStr = await storage.read(key: 'user');
+      if (userDataStr == null) {
+        return { 'username': 'N/A' };
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(builder: (context) => LoginPage()),
+        // );
+      }
+
+      else {
+        final userData = jsonDecode(userDataStr);
+        return userData;
+      }
     }
 
-    else {
-      final userData = jsonDecode(userDataStr);
-      return userData;
+    catch(err, trace) {
+      final logger = Logger();
+      logger.e(trace);
     }
   }
 

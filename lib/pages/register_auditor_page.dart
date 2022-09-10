@@ -106,6 +106,7 @@ class _RegisterAuditorPageState extends State<RegisterAuditorPage> {
         options: [
           FormConfigOption('lph', 'LPH'),
           FormConfigOption('bpjph', 'BPJPH'),
+          FormConfigOption('mui', 'MUI')
         ]
       ),
       FormConfig(

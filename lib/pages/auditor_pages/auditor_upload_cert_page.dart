@@ -17,6 +17,8 @@ class AuditorUploadCertPage extends StatefulWidget {
 
 class _AuditorUploadCertPageState extends State<AuditorUploadCertPage> {
 
+  final _expireController = TextEditingController();
+  DateTime? _expireModel;
   File? _certificateModel;
 
   Future _submit() async {
@@ -35,7 +37,8 @@ class _AuditorUploadCertPageState extends State<AuditorUploadCertPage> {
       final uploadImage = await core.genericPost(ApiList.imageUpload, null, paramsImage);
       final params = {
         'umkm_id': umkmId,
-        'cert_id': uploadImage.data
+        'cert_id': uploadImage.data,
+        'expire': _expireModel?.millisecondsSinceEpoch,
       };
       final response = await core.genericPost(ApiList.coreBpjphInsertCert, null, params);
       Navigator.of(context).pop();
@@ -61,6 +64,17 @@ class _AuditorUploadCertPageState extends State<AuditorUploadCertPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                getInputWrapper(
+                  label: 'Expire',
+                  input: getInputDate(
+                    label: 'Expire',
+                    controller: _expireController,
+                    context: context,
+                    onChanged: (pickedDate) {
+                      setState(() => _expireModel = pickedDate);
+                    }
+                  ),
+                ),
                 getInputWrapper(
                   label: 'Certificate Image',
                   input: getInputFile(

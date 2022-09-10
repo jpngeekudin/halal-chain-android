@@ -4,6 +4,7 @@ import 'package:halal_chain/helpers/auth_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
 import 'package:halal_chain/helpers/http_helper.dart';
 import 'package:halal_chain/helpers/typography_helper.dart';
+import 'package:halal_chain/models/qr_model.dart';
 import 'package:halal_chain/models/umkm_mui_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
@@ -17,7 +18,7 @@ class AuditorCheckSjhMuiPage extends StatefulWidget {
 
 class _AuditorCheckSjhMuiPageState extends State<AuditorCheckSjhMuiPage> {
 
-  UmkmMuiData? _muiData;
+  QrDetailCore? _muiData;
   String _statusModel = '';
   final _descriptionController = TextEditingController();
 
@@ -30,7 +31,7 @@ class _AuditorCheckSjhMuiPageState extends State<AuditorCheckSjhMuiPage> {
       final params = { 'umkm_id': id };
       final response = await core.genericGet(ApiList.coreMuiGetData, params);
       setState(() {
-        _muiData = UmkmMuiData.fromJson(response.data);
+        _muiData = QrDetailCore.fromJson(response.data);
       });
     }
 
@@ -111,13 +112,13 @@ class _AuditorCheckSjhMuiPageState extends State<AuditorCheckSjhMuiPage> {
                 if (_muiData == null) CircularProgressIndicator()
                 else ...[
                   _getSjhDataTile('ID', _muiData?.id),
-                  _getSjhDataTile('Status Registrasi', _muiData?.statusRegistration),
-                  _getSjhDataTile('Checked by BPJPH', _muiData?.statusCheckByBpjph),
-                  _getSjhDataTile('BPJPH Note', _muiData?.descCheckByBpjph),
-                  _getSjhDataTile('LPH ID', _muiData?.lphAppointment.lphId),
-                  _getSjhDataTile('Checked by LPH', _muiData?.lphCheckingDataStatus),
-                  _getSjhDataTile('LPH Note', _muiData?.lphCheckingDataDesc),
-                  _getSjhDataTile('LPH Location Survey', _muiData?.lphReviewStatus),
+                  _getSjhDataTile('Status Registrasi', _muiData?.registration.status),
+                  _getSjhDataTile('Checked by BPJPH', _muiData?.bpjphChecked.status),
+                  _getSjhDataTile('BPJPH Note', _muiData?.bpjphChecked.desc),
+                  _getSjhDataTile('Selected LPH', _muiData?.lphAppointment.lphId),
+                  _getSjhDataTile('Checked by LPH', _muiData?.lphChecked.reviewStatus),
+                  _getSjhDataTile('LPH Note', _muiData?.lphChecked.desc),
+                  _getSjhDataTile('LPH Location Survey', _muiData?.lphChecked.surveyLocation),
                 ],
                 SizedBox(height: 30),
 

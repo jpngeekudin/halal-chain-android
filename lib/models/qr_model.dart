@@ -56,16 +56,16 @@ class QrDetail {
 // QR DETAIL CORE
 
 class QrDetailCore {
-  String id;
-  String prevId;
-  String umkmId;
-  QrDetailCoreRegistration registration;
-  QrDetailCoreBpjphChecked bpjphChecked;
-  QrDetailCoreLphAppointment lphAppointment;
-  QrDetailCoreLphChecked lphChecked;
-  QrDetailCoreMui mui;
-  QrDetailCoreCertificate certificate;
-  String qrData;
+  late String id;
+  late String prevId;
+  late String umkmId;
+  late QrDetailCoreRegistration registration;
+  late QrDetailCoreBpjphChecked bpjphChecked;
+  late QrDetailCoreLphAppointment lphAppointment;
+  late QrDetailCoreLphChecked lphChecked;
+  late QrDetailCoreMui mui;
+  late QrDetailCoreCertificate certificate;
+  late String qrData;
 
   QrDetailCore({
     required this.id,
@@ -79,6 +79,48 @@ class QrDetailCore {
     required this.certificate,
     required this.qrData,
   });
+
+  QrDetailCore.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
+    prevId = json['prev_id'];
+    umkmId = json['umkm_id'];
+    registration = QrDetailCoreRegistration(
+      json['registration']['status'],
+      json['registration']['date']
+    );
+    bpjphChecked = QrDetailCoreBpjphChecked(
+      json['bpjph_checked']['status'],
+      json['bpjph_checked']['desc'],
+      json['bpjph_checked']['result'],
+      json['bpjph_checked']['date'],
+    );
+    lphAppointment = QrDetailCoreLphAppointment(
+      json['lph_appointment']['bpjph_id'],
+      json['lph_appointment']['lph_id'],
+      json['lph_appointment']['date'],
+    );
+    lphChecked = QrDetailCoreLphChecked(
+      toBool(json['lph_checked']['status']),
+      json['lph_checked']['desc'],
+      json['lph_checked']['survey_location'],
+      toBool(json['lph_checked']['review_status']),
+      toBool(json['lph_checked']['to_mui']),
+      json['lph_checked']['date'],
+    );
+    mui = QrDetailCoreMui(
+      json['mui']['checked_status'],
+      json['mui']['decision_desc'],
+      json['mui']['approved'],
+      json['mui']['date'],
+    );
+    certificate = QrDetailCoreCertificate(
+      json['certificate']['data'],
+      json['certificate']['status'],
+      json['certificate']['created_date'],
+      json['certificate']['expired_date'],
+    );
+    qrData = json['QR_data'];
+  }
 }
 
 class QrDetailCoreRegistration {
@@ -134,7 +176,7 @@ class QrDetailCoreLphChecked {
 class QrDetailCoreMui {
   bool checkedStatus;
   String decisionDesc;
-  bool approved;
+  String approved;
   late DateTime date;
 
   QrDetailCoreMui(

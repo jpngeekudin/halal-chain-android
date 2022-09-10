@@ -81,14 +81,19 @@ class _AuditorCheckSjhPageState extends State<AuditorCheckSjhPage> {
       else params = {
         'umkm_id': umkmId,
         'lph_id': user!.id,
-        'result': _resultModel,
+        'status': _resultModel,
         'description': _descriptionController.text
       };
 
       String url;
       if (checkType == 'check-bpjph') url = ApiList.coreBpjphCheckingData;
       else if (checkType == 'check-lph') url = ApiList.coreLphCheckingData;
+      else if (checkType == 'review-place') url = ApiList.coreReviewBussinessPlace;
       else url = ApiList.coreBpjphCheckingData;
+
+      final logger = Logger();
+      logger.i(url);
+      logger.i(params);
 
       final response = await core.genericPost(url, null, params);
       Navigator.pop(context);
@@ -96,7 +101,7 @@ class _AuditorCheckSjhPageState extends State<AuditorCheckSjhPage> {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
-    catch(err) {
+    catch(err, trace) {
       String message = 'Terjadi kesalahan';
       if (err is DioError) message = err.response?.data?['message'] ?? message;
       final snackBar = SnackBar(content: Text(message));

@@ -32,6 +32,7 @@ abstract class ApiList {
   static String umkmMatriksProduk = '$apiPrefix/umkm/matriks_produk';
 
   static String imageUpload = '$apiPrefix/util/upload_files';
+  static String utilLoadFile = '$apiPrefix/util/load_image';
 
   static String simulasiGetBahan = '$apiPrefix/simulasi/get_bahan';
   static String simulasiInputBahan = '$apiPrefix/simulasi/input_bahan';

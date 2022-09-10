@@ -147,6 +147,7 @@ class UserAuditorData {
 
     if (json['type'] == 'lph') type = UserAuditorType.lph;
     else if (json['type'] == 'bpjph') type = UserAuditorType.bpjph;
+    else if (json['type'] == 'mui') type = UserAuditorType.mui;
     else type = UserAuditorType.lph;
 
     role = json['role'] ?? 'auditor';
