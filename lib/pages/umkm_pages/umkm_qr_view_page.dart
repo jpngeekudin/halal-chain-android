@@ -77,6 +77,7 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
       final logger = Logger();
       logger.e(err);
       logger.e(trace);
+      throw(err.toString());
     }
   }
 
@@ -92,67 +93,88 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
           builder:(context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               QrDetail qrDetail = snapshot.data;
-              final umkmId = qrDetail.profile.id;
-              final certified = qrDetail.core.certificate.status;
-              final certificateImageUrl = ApiList.utilLoadFile + '?image_name=' + qrDetail.core.certificate.data;
 
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 100),
-                    RepaintBoundary(
-                      key: _globalKey,
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        color: Colors.white,
-                        child: QrImage(
-                          data: umkmId,
-                          version: QrVersions.auto,
-                          size: 200
+              if (qrDetail.core != null) {
+                final umkmId = qrDetail.profile.id;
+                final certified = qrDetail.core!.certificate.status;
+                final certificateImageUrl = ApiList.utilLoadFile + '?image_name=' + qrDetail.core!.certificate.data;
+
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 100),
+                      RepaintBoundary(
+                        key: _globalKey,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          color: Colors.white,
+                          child: QrImage(
+                            data: umkmId,
+                            version: QrVersions.auto,
+                            size: 200
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(qrDetail.profile.companyName, style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24
-                    )),
-                    SizedBox(height: 10),
-                    certified
-                      ? Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Icon(Icons.check_circle_outline, color: Colors.green),
-                          SizedBox(width: 5),
-                          Text('Certified')
-                        ],
-                      )
-                      : Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Icon(Icons.close_rounded, color: Colors.red),
-                          SizedBox(width: 5),
-                          Text('Not Certified')
-                        ],
+                      SizedBox(height: 10),
+                      Text(qrDetail.profile.companyName, style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24
+                      )),
+                      SizedBox(height: 10),
+                      certified
+                        ? Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.check_circle_outline, color: Colors.green),
+                            SizedBox(width: 5),
+                            Text('Certified')
+                          ],
+                        )
+                        : Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.close_rounded, color: Colors.red),
+                            SizedBox(width: 5),
+                            Text('Not Certified')
+                          ],
+                        ),
+                      SizedBox(height: 10),
+                      ElevatedButton(
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.share, size: 16),
+                            SizedBox(width: 10),
+                            Text('Share'),
+                          ],
+                        ),
+                        onPressed: () => _shareQr(umkmId),
                       ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Icon(Icons.share, size: 16),
-                          SizedBox(width: 10),
-                          Text('Share'),
-                        ],
-                      ),
-                      onPressed: () => _shareQr(umkmId),
-                    ),
-                    SizedBox(height: 50),
-                    Image.network(certificateImageUrl, width: 400,),
-                    SizedBox(height: 50)
-                  ],
-                ),
+                      SizedBox(height: 50),
+                      Image.network(certificateImageUrl, width: 400,),
+                      SizedBox(height: 50)
+                    ],
+                  ),
+                );
+              }
+
+              else {
+                return Center(
+                  child: Text('UMKM has not been certified', style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[400]
+                  )),
+                );
+              }
+            }
+
+            else if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error.toString(), style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[400]
+                ))
               );
             }
 

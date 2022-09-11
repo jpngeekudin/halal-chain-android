@@ -3,53 +3,59 @@ import 'package:halal_chain/models/user_data_model.dart';
 
 class QrDetail {
   late UserUmkmData profile;
-  late QrDetailCore core;
+  late QrDetailCore? core;
 
   QrDetail(this.profile, this.core);
 
   QrDetail.fromJson(Map<String, dynamic> json) {
     profile = UserUmkmData.fromJSON(json['profile']);
-    core = QrDetailCore(
-      id: json['core']['_id'],
-      prevId: json['core']['prev_id'],
-      umkmId: json['core']['umkm_id'],
-      registration: QrDetailCoreRegistration(
-        json['core']['registration']['status'],
-        json['core']['registration']['date']
-      ),
-      bpjphChecked: QrDetailCoreBpjphChecked(
-        json['core']['bpjph_checked']['status'],
-        json['core']['bpjph_checked']['desc'],
-        json['core']['bpjph_checked']['result'],
-        json['core']['bpjph_checked']['date'],
-      ),
-      lphAppointment: QrDetailCoreLphAppointment(
-        json['core']['lph_appointment']['bpjph_id'],
-        json['core']['lph_appointment']['lph_id'],
-        json['core']['lph_appointment']['date'],
-      ),
-      lphChecked: QrDetailCoreLphChecked(
-        toBool(json['core']['lph_checked']['status']),
-        json['core']['lph_checked']['desc'],
-        json['core']['lph_checked']['survey_location'],
-        toBool(json['core']['lph_checked']['review_status']),
-        toBool(json['core']['lph_checked']['to_mui']),
-        json['core']['lph_checked']['date'],
-      ),
-      mui: QrDetailCoreMui(
-        json['core']['mui']['checked_status'],
-        json['core']['mui']['decision_desc'],
-        json['core']['mui']['approved'],
-        json['core']['mui']['date'],
-      ),
-      certificate: QrDetailCoreCertificate(
-        json['core']['certificate']['data'],
-        json['core']['certificate']['status'],
-        json['core']['certificate']['created_date'],
-        json['core']['certificate']['expired_date'],
-      ),
-      qrData: json['core']['QR_data']
-    );
+    if (json.containsKey('core') && json['core'] != null) {
+      core = QrDetailCore(
+        id: json['core']['_id'],
+        prevId: json['core']['prev_id'],
+        umkmId: json['core']['umkm_id'],
+        registration: QrDetailCoreRegistration(
+          json['core']['registration']['status'],
+          json['core']['registration']['date']
+        ),
+        bpjphChecked: QrDetailCoreBpjphChecked(
+          json['core']['bpjph_checked']['status'],
+          json['core']['bpjph_checked']['desc'],
+          json['core']['bpjph_checked']['result'],
+          json['core']['bpjph_checked']['date'],
+        ),
+        lphAppointment: QrDetailCoreLphAppointment(
+          json['core']['lph_appointment']['bpjph_id'],
+          json['core']['lph_appointment']['lph_id'],
+          json['core']['lph_appointment']['date'],
+        ),
+        lphChecked: QrDetailCoreLphChecked(
+          toBool(json['core']['lph_checked']['status']),
+          json['core']['lph_checked']['desc'],
+          json['core']['lph_checked']['survey_location'],
+          toBool(json['core']['lph_checked']['review_status']),
+          toBool(json['core']['lph_checked']['to_mui']),
+          json['core']['lph_checked']['date'],
+        ),
+        mui: QrDetailCoreMui(
+          json['core']['mui']['checked_status'],
+          json['core']['mui']['decision_desc'],
+          json['core']['mui']['approved'],
+          json['core']['mui']['date'],
+        ),
+        certificate: QrDetailCoreCertificate(
+          json['core']['certificate']['data'],
+          json['core']['certificate']['status'],
+          json['core']['certificate']['created_date'],
+          json['core']['certificate']['expired_date'],
+        ),
+        qrData: json['core']['QR_data']
+      );
+    }
+
+    else {
+      core = null;
+    }
   }
 }
 

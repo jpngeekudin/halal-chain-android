@@ -78,7 +78,7 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
                               color: Colors.grey[400]!,
                             )
                           ),
-                          child: data.core.certificate.status
+                          child: data.core?.certificate.status ?? false
                             ? Wrap(
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
@@ -97,9 +97,9 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
                         ),
                       ),
                       
-                      if (data.core.certificate.status) ...[
+                      if (data.core?.certificate.status ?? false) ...[
                         SizedBox(height: 20),
-                        Image.network(ApiList.utilLoadFile + '?image_name=' + data.core.certificate.data),
+                        Image.network(ApiList.utilLoadFile + '?image_name=' + data.core!.certificate.data),
                         SizedBox(height: 30),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -112,7 +112,7 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
                                   fontWeight: FontWeight.bold
                                 )),
                                 SizedBox(height: 10),
-                                Text(defaultDateFormat.format(data.core.certificate.createdDate))
+                                Text(defaultDateFormat.format(data.core!.certificate.createdDate))
                               ],
                             ),
                             Wrap(
@@ -123,7 +123,7 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
                                   fontWeight: FontWeight.bold
                                 )),
                                 SizedBox(height: 10),
-                                Text(defaultDateFormat.format(data.core.certificate.expiredDate))
+                                Text(defaultDateFormat.format(data.core!.certificate.expiredDate))
                               ],
                             ),
                           ],
