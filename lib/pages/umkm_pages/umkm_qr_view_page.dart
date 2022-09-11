@@ -1,11 +1,18 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/auth_helper.dart';
 import 'package:halal_chain/models/qr_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 class UmkmQrViewPage extends StatefulWidget {
   const UmkmQrViewPage({Key? key}) : super(key: key);
@@ -17,6 +24,7 @@ class UmkmQrViewPage extends StatefulWidget {
 class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
 
   final _logger = Logger();
+  GlobalKey _globalKey = GlobalKey();
 
   Future _getQrDetail() async {
     try {
@@ -35,6 +43,40 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
       if (err is DioError) message = err.response?.data?['message'] ?? message;
       final snackBar = SnackBar(content: Text(message));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  Future _shareQr(String qrData) async {
+    // try {
+    //   final image = await QrPainter(
+    //     data: qrData,
+    //     version: QrVersions.auto,
+    //   ).toImage(200);
+    // }
+
+    // catch(err) {
+
+    // }
+
+    try {
+      RenderRepaintBoundary boundary = _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+      final image = await boundary.toImage();
+      final byteData = await image.toByteData(format: ImageByteFormat.png);
+      final pngBytes = byteData?.buffer.asUint8List();
+      final tempDir = await getTemporaryDirectory();
+      final file = await File('${tempDir.path}/image.png').create();
+      await file.writeAsBytes(pngBytes!);
+
+      Share.shareFiles([file.path]);
+
+      // final channel = MethodChannel('channel:me.cocode.share/share');
+      // channel.invokeMethod('shareFile', 'qr.png');
+    }
+
+    catch(err, trace) {
+      final logger = Logger();
+      logger.e(err);
+      logger.e(trace);
     }
   }
 
@@ -59,10 +101,17 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(height: 100),
-                    QrImage(
-                      data: umkmId,
-                      version: QrVersions.auto,
-                      size: 200
+                    RepaintBoundary(
+                      key: _globalKey,
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        color: Colors.white,
+                        child: QrImage(
+                          data: umkmId,
+                          version: QrVersions.auto,
+                          size: 200
+                        ),
+                      ),
                     ),
                     SizedBox(height: 10),
                     Text(qrDetail.profile.companyName, style: TextStyle(
@@ -87,6 +136,18 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
                           Text('Not Certified')
                         ],
                       ),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Icon(Icons.share, size: 16),
+                          SizedBox(width: 10),
+                          Text('Share'),
+                        ],
+                      ),
+                      onPressed: () => _shareQr(umkmId),
+                    ),
                     SizedBox(height: 50),
                     Image.network(certificateImageUrl, width: 400,),
                     SizedBox(height: 50)
