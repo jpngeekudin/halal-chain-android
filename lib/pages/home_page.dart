@@ -246,6 +246,19 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ],
+
+                      if (userData.role == 'consumen')
+                        ...[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: HomeItemWidget(
+                              title: 'Scan QR',
+                              subtitle: 'Scan QR for checking halal certificate',
+                              isDone: true,
+                              route: '/consument/scan',
+                            ),
+                          )
+                        ],
                         
                       if (userData.role != 'umkm')
                         ...[
