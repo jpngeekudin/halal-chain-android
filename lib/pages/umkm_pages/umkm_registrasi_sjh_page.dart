@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/auth_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
 import 'package:halal_chain/services/core_service.dart';
 
 class UmkmRegistrasiSjhPage extends StatefulWidget {
@@ -19,8 +20,37 @@ class _UmkmRegistrasiSjhPageState extends State<UmkmRegistrasiSjhPage> {
       final user = await getUserData();
       final params = { 'creator_id': user!.id };
       final response = await core.genericPost(ApiList.coreRegistrationSjh, null, params);
-      final snackBar = SnackBar(content: Text('Sukses melakukan registrasi'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      showModalBottomSheet(
+        context: context,
+        shape: ModalBottomSheetShape,
+        builder: (context) {
+          return SizedBox(
+            height: 400,
+            child: Center(
+              child: Wrap(
+                direction: Axis.vertical,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Icon(Icons.check_circle_outline, size: 72, color: Colors.green),
+                  SizedBox(height: 20),
+                  Text('Registrasi Sukses', style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  )),
+                  SizedBox(height: 10),
+                  Text('Silahkan menunggu hasil registrasi', style: TextStyle(
+                    color: Colors.grey[600]
+                  ))
+                ],
+              ),
+            ),
+          );
+        }
+      ).then((value) {
+        Navigator.of(context).pop();
+      });
+
     }
 
     catch(err) {
