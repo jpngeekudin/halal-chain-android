@@ -4,11 +4,22 @@ import 'package:halal_chain/models/user_data_model.dart';
 class QrDetail {
   late UserUmkmData profile;
   late QrDetailCore? core;
+  late List<QrDetailPembelian> pembelian;
+  late List<QrDetailPembelian> pembelianImport;
+  late List<QrDetailStok> stokBarang;
 
-  QrDetail(this.profile, this.core);
+  QrDetail({
+    required this.profile,
+    this.core,
+    required this.pembelian,
+    required this.pembelianImport,
+    required this.stokBarang
+  });
 
   QrDetail.fromJson(Map<String, dynamic> json) {
     profile = UserUmkmData.fromJSON(json['profile']);
+
+    // core
     if (json.containsKey('core') && json['core'] != null) {
       core = QrDetailCore(
         id: json['core']['_id'],
@@ -51,11 +62,13 @@ class QrDetail {
         ),
         qrData: json['core']['QR_data']
       );
-    }
-
-    else {
+    } else {
       core = null;
     }
+
+    pembelian = json['pembelian'].map<QrDetailPembelian>((p) => QrDetailPembelian.fromJSON(p)).toList();
+    pembelianImport = json['pembelian_import'].map<QrDetailPembelian>((p) => QrDetailPembelian.fromJSON(p)).toList();
+    stokBarang = json['stok_barang'].map<QrDetailStok>((stok) => QrDetailStok.fromJSON(stok)).toList();
   }
 }
 
@@ -209,5 +222,59 @@ class QrDetailCoreCertificate {
   ) {
     createdDate = DateTime.fromMillisecondsSinceEpoch(createdTimestamp);
     expiredDate = DateTime.fromMillisecondsSinceEpoch(expiredTimestamp);
+  }
+}
+
+class QrDetailPembelian {
+  late DateTime tanggal;
+  late String namaDanMerk;
+  late String namaDanNegara;
+  late bool halal;  // "True" and "False"
+  late DateTime expBahan;
+  late String paraf;
+
+  QrDetailPembelian({
+    required this.tanggal,
+    required this.expBahan,
+    required this.namaDanMerk,
+    required this.namaDanNegara,
+    required this.halal,
+    required this.paraf
+  });
+
+  QrDetailPembelian.fromJSON(Map<String, dynamic> json) {
+    tanggal = DateTime.fromMillisecondsSinceEpoch(int.parse(json['Tanggal']));
+    expBahan = DateTime.fromMillisecondsSinceEpoch(int.parse(json['exp_bahan']));
+    namaDanMerk = json['nama_dan_merk'];
+    namaDanNegara = json['nama_dan_negara'];
+    halal = json['halal'].toLowerCase() == 'true';
+    paraf = json['paraf'];
+  }
+}
+
+class QrDetailStok {
+  late DateTime tanggalBeli;
+  late String namaBahan;
+  late String jumlahBahan;
+  late String jumlahKeluar;
+  late String stokSisa;
+  late String paraf;
+
+  QrDetailStok({
+    required this.tanggalBeli,
+    required this.namaBahan,
+    required this.jumlahBahan,
+    required this.jumlahKeluar,
+    required this.stokSisa,
+    required this.paraf
+  });
+
+  QrDetailStok.fromJSON(Map<String, dynamic> json) {
+    tanggalBeli = DateTime.fromMillisecondsSinceEpoch(int.parse(json['tanggal_beli']));
+    namaBahan = json['nama_bahan'];
+    jumlahBahan = json['jumlah_bahan'];
+    jumlahKeluar = json['jumlah_keluar'];
+    stokSisa = json['stok_sisa'];
+    paraf = json['paraf'];
   }
 }
