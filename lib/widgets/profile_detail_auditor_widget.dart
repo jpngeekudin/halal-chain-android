@@ -61,7 +61,7 @@ class ProfileDetailAuditorWidget extends StatelessWidget {
               Divider(),
               _getDetailItem('Username', auditorData.username),
               Divider(),
-              _getDetailItem('Type', auditorData.type),
+              _getDetailItem('Type', auditorData.getType()),
               Divider(),
               _getDetailItem('Role', auditorData.role),
               Divider(),
