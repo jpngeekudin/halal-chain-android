@@ -4,6 +4,7 @@ import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/models/qr_model.dart';
 import 'package:halal_chain/services/core_service.dart';
+import 'package:halal_chain/widgets/qr_trace_widget.dart';
 import 'package:logger/logger.dart';
 
 class ConsumentQrDetailPage extends StatefulWidget {
@@ -15,13 +16,14 @@ class ConsumentQrDetailPage extends StatefulWidget {
 
 class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
 
-  Future<QrDetail?> _getQrDetail() async {
-    final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final umkmId = args['umkmId'];
+  String _umkmId = '';
 
+  Future<QrDetail?> _getQrDetail() async {
+    if (_umkmId.isEmpty) return null;
+    
     try {
       final core = CoreService();
-      final params = { 'umkm_id': umkmId };
+      final params = { 'umkm_id': _umkmId };
       final response = await core.genericGet(ApiList.coreQrDetail, params);
       final qrDetail = QrDetail.fromJson(response.data);
       return qrDetail;
@@ -47,6 +49,18 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
         child: content
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero, () {
+      final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      setState(() {
+        _umkmId = args['umkmId'];
+      });
+    });
   }
 
   @override
@@ -319,6 +333,12 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
                           ],
                         ),
                       ),
+
+                      // product trace
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: QrTraceWidget(umkmId: _umkmId),
+                      )
                     ],
                   ),
                 ),
