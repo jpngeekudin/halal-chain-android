@@ -4,10 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/helpers/utils_helper.dart';
+import 'package:halal_chain/models/signature_model.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
+import 'package:halal_chain/widgets/signature_form_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:signature/signature.dart';
 
@@ -32,9 +35,25 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
   final _jumlahAwalController = TextEditingController();
   final _jumlahProdukKeluarController = TextEditingController();
   final _sisaStokController = TextEditingController();
-  final _parafController = SignatureController(
-    penStrokeWidth: 5
-  );
+  UserSignature? _parafModel;
+  // final _parafController = SignatureController(
+  //   penStrokeWidth: 5
+  // );
+
+  void _showModalSignature() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return SignatureFormWidget();
+      }
+    ).then((signature) {
+      setState(() {
+        _parafModel = signature;
+      });
+    });
+  }
 
   Widget _getProduksiCard(UmkmProduksi produksi) {
     final labelTextStyle = TextStyle(
@@ -125,14 +144,15 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
       _jumlahAwalController.text.isEmpty ||
       _jumlahProdukKeluarController.text.isEmpty ||
       _sisaStokController.text.isEmpty ||
-      _parafController.isEmpty
+      _parafModel == null
+      // _parafController.isEmpty
     ) {
       final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
 
-    final parafBytes = await _parafController.toPngBytes();
+    // final parafBytes = await _parafController.toPngBytes();
 
     final produksi = UmkmProduksi(
       tanggalProduksi: _tanggalProduksiModel!,
@@ -140,7 +160,8 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
       jumlahAwal: int.parse(_jumlahAwalController.text),
       jumlahProdukKeluar: int.parse(_jumlahProdukKeluarController.text),
       sisaStok: int.parse(_sisaStokController.text),
-      paraf: await uint8ListToFile(parafBytes!),
+      paraf: _parafModel!,
+      // paraf: await uint8ListToFile(parafBytes!),
     );
 
     setState(() {
@@ -150,7 +171,8 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
       _jumlahAwalController.text = '';
       _jumlahProdukKeluarController.text = '';
       _sisaStokController.text = '';
-      _parafController.clear();
+      _parafModel = null;
+      // _parafController.clear();
     });
   }
 
@@ -169,17 +191,18 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
       final core = CoreService();
       final document = await getUmkmDocument();
 
-      for (int i = 0; i < _listProduksi.length; i++) {
-        final produksi = _listProduksi[i];
-        final formData = FormData.fromMap({
-          'image': await MultipartFile.fromFile(
-            produksi.paraf.path,
-            filename: produksi.paraf.path.split('/').last
-          )
-        });
-        final upload = await core.genericPost(ApiList.imageUpload, null, formData);
-        produksi.setParafUrl(upload.data);
-      }
+      // upload each produksi signature image
+      // for (int i = 0; i < _listProduksi.length; i++) {
+      //   final produksi = _listProduksi[i];
+      //   final formData = FormData.fromMap({
+      //     'image': await MultipartFile.fromFile(
+      //       produksi.paraf.path,
+      //       filename: produksi.paraf.path.split('/').last
+      //     )
+      //   });
+      //   final upload = await core.genericPost(ApiList.imageUpload, null, formData);
+      //   produksi.setParafUrl(upload.data);
+      // }
 
       final params = {
         'id': document!.id,
@@ -189,7 +212,7 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
           'jumlah_awal': produksi.jumlahAwal,
           'jumlah_produk_keluar': produksi.jumlahProdukKeluar,
           'sisa_stok': produksi.sisaStok,
-          'paraf': produksi.uploadedParafUrl
+          'paraf': produksi.paraf.sign
         }).toList()
       };
       
@@ -292,9 +315,34 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
                   //     Text(_parafModel ? 'Ya' : 'Tidak')
                   //   ],
                   // ),
-                  input: getInputSignature(
-                    controller: _parafController,
-                    context: context
+                  // input: getInputSignature(
+                  //   controller: _parafController,
+                  //   context: context
+                  // )
+                  input: _parafModel == null ? InkWell(
+                    onTap: () => _showModalSignature(),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Icon(Icons.warning_rounded, color: Colors.grey[600]),
+                        SizedBox(width: 10),
+                        Text('Input Signature', style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600]
+                        ))
+                      ],
+                    ),
+                  )
+                  : Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Icon(Icons.check_circle_outline, color: Colors.green),
+                      SizedBox(width: 10),
+                      Text('Inputted', style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green
+                      ))
+                    ],
                   )
                 ),
                 Row(
