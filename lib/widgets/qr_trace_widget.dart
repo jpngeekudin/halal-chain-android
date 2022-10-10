@@ -289,7 +289,7 @@ class _QrTraceWidgetState extends State<QrTraceWidget> {
                 fontSize: 24,
                 color: Colors.grey[600]
               );
-              final message = snapshot.error.toString() ?? 'Something went wrong';
+              final message = snapshot.error?.toString() ?? 'Something went wrong';
               return Center(
                 child: Text(message, style: messageStyle,),
               );

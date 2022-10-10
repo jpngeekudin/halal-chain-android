@@ -33,6 +33,8 @@ abstract class ApiList {
 
   static String imageUpload = '$apiPrefix/util/upload_files';
   static String utilLoadFile = '$apiPrefix/util/load_image';
+  static String utilInputSignature = '$apiPrefix/util/input_signature';
+  static String utilLoadSignature = '$apiPrefix/util/load_signature';
 
   static String simulasiGetBahan = '$apiPrefix/simulasi/get_bahan';
   static String simulasiInputBahan = '$apiPrefix/simulasi/input_bahan';
