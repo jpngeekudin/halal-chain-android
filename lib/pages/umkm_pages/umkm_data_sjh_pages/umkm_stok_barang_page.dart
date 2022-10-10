@@ -7,8 +7,10 @@ import 'package:halal_chain/helpers/modal_helper.dart';
 import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/helpers/utils_helper.dart';
+import 'package:halal_chain/models/signature_model.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
+import 'package:halal_chain/widgets/signature_form_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:signature/signature.dart';
 
@@ -28,14 +30,30 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
   final _jumlahBahanController = TextEditingController();
   final _jumlahKeluarController = TextEditingController();
   final _stokSisaController = TextEditingController();
-  final _parafController = SignatureController(
-    penStrokeWidth: 5
-  );
+  UserSignature? _parafModel;
+  // final _parafController = SignatureController(
+  //   penStrokeWidth: 5
+  // );
   
   final _titleTextStyle = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 16
   );
+
+  void _showModalSignature(Function setSignatureState) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return SignatureFormWidget();
+      }
+    ).then((signature) {
+      setSignatureState(() {
+        _parafModel = signature;
+      });
+    });
+  }
 
   void _showModalStok() {
     showModalBottomSheet(
@@ -110,23 +128,52 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
                       style: inputTextStyle,
                     )
                   ),
-                  getInputWrapper(
-                    label: 'Paraf',
-                    // input: Wrap(
-                    //   crossAxisAlignment: WrapCrossAlignment.center,
-                    //   children: [
-                    //     Switch(
-                    //       value: _parafModel,
-                    //       onChanged: (value) {
-                    //         setState(() => _parafModel = value);
-                    //       },
-                    //     )
-                    //   ],
-                    // ),
-                    input: getInputSignature(
-                      controller: _parafController,
-                      context: context
-                    )
+                  StatefulBuilder(
+                    builder: (context, setSignatureState) {
+                      return getInputWrapper(
+                        label: 'Paraf',
+                        // input: Wrap(
+                        //   crossAxisAlignment: WrapCrossAlignment.center,
+                        //   children: [
+                        //     Switch(
+                        //       value: _parafModel,
+                        //       onChanged: (value) {
+                        //         setState(() => _parafModel = value);
+                        //       },
+                        //     )
+                        //   ],
+                        // ),
+                        // input: getInputSignature(
+                        //   controller: _parafController,
+                        //   context: context
+                        // )
+                        input: _parafModel == null ? InkWell(
+                          onTap: () => _showModalSignature(setSignatureState),
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Icon(Icons.warning_rounded, color: Colors.grey[600]),
+                              SizedBox(width: 10),
+                              Text('Input Signature', style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[600]
+                              ))
+                            ],
+                          ),
+                        )
+                        : Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Icon(Icons.check_circle_outline, color: Colors.green),
+                            SizedBox(width: 10),
+                            Text('Inputted', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green
+                            ))
+                          ],
+                        )
+                      );
+                    }
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -255,7 +302,7 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
   }
 
   void _addStok() async {
-    final parafBytes = await _parafController.toPngBytes();
+    // final parafBytes = await _parafController.toPngBytes();
 
     final stok = UmkmStokBarang(
       tanggalBeli: _tanggalBeliModel!,
@@ -263,7 +310,8 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
       jumlahBahan: _jumlahBahanController.text,
       jumlahKeluar: _jumlahKeluarController.text,
       stokSisa: _stokSisaController.text,
-      paraf: await uint8ListToFile(parafBytes!),
+      paraf: _parafModel!,
+      // paraf: await uint8ListToFile(parafBytes!),
     );
     
     setState(() => _listStok.add(stok));
@@ -273,7 +321,8 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
     _jumlahBahanController.text = '';
     _jumlahKeluarController.text = '';
     _stokSisaController.text = '';
-    _parafController.clear();
+    _parafModel = null;
+    // _parafController.clear();
   }
 
   void _removeStok(UmkmStokBarang stok) {
@@ -289,17 +338,19 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
 
     try {
       final core = CoreService();
-      for (int i = 0; i < _listStok.length; i++) {
-        final stok = _listStok[i];
-        final formData = FormData.fromMap({
-          'image': await MultipartFile.fromFile(
-            stok.paraf.path,
-            filename: stok.paraf.path.split('/').last
-          )
-        });
-        final upload = await core.genericPost(ApiList.imageUpload, null, formData);
-        stok.setParafUrl(upload.data);
-      }
+
+      // upload each stok signature image
+      // for (int i = 0; i < _listStok.length; i++) {
+      //   final stok = _listStok[i];
+      //   final formData = FormData.fromMap({
+      //     'image': await MultipartFile.fromFile(
+      //       stok.paraf.path,
+      //       filename: stok.paraf.path.split('/').last
+      //     )
+      //   });
+      //   final upload = await core.genericPost(ApiList.imageUpload, null, formData);
+      //   stok.setParafUrl(upload.data);
+      // }
 
       final document = await getUmkmDocument();
       final params = {
@@ -310,7 +361,8 @@ class _UmkmStokBarangPageState extends State<UmkmStokBarangPage> {
           'jumlah_bahan': stok.jumlahBahan,
           'jumlah_keluar': stok.jumlahKeluar,
           'stok_sisa': stok.stokSisa,
-          'paraf': stok.uploadedParafUrl
+          'paraf': stok.paraf.sign,
+          // 'paraf': stok.uploadedParafUrl
         }).toList(),
       };
 

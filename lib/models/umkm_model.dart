@@ -222,8 +222,9 @@ class UmkmStokBarang {
   String jumlahBahan;
   String jumlahKeluar;
   String stokSisa;
-  File paraf;
-  String? uploadedParafUrl;
+  UserSignature paraf;
+  // File paraf;
+  // String? uploadedParafUrl;
 
   UmkmStokBarang({
     required this.tanggalBeli,
@@ -234,9 +235,9 @@ class UmkmStokBarang {
     required this.paraf
   });
 
-  void setParafUrl(String url) {
-    uploadedParafUrl = url;
-  }
+  // void setParafUrl(String url) {
+  //   uploadedParafUrl = url;
+  // }
 }
 
 class UmkmProduksi {
