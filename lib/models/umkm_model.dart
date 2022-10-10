@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:halal_chain/models/signature_model.dart';
 import 'package:logger/logger.dart';
 
 class UmkmDocument {
@@ -196,7 +197,8 @@ class UmkmPembelianPemeriksaanBahan {
   String namaNegaraProdusen;
   bool adaDiDaftarBahanHalal;
   DateTime expDateBahan;
-  File paraf;
+  // File paraf;
+  UserSignature paraf;
   String? parafUploadedUrl;
 
   UmkmPembelianPemeriksaanBahan({
@@ -205,7 +207,8 @@ class UmkmPembelianPemeriksaanBahan {
     required this.namaNegaraProdusen,
     required this.adaDiDaftarBahanHalal,
     required this.expDateBahan,
-    required this.paraf
+    // required this.paraf
+    required this.paraf,
   });
 
   void setParafUrl(String url) {

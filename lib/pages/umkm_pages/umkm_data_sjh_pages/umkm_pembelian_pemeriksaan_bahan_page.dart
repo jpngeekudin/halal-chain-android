@@ -7,8 +7,10 @@ import 'package:halal_chain/helpers/modal_helper.dart';
 import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/helpers/umkm_helper.dart';
 import 'package:halal_chain/helpers/utils_helper.dart';
+import 'package:halal_chain/models/signature_model.dart';
 import 'package:halal_chain/models/umkm_model.dart';
 import 'package:halal_chain/services/core_service.dart';
+import 'package:halal_chain/widgets/signature_form_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:signature/signature.dart';
 
@@ -30,14 +32,30 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
   bool _adaDiDaftarBahanHalalModel = false;
   final _expDateBahanController = TextEditingController();
   DateTime? _expDateBahanModel;
-  final _parafController = SignatureController(
-    penStrokeWidth: 5,
-  );
+  UserSignature? _parafModel;
+  // final _parafController = SignatureController(
+  //   penStrokeWidth: 5,
+  // );
 
   final _titleTextStyle = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 16,
   );
+
+  void _showModalSignature() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return SignatureFormWidget();
+      }
+    ).then((signature) {
+      setState(() {
+        _parafModel = signature;
+      });
+    });
+  }
 
   void _showModalPembelian() {
     showModalBottomSheet(
@@ -157,10 +175,35 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
                     //     Text(_parafModel ? 'Ya' : 'Tidak')
                     //   ],
                     // ),
-                    input: getInputSignature(
-                      controller: _parafController,
-                      context: context
-                    ),
+                    // input: getInputSignature(
+                    //   controller: _parafController,
+                    //   context: context
+                    // ),
+                    input: _parafModel == null ? InkWell(
+                      onTap: () => _showModalSignature(),
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Icon(Icons.warning_rounded, color: Colors.grey[600]),
+                          SizedBox(width: 10),
+                          Text('Input Signature', style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[600]
+                          ))
+                        ],
+                      ),
+                    )
+                    : Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Icon(Icons.check_circle_outline, color: Colors.green),
+                        SizedBox(width: 10),
+                        Text('Inputted', style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green
+                        ))
+                      ],
+                    )
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -185,7 +228,8 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
                             _namaMerkBahanController.text.isEmpty ||
                             _namaNegaraProdusen.text.isEmpty ||
                             _expDateBahanModel == null ||
-                            _parafController.isEmpty
+                            // _parafController.isEmpty
+                            _parafModel == null
                           ) {
                             final snackBar = SnackBar(content: Text('Harap isi semua field yang dibutuhkan'));
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -208,7 +252,7 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
   }
 
   void _addBahan() async {
-    final parafBytes = await _parafController.toPngBytes();
+    // final parafBytes = await _parafController.toPngBytes();
 
     final bahan = UmkmPembelianPemeriksaanBahan(
       tanggal: _tanggalModel!,
@@ -216,7 +260,8 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
       namaMerkBahan: _namaMerkBahanController.text,
       namaNegaraProdusen: _namaNegaraProdusen.text,
       adaDiDaftarBahanHalal: _adaDiDaftarBahanHalalModel,
-      paraf: await uint8ListToFile(parafBytes!),
+      // paraf: await uint8ListToFile(parafBytes!),
+      paraf: _parafModel!,
     );
 
     setState(() => _listBahan.add(bahan));
@@ -227,7 +272,8 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
     _namaMerkBahanController.text = '';
     _namaNegaraProdusen.text = '';
     _adaDiDaftarBahanHalalModel = false;
-    _parafController.clear();
+    // _parafController.clear();
+    _parafModel = null;
   }
 
   void _removeBahan(UmkmPembelianPemeriksaanBahan bahan) {
@@ -245,17 +291,18 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
     final logger = Logger();
 
     try {
-      for (int i = 0; i < _listBahan.length; i++) {
-        final bahan = _listBahan[i];
-        final formData = FormData.fromMap({
-          'image': await MultipartFile.fromFile(
-            bahan.paraf.path,
-            filename: bahan.paraf.path.split('/').last
-          )
-        });
-        final upload = await core.genericPost(ApiList.imageUpload, null, formData);
-        bahan.setParafUrl(upload.data);
-      }
+      // upload each bahan paraf
+      // for (int i = 0; i < _listBahan.length; i++) {
+      //   final bahan = _listBahan[i];
+      //   final formData = FormData.fromMap({
+      //     'image': await MultipartFile.fromFile(
+      //       bahan.paraf.path,
+      //       filename: bahan.paraf.path.split('/').last
+      //     )
+      //   });
+      //   final upload = await core.genericPost(ApiList.imageUpload, null, formData);
+      //   bahan.setParafUrl(upload.data);
+      // }
 
       final document = await getUmkmDocument();
       final params = {
@@ -266,7 +313,7 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
           'nama_dan_negara': bahan.namaNegaraProdusen,
           'halal': bahan.adaDiDaftarBahanHalal,
           'exp_bahan': bahan.expDateBahan.millisecondsSinceEpoch,
-          'paraf': bahan.parafUploadedUrl
+          'paraf': bahan.paraf.sign
         }).toList()
       };
 
