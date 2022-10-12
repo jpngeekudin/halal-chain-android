@@ -2,9 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
+import 'package:halal_chain/helpers/modal_helper.dart';
 import 'package:halal_chain/models/qr_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:halal_chain/widgets/qr_trace_widget.dart';
+import 'package:halal_chain/widgets/review_form_widget.dart';
 import 'package:logger/logger.dart';
 
 class ConsumentQrDetailPage extends StatefulWidget {
@@ -48,6 +50,22 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
         padding: EdgeInsets.all(10),
         child: content
       ),
+    );
+  }
+
+  void _openReviewModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: ModalBottomSheetShape,
+      builder: (context) {
+        return ReviewFormWidget(
+          umkmId: _umkmId,
+          onSuccess: () {
+            Navigator.of(context).pop();
+          },
+        );
+      }
     );
   }
 
@@ -338,6 +356,17 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
                       Container(
                         margin: EdgeInsets.only(bottom: 20),
                         child: QrTraceWidget(umkmId: _umkmId),
+                      ),
+
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => _openReviewModal(),
+                            child: Text('Write Review'),
+                          ),
+                        )
                       )
                     ],
                   ),
