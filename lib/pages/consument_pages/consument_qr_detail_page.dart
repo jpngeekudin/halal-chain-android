@@ -7,6 +7,7 @@ import 'package:halal_chain/models/qr_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:halal_chain/widgets/qr_trace_widget.dart';
 import 'package:halal_chain/widgets/review_form_widget.dart';
+import 'package:halal_chain/widgets/review_list_widget.dart';
 import 'package:logger/logger.dart';
 
 class ConsumentQrDetailPage extends StatefulWidget {
@@ -63,6 +64,7 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
           umkmId: _umkmId,
           onSuccess: () {
             Navigator.of(context).pop();
+            setState(() {});
           },
         );
       }
@@ -367,6 +369,11 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
                             child: Text('Write Review'),
                           ),
                         )
+                      ),
+
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: ReviewListWidget(umkmId: _umkmId),
                       )
                     ],
                   ),
