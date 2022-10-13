@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_appoint_lph_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_check_sjh_mui_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_check_sjh_page.dart';
@@ -37,8 +40,20 @@ import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_stok_baran
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_team_assign_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_qr_view_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_registrasi_sjh_page.dart';
+import 'package:logger/logger.dart';
 
-void main() {
+// class DownloadClass {
+//   static void callback(String id, DownloadTaskStatus status, int progress) {
+//     final logger = Logger();
+//     logger.i('$id - $status - $progress%');
+//   }
+// }
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await FlutterDownloader.initialize(ignoreSsl: true);
+  // FlutterDownloader.registerCallback(DownloadClass.callback);
+  
   runApp(const MyApp());
 }
 

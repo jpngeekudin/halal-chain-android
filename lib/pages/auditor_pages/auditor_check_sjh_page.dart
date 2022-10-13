@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/auth_helper.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
@@ -8,6 +12,7 @@ import 'package:halal_chain/models/api_model.dart';
 import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/services/core_service.dart';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:recase/recase.dart';
 
 class AuditorCheckSjhPage extends StatefulWidget {
@@ -54,6 +59,54 @@ class _AuditorCheckSjhPageState extends State<AuditorCheckSjhPage> {
       final snackBar = SnackBar(content: Text(message));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       setState(() => _error = message);
+    }
+  }
+
+  void _downloadSjhDoc() async {
+    final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final umkmId = args['id'];
+
+    try {
+      Directory directory = Directory('/storage/emulated/0/Download');
+      if (!await directory.exists()) directory = (await getExternalStorageDirectory())!;
+
+      Logger logger = Logger();
+      String url = ApiList.generateDownloadDoc + '?umkm_id=$umkmId';
+      logger.i(url);
+      // final taskId = await FlutterDownloader.enqueue(
+      //   url: url,
+      //   savedDir: directory.path,
+      //   showNotification: true,
+      //   openFileFromNotification: true,
+      // );
+      final dio = Dio();
+      final res = await dio.get(url,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          validateStatus: (status) => status != null && status < 500
+        )
+      );
+
+      String contentDisposition = res.headers.value('content-disposition')!;
+      String filename = contentDisposition.substring(22, contentDisposition.length-1);
+      String fullPath = directory.path + '/$filename';
+
+      final file = await File(fullPath).create();
+      file.writeAsBytesSync(res.data);
+
+      // var raf = file.openSync(mode: FileMode.write);
+      // raf.writeFromSync(res.data);
+      // await raf.close();
+
+      final snackBar = SnackBar(content: Text('Success downloading file at $fullPath'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
+    catch(err, trace) {
+      final logger = Logger();
+      logger.e(err);
+      logger.e(trace);
     }
   }
 
@@ -109,9 +162,15 @@ class _AuditorCheckSjhPageState extends State<AuditorCheckSjhPage> {
     }
   }
 
+  // void _downloadCallback(String id, DownloadTaskStatus status, int progress) {
+  //   final send = IsolateNameServer.lookupPortByName('downloader_send_port');
+  //   send?.send([id, status, progress]);
+  // }
+
   @override
   void initState() {
     super.initState();
+    // FlutterDownloader.registerCallback(_downloadCallback);
   }
 
   @override
@@ -167,6 +226,16 @@ class _AuditorCheckSjhPageState extends State<AuditorCheckSjhPage> {
                       ],
                     );
                   }),
+                  SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => _downloadSjhDoc(),
+                        child: Text('Download Doc SJH')
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 30),
                   Text('Check Data', style: TextStyle(
                     fontWeight: FontWeight.bold,

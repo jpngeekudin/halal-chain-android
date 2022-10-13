@@ -56,4 +56,6 @@ abstract class ApiList {
   static String coreTracing = '$apiPrefix/core/tracing';
   static String coreCreateReview = '$apiPrefix/core/review';
   static String coreGetReview = '$apiPrefix/core/review_by_umkm';
+
+  static String generateDownloadDoc = '$apiPrefix/generate/download_doc';
 }
