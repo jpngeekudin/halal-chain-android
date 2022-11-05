@@ -21,8 +21,11 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
 
   Future _getRegistratorList() async {
     try {
+      final currentUser = await getUserAuditorData();
       final core = CoreService();
-      final response = await core.genericGet(ApiList.coreGetUmkmRegistered);
+      final lphId = currentUser?.type == UserAuditorType.bpjph ? 'all' : currentUser?.id;
+      final params = { 'lph_id': lphId };
+      final response = await core.genericGet(ApiList.coreGetUmkmRegistered, params);
       setState(() {
         _listRegistrator = response.data
           .map<UmkmRegistrator>((d) => UmkmRegistrator.fromJson(d))
@@ -131,11 +134,26 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
               shrinkWrap: true,
               children: [
                 ..._listRegistrator.map((reg) {
+                  late String assigned;
+                  if (reg.lphId.isNotEmpty) assigned = 'Assigned to ' + reg.lphId;
+                  else assigned = 'Not assigned to any LPH';
+
                   return ListTile(
                     title: Text('@' + reg.username, style: TextStyle(
                       fontWeight: FontWeight.bold
                     )),
-                    subtitle: _getItemChecked(reg),
+                    subtitle: Wrap(
+                      direction: Axis.horizontal,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        _getItemChecked(reg),
+                        SizedBox(width: 10),
+                        Text(assigned, style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey[600]
+                        )),
+                      ]
+                    ),
                     trailing: PopupMenuButton(
                       icon: Icon(Icons.more_horiz_outlined),
                       itemBuilder: (context) => [
