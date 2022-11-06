@@ -21,6 +21,7 @@ abstract class ApiList {
   static String umkmCreateEvaluasiJawaban = '$apiPrefix/umkm/input_jawaban';
   static String umkmGetAuditSoal = '$apiPrefix/umkm/get_audit_internal';
   static String umkmCreateAuditJawaban = '$apiPrefix/umkm/jawaban_audit_internal';
+  static String umkmGetAuditList = '$apiPrefix/umkm/list_jawaban_audit_internal';
   static String umkmCreateDaftarHadirKaji = '$apiPrefix/umkm/daftar_hadir_kaji';
   static String umkmCreateFormPembelianPemeriksaan = '$apiPrefix/umkm/form_pembelian_pemeriksaan';
   static String umkmCreateFormPembelianPemeriksaanImport = '$apiPrefix/umkm/form_pembelian_pemeriksaan_import';

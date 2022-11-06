@@ -25,6 +25,8 @@ import 'package:halal_chain/pages/register_umkm_page.dart';
 import 'package:halal_chain/pages/splash_screen_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_audit_internal_2_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_audit_internal_list_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_audit_internal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_bahan_halal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_daftar_hadir_kaji_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_detail_insert_page.dart';
@@ -105,7 +107,9 @@ class MyApp extends StatelessWidget {
         '/umkm/data-sjh/penetapan-tim': (context) => UmkmTeamAssignPage(),
         '/umkm/data-sjh/bukti-pelaksanaan': (context) => UmkmPenilaianPage(),
         '/umkm/data-sjh/evaluasi': (context) => UmkmEvaluasiPage(),
-        '/umkm/data-sjh/audit-internal': (context) => UmkmAuditInternal2Page(),
+        // '/umkm/data-sjh/audit-internal': (context) => UmkmAuditInternal2Page(),
+        '/umkm/data-sjh/audit-internal': (context) => UmkmAuditInternalListPage(),
+        '/umkm/data-sjh/audit-internal/create': (context) => UmkmAuditInternal2Page(),
         '/umkm/data-sjh/daftar-hadir-kajian': (context) => UmkmDaftarHadirKajiPage(),
         '/umkm/data-sjh/pembelian-bahan': (context) => UmkmPembelianPemerikasaanBahanPage(),
         '/umkm/data-sjh/pembelian-bahan-import': (context) => UmkmPembelianPemerikasaanBahanPage(typeBahan: 'import'),

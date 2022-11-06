@@ -358,3 +358,61 @@ class UmkmSimulasiBahan {
     };
   }
 }
+
+class UmkmAuditInternal {
+  late String id;
+  late String docId;
+  late UmkmAuditInternalData data;
+  
+  UmkmAuditInternal({
+    required this.id,
+    required this.docId,
+    required this.data
+  });
+
+  UmkmAuditInternal.fromJSON(Map<String, dynamic> json) {
+    id = json['_id'];
+    docId = json['doc_id'];
+    data = UmkmAuditInternalData(
+      createdAt: DateTime.fromMillisecondsSinceEpoch(json['data']['created_at']),
+      auditee: json['data']['auditee'],
+      namaAuditor: json['data']['nama_auditor'],
+      bagianDiaudit: json['data']['bagian_diaudit'],
+      data: json['data']['data'].map<UmkmAuditInternalAnswer>((answer) {
+        return UmkmAuditInternalAnswer(
+          id: answer['id'],
+          jawaban: answer['jawaban'],
+          keterangan: answer['keterangan']
+        );
+      }).toList(),
+    );
+  }
+}
+
+class UmkmAuditInternalData {
+  DateTime createdAt;
+  String auditee;
+  String namaAuditor;
+  String bagianDiaudit;
+  List<UmkmAuditInternalAnswer> data;
+
+  UmkmAuditInternalData({
+    required this.createdAt,
+    required this.auditee,
+    required this.namaAuditor,
+    required this.bagianDiaudit,
+    required this.data
+  });
+}
+
+class UmkmAuditInternalAnswer {
+  String id;
+  bool jawaban;
+  String keterangan;
+
+  UmkmAuditInternalAnswer({
+    required this.id,
+    required this.jawaban,
+    required this.keterangan
+  });
+}
