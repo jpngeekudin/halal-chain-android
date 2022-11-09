@@ -163,6 +163,7 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                           ...[
                             _getPopupMenuItem('check-sjh-bpjph', 'Check SJH by BPJPH', reg.statusCheckByBpjph),
                             _getPopupMenuItem('appoint-lph', 'Appoint LPH', reg.lphId.isNotEmpty),
+                            _getPopupMenuItem('upload-cert', 'Upload Certificate', reg.certificateStatus),
                           ]
 
                         // if user lph
@@ -176,7 +177,6 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                         else if (_auditorType == UserAuditorType.mui)
                           ...[
                             _getPopupMenuItem('check-sjh-mui', 'Check SJH by MUI', reg.statusCheckedMui),
-                            _getPopupMenuItem('upload-cert', 'Upload Certificate', reg.certificateStatus),
                           ],
                       ],
                       onSelected: (String value) {
