@@ -245,19 +245,15 @@ class _HomePageState extends State<HomePage> {
                               route: '/auditor/daftar-sjh',
                             ),
                           ),
-                        ],
-
-                      if (userData.role == 'consumen')
-                        ...[
                           Container(
                             margin: EdgeInsets.only(bottom: 20),
                             child: HomeItemWidget(
-                              title: 'Scan QR',
-                              subtitle: 'Scan QR for checking halal certificate',
+                              title: 'Review',
+                              subtitle: 'See UMKM Review by Consument',
                               isDone: true,
-                              route: '/consument/scan',
+                              route: '/auditor/review',
                             ),
-                          )
+                          ),
                         ],
                         
                       if (userData.role != 'umkm')
@@ -284,6 +280,16 @@ class _HomePageState extends State<HomePage> {
                           //   ),
                           // )
                         ],
+
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: HomeItemWidget(
+                          title: 'Scan QR',
+                          subtitle: 'Scan QR for checking halal certificate',
+                          isDone: true,
+                          route: '/consument/scan',
+                        ),
+                      )
                     ],
                   );
                 }

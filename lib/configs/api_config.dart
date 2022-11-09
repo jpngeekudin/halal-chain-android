@@ -11,6 +11,7 @@ abstract class ApiList {
   static String getUserUmkm = '$apiPrefix/account/get_umkm';
   static String getUserAuditor = '$apiPrefix/account/get_auditor';
   static String getUserConsument = '$apiPrefix/account/get_consumen';
+  static String getUserUmkmAll = '$apiPrefix/account/get_all_umkm';
 
   static String umkmCreateInit = '$apiPrefix/umkm/create_init';
   static String umkmGetDocument = '$apiPrefix/umkm/get_ukmk_detail';
