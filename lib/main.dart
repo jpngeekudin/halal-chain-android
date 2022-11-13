@@ -44,6 +44,8 @@ import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_stok_baran
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_team_assign_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_qr_view_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_registrasi_sjh_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_detail_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_penilaian_page.dart';
 import 'package:logger/logger.dart';
 
 // class DownloadClass {
@@ -121,6 +123,9 @@ class MyApp extends StatelessWidget {
         '/umkm/data-sjh/kebersihan': (context) => UmkmKebersihanPage(),
         '/umkm/data-sjh/bahan-halal': (context) => UmkmBahanHalalPage(),
         '/umkm/data-sjh/matriks': (context) => UmkmMatriksProdukPage(),
+
+        '/umkm/view-sjh/detail-umkm': (context) => UmkmViewDetailPage(),
+        '/umkm/view-sjh/bukti-pelaksanaan': (context) => UmkmViewPenilaianPage(),
 
         '/umkm/simulasi': (context) => UmkmSimulasiPage(),
         '/umkm/registrasi-sjh': (context) => UmkmRegistrasiSjhPage(),

@@ -33,6 +33,19 @@ abstract class ApiList {
   static String umkmBarangHalal = '$apiPrefix/umkm/daftar_barang_halal';
   static String umkmMatriksProduk = '$apiPrefix/umkm/matriks_produk';
 
+  static String sjhDetailUmkm = '$apiPrefix/sjh/detail_umkm';
+  static String sjhBuktiPelaksanaan = '$apiPrefix/sjh/bukti_pelaksanaan';
+  static String sjhJawabanEvaluasi = '$apiPrefix/sjh/jawaban_evaluasi';
+  static String sjhJawabanAudit = '$apiPrefix/sjh/jawaban_audit';
+  static String sjhDaftarHasilKaji = '$apiPrefix/sjh/daftar_hasil_kaji';
+  static String sjhPembelian = '$apiPrefix/sjh/pembelian';
+  static String sjhStokBarang = '$apiPrefix/sjh/stok_barang';
+  static String sjhStokProduksi = '$apiPrefix/sjh/form_produksi';
+  static String sjhFormPemusnahan = '$apiPrefix/sjh/form_pemusnahan';
+  static String sjhFormKebersihan = '$apiPrefix/sjh/form_pengecekan_kebersihan';
+  static String sjhBarangHalal = '$apiPrefix/sjh/daftar_barang_halal';
+  static String sjhMatriksProduk = '$apiPrefix/sjh/matriks_produk';
+
   static String imageUpload = '$apiPrefix/util/upload_files';
   static String utilLoadFile = '$apiPrefix/util/load_image';
   static String utilInputSignature = '$apiPrefix/util/input_signature';

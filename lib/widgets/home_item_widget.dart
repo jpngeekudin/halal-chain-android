@@ -9,12 +9,14 @@ class HomeItemWidget extends StatefulWidget {
     required this.subtitle,
     this.isDone = false,
     this.route,
+    this.routeView,
   }) : super(key: key);
 
   final String title;
   final String subtitle;
   final bool isDone;
   final String? route;
+  final String? routeView;
 
   @override
   State<HomeItemWidget> createState() => _HomeItemWidgetState();
@@ -26,8 +28,11 @@ class _HomeItemWidgetState extends State<HomeItemWidget> {
     return  InkWell(
       onTap: () {
         try {
-          if (widget.route != null) {
-            Navigator.of(context).pushNamed(widget.route!).then((value) {
+          String? route = widget.isDone && widget.routeView != null
+            ? widget.routeView : widget.route;
+
+          if (route != null) {
+            Navigator.of(context).pushNamed(route).then((value) {
               setState(() { });
             });
           }
