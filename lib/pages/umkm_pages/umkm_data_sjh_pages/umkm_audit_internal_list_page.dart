@@ -69,6 +69,7 @@ class UmkmAuditInternalListPage extends StatelessWidget {
                     ),
                     child: ListView.separated(
                       shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       itemCount: audit.data.data.length + 1,
                       separatorBuilder: (context, index) => Divider(),
                       itemBuilder: (context, index) {

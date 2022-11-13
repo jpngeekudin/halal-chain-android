@@ -1,3 +1,5 @@
+// UMKM DETAIL
+
 class SjhUmkmDetail {
   late String namaKetua;
   late String noTelpKetua;
@@ -27,6 +29,28 @@ class SjhUmkmDetail {
     ttdKetua = json['ttd_ketua'];
   }
 }
+
+// PENETAPAN TIM
+
+class SjhPenetapanTimItem {
+  late String nama;
+  late String jabatan;
+  late String position;
+
+  SjhPenetapanTimItem({
+    required this.nama,
+    required this.jabatan,
+    required this.position
+  });
+
+  SjhPenetapanTimItem.fromJSON(Map<String, dynamic> json) {
+    nama = json['nama'];
+    jabatan = json['jabatan'];
+    position = json['position'];
+  }
+}
+
+// BUKTI PELAKSANAAN
 
 class SjhBuktiPelaksanaan {
   late DateTime tanggalPelaksanaan;
@@ -62,5 +86,76 @@ class SjhBuktiPelaksanaanData {
     required this.posisi,
     required this.ttd,
     required this.nilai
+  });
+}
+
+// EVALUASI
+
+class SjhEvaluasi {
+  late String nama;
+  late DateTime tanggal;
+  late Map<String, dynamic> data;
+
+  SjhEvaluasi({
+    required this.nama,
+    required this.tanggal,
+    required this.data
+  });
+
+  SjhEvaluasi.fromJSON(Map<String, dynamic> json) {
+    nama = json['nama'];
+    tanggal = DateTime.fromMillisecondsSinceEpoch(json['tanggal']);
+    data = json['data'];
+  }
+}
+
+// DAFTAR HADIR KAJI
+
+class SjhDaftarHadirKaji {
+  late DateTime tanggal;
+  late List<SjhDaftarHadirKajiOrang> orangList;
+  late List<SjhDaftarHadirKajiPembahasan> pembahasanList;
+
+  SjhDaftarHadirKaji({
+    required this.tanggal,
+    required this.orangList,
+    required this.pembahasanList
+  });
+
+  SjhDaftarHadirKaji.fromJSON(Map<String, dynamic> json) {
+    tanggal = DateTime.fromMillisecondsSinceEpoch(int.parse(json['tanggal']));
+    orangList = json['list_orang'].map<SjhDaftarHadirKajiOrang>((json) => SjhDaftarHadirKajiOrang.fromJSON(json)).toList();
+    pembahasanList = json['pembahasan'].map<SjhDaftarHadirKajiPembahasan>((json) => SjhDaftarHadirKajiPembahasan(
+      pembahasan: json['pembahasan'],
+      perbaikan: json['perbaikan']
+    )).toList();
+  }
+}
+
+class SjhDaftarHadirKajiOrang {
+  late String nama;
+  late String jabatan;
+  late String paraf;
+
+  SjhDaftarHadirKajiOrang({
+    required this.nama,
+    required this.jabatan,
+    required this.paraf
+  });
+
+  SjhDaftarHadirKajiOrang.fromJSON(Map<String, dynamic> json) {
+    nama = json['nama'];
+    jabatan = json['jabatan'];
+    paraf = json['paraf'];
+  }
+}
+
+class SjhDaftarHadirKajiPembahasan {
+  String pembahasan;
+  String perbaikan;
+
+  SjhDaftarHadirKajiPembahasan({
+    required this.pembahasan,
+    required this.perbaikan
   });
 }
