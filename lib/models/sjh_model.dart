@@ -159,3 +159,32 @@ class SjhDaftarHadirKajiPembahasan {
     required this.perbaikan
   });
 }
+
+// PEMBELIAN DAN PEMERIKSAAN BAHAN
+
+class SjhPembelianBahanItem {
+  late DateTime tanggal;
+  late String namaDanMerk;
+  late String namaDanNegara;
+  late bool halal;
+  late DateTime expBahan;
+  late String paraf;
+
+  SjhPembelianBahanItem({
+    required this.tanggal,
+    required this.namaDanMerk,
+    required this.namaDanNegara,
+    required this.halal,
+    required this.expBahan,
+    required this.paraf
+  });
+
+  SjhPembelianBahanItem.fromJSON(Map<String, dynamic> json) {
+    tanggal = DateTime.fromMillisecondsSinceEpoch(int.parse(json['Tanggal']));
+    namaDanMerk = json['nama_dan_merk'];
+    namaDanNegara = json['nama_dan_negara'];
+    halal = json['halal'].toString().toLowerCase() == 'true';
+    expBahan = DateTime.fromMillisecondsSinceEpoch(int.parse(json['exp_bahan']));
+    paraf = json['paraf'];
+  }
+}
