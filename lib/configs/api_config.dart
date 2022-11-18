@@ -45,7 +45,7 @@ abstract class ApiList {
   static String sjhStokProduksi = '$apiPrefix/sjh/form_produksi';
   static String sjhFormPemusnahan = '$apiPrefix/sjh/form_pemusnahan';
   static String sjhFormKebersihan = '$apiPrefix/sjh/form_pengecekan_kebersihan';
-  static String sjhBarangHalal = '$apiPrefix/sjh/daftar_barang_halal';
+  static String sjhBarangHalal = '$apiPrefix/sjh/daftar_bahan_halal';
   static String sjhMatriksProduk = '$apiPrefix/sjh/matriks_produk';
 
   static String imageUpload = '$apiPrefix/util/upload_files';

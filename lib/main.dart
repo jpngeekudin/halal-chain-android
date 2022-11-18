@@ -44,12 +44,18 @@ import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_stok_baran
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_team_assign_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_qr_view_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_registrasi_sjh_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_bahan_halal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_daftar_hadir_kaji_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_detail_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_evaluasi_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_kebersihan_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_matriks_produk_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_pembelian_bahan_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_pemusnahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_penetapan_tim_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_penilaian_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_produksi_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_stok_barang_page.dart';
 import 'package:logger/logger.dart';
 
 // class DownloadClass {
@@ -135,6 +141,12 @@ class MyApp extends StatelessWidget {
         '/umkm/view-sjh/daftar-hadir-kajian': (context) => UmkmViewDaftarHadirKajiPage(),
         '/umkm/view-sjh/pembelian-bahan': (context) => UmkmViewPembelianBahanPage(bahanType: 'non-import'),
         '/umkm/view-sjh/pembelian-bahan-import': (context) => UmkmViewPembelianBahanPage(bahanType: 'import'),
+        '/umkm/view-sjh/stok-bahan': (context) => UmkmViewStokBarangPage(),
+        '/umkm/view-sjh/produksi': (context) => UmkmViewProduksiPage(),
+        '/umkm/view-sjh/pemusnahan': (context) => UmkmViewPemusnahanPage(),
+        '/umkm/view-sjh/kebersihan': (context) => UmkmViewKebersihanPage(),
+        '/umkm/view-sjh/bahan-halal': (context) => UmkmViewBahanHalalPage(),
+        '/umkm/view-sjh/matriks': (context) => UmkmViewMatriksProdukPage(),
 
         '/umkm/simulasi': (context) => UmkmSimulasiPage(),
         '/umkm/registrasi-sjh': (context) => UmkmRegistrasiSjhPage(),
