@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
@@ -31,6 +33,8 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
   final _namaNegaraProdusen = TextEditingController();
   bool _adaDiDaftarBahanHalalModel = false;
   final _expDateBahanController = TextEditingController();
+  final _noSertifikatController = TextEditingController();
+  File? _strukPembelianModel;
   DateTime? _expDateBahanModel;
   UserSignature? _parafModel;
   // final _parafController = SignatureController(
@@ -116,25 +120,39 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
                       style: inputTextStyle,
                     )
                   ),
-                  getInputWrapper(
-                    label: 'Ada di Daftar Bahan Halal',
-                    input: StatefulBuilder(
-                      builder: (context, setSwitchState) {
-                        return Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Switch(
-                              value: _adaDiDaftarBahanHalalModel,
-                              onChanged: (value) {
-                                setSwitchState(() => _adaDiDaftarBahanHalalModel = value);
-                              },
+                  StatefulBuilder(
+                    builder: (context, setSwitchState) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          getInputWrapper(
+                            label: 'Ada di Daftar Bahan Halal',
+                            input: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Switch(
+                                  value: _adaDiDaftarBahanHalalModel,
+                                  onChanged: (value) {
+                                    setSwitchState(() => _adaDiDaftarBahanHalalModel = value);
+                                  },
+                                ),
+                                SizedBox(width: 10),
+                                Text(_adaDiDaftarBahanHalalModel ? 'Ya' : 'Tidak')
+                              ],
                             ),
-                            SizedBox(width: 10),
-                            Text(_adaDiDaftarBahanHalalModel ? 'Ya' : 'Tidak')
-                          ],
-                        );
-                      }
-                    )
+                          ),
+                          if (_adaDiDaftarBahanHalalModel) getInputWrapper(
+                            label: 'No. Sertifikat',
+                            input: TextField(
+                              controller: _noSertifikatController,
+                              decoration: getInputDecoration(label: 'No. Sertifikat'),
+                              style: inputTextStyle,
+                            )
+                          ),
+                        ],
+                      );
+                    }
                   ),
                   getInputWrapper(
                     label: 'Exp. Date Bahan',
@@ -159,6 +177,20 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
                         }
                       },
                     ),
+                  ),
+                  StatefulBuilder(
+                    builder: (context, setStrukState) {
+                      return getInputWrapper(
+                        label: 'Struk Pembelian',
+                        input: getInputFile(
+                          context: context,
+                          model: _strukPembelianModel,
+                          onChanged: ((file) {
+                            setStrukState(() => _strukPembelianModel = file);
+                          }),
+                        )
+                      );
+                    }
                   ),
                   getInputWrapper(
                     label: 'Paraf',
@@ -260,6 +292,8 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
       namaMerkBahan: _namaMerkBahanController.text,
       namaNegaraProdusen: _namaNegaraProdusen.text,
       adaDiDaftarBahanHalal: _adaDiDaftarBahanHalalModel,
+      noSertifikat: _noSertifikatController.text,
+      strukPembelian: _strukPembelianModel!,
       // paraf: await uint8ListToFile(parafBytes!),
       paraf: _parafModel!,
     );
@@ -272,6 +306,8 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
     _namaMerkBahanController.text = '';
     _namaNegaraProdusen.text = '';
     _adaDiDaftarBahanHalalModel = false;
+    _noSertifikatController.text = '';
+    _strukPembelianModel = null;
     // _parafController.clear();
     _parafModel = null;
   }
@@ -291,18 +327,16 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
     final logger = Logger();
 
     try {
-      // upload each bahan paraf
-      // for (int i = 0; i < _listBahan.length; i++) {
-      //   final bahan = _listBahan[i];
-      //   final formData = FormData.fromMap({
-      //     'image': await MultipartFile.fromFile(
-      //       bahan.paraf.path,
-      //       filename: bahan.paraf.path.split('/').last
-      //     )
-      //   });
-      //   final upload = await core.genericPost(ApiList.imageUpload, null, formData);
-      //   bahan.setParafUrl(upload.data);
-      // }
+      for (var i = 0; i < _listBahan.length; i++) {
+        final bahan = _listBahan[i];
+        final strukPembelianFormData = FormData.fromMap({
+          'image': await MultipartFile.fromFile(bahan.strukPembelian.path,
+            filename: bahan.strukPembelian.path.split('/').last
+          ),
+        });
+        final uploadStruk = await core.genericPost(ApiList.imageUpload, null, strukPembelianFormData);
+        bahan.setStrukUrl(uploadStruk.data);
+      }
 
       final document = await getUmkmDocument();
       final params = {
@@ -313,6 +347,8 @@ class _UmkmPembelianPemerikasaanBahanPageState extends State<UmkmPembelianPemeri
           'nama_dan_negara': bahan.namaNegaraProdusen,
           'halal': bahan.adaDiDaftarBahanHalal,
           'exp_bahan': bahan.expDateBahan.millisecondsSinceEpoch,
+          'no_sertifikat': bahan.noSertifikat,
+          'struk_pembelian': bahan.strukUploadedUrl,
           'paraf': bahan.paraf.sign
         }).toList()
       };

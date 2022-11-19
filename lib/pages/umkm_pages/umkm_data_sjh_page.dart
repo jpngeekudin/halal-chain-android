@@ -139,7 +139,7 @@ class _UmkmDataSjhPageState extends State<UmkmDataSjhPage> {
                         title: 'Pembelian dan Pemeriksaan Bahan',
                         subtitle: 'Mengisi daftar pembelian dan pemeriksaan bahan',
                         route: '/umkm/data-sjh/pembelian-bahan',
-                        routeView: '/umkm/view-sjh/pembelian-bahan',
+                        // routeView: '/umkm/view-sjh/pembelian-bahan',
                         isDone: document.pembelian,
                       ),
                     ),

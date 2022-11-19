@@ -197,7 +197,9 @@ class UmkmPembelianPemeriksaanBahan {
   String namaNegaraProdusen;
   bool adaDiDaftarBahanHalal;
   DateTime expDateBahan;
-  // File paraf;
+  String noSertifikat;
+  File strukPembelian;
+  String? strukUploadedUrl;
   UserSignature paraf;
   String? parafUploadedUrl;
 
@@ -207,12 +209,17 @@ class UmkmPembelianPemeriksaanBahan {
     required this.namaNegaraProdusen,
     required this.adaDiDaftarBahanHalal,
     required this.expDateBahan,
-    // required this.paraf
+    required this.noSertifikat,
+    required this.strukPembelian,
     required this.paraf,
   });
 
   void setParafUrl(String url) {
     parafUploadedUrl = url;
+  }
+
+  void setStrukUrl(String url) {
+    strukUploadedUrl = url;
   }
 }
 
