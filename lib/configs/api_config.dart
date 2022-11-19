@@ -53,10 +53,12 @@ abstract class ApiList {
   static String utilInputSignature = '$apiPrefix/util/input_signature';
   static String utilLoadSignature = '$apiPrefix/util/load_signature';
 
-  static String simulasiGetBahan = '$apiPrefix/simulasi/get_bahan';
-  static String simulasiInputBahan = '$apiPrefix/simulasi/input_bahan';
-  static String simulasiUpdateBahan = '$apiPrefix/simulasi/update_bahan';
-  static String simulasiSJH = '$apiPrefix/simulasi/simulasi_sjh';
+  // static String simulasiGetBahan = '$apiPrefix/simulasi/get_bahan';
+  // static String simulasiInputBahan = '$apiPrefix/simulasi/input_bahan';
+  // static String simulasiUpdateBahan = '$apiPrefix/simulasi/update_bahan';
+  // static String simulasiSJH = '$apiPrefix/simulasi/simulasi_sjh';
+  static String simulasiCreate = '$apiPrefix/simulasi/simulasi';
+  static String simulasiGet = '$apiPrefix/simulasi/get_simulasi';
 
   static String coreRegistrationSjh = '$apiPrefix/core/registration_sjh';
   static String coreGetUmkmRegistered = '$apiPrefix/core/get_umkm_registered';

@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_appoint_lph_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_check_sjh_mui_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_check_sjh_page.dart';
@@ -16,9 +13,6 @@ import 'package:halal_chain/pages/consument_pages/consument_scan_page.dart';
 import 'package:halal_chain/pages/home_page.dart';
 import 'package:halal_chain/pages/login_page.dart';
 import 'package:halal_chain/pages/profile_detail_page.dart';
-import 'package:halal_chain/pages/profile_edit_auditor_page.dart';
-import 'package:halal_chain/pages/profile_edit_consument_page.dart';
-import 'package:halal_chain/pages/profile_edit_umkm_page.dart';
 import 'package:halal_chain/pages/profile_page.dart';
 import 'package:halal_chain/pages/register_auditor_page.dart';
 import 'package:halal_chain/pages/register_consumen_page.dart';
@@ -28,7 +22,6 @@ import 'package:halal_chain/pages/splash_screen_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_audit_internal_2_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_audit_internal_list_page.dart';
-import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_audit_internal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_bahan_halal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_daftar_hadir_kaji_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_detail_insert_page.dart';
@@ -39,11 +32,11 @@ import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_pembelian_
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_pemusnahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_penilaian_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_produksi_page.dart';
-import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_simulasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_stok_barang_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_team_assign_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_qr_view_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_registrasi_sjh_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_simulasi_2_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_bahan_halal_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_daftar_hadir_kaji_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_view_sjh_pages/umkm_view_detail_page.dart';
@@ -148,7 +141,7 @@ class MyApp extends StatelessWidget {
         '/umkm/view-sjh/bahan-halal': (context) => UmkmViewBahanHalalPage(),
         '/umkm/view-sjh/matriks': (context) => UmkmViewMatriksProdukPage(),
 
-        '/umkm/simulasi': (context) => UmkmSimulasiPage(),
+        '/umkm/simulasi': (context) => UmkmSimulasi2Page(),
         '/umkm/registrasi-sjh': (context) => UmkmRegistrasiSjhPage(),
         '/umkm/qr-view': (context) => UmkmQrViewPage(),
 
