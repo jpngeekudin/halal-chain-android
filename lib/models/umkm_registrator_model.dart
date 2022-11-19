@@ -12,6 +12,7 @@ class UmkmRegistrator {
   late String statusLphCheckField;
   late bool statusCheckedMui;
   late bool certificateStatus;
+  late bool fatwaStatus;
 
   UmkmRegistrator({
     required this.id,
@@ -22,7 +23,8 @@ class UmkmRegistrator {
     required this.statusCheckByLph,
     required this.statusLphCheckField,
     required this.statusCheckedMui,
-    required this.certificateStatus
+    required this.certificateStatus,
+    required this.fatwaStatus
   });
 
   UmkmRegistrator.fromJson(Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class UmkmRegistrator {
     statusLphCheckField = json['status_LPH_check_field'];
     statusCheckedMui = json['status_checked_MUI'];
     certificateStatus = json['Certificate_status'];
+    fatwaStatus = ![null, false].contains(json['status_fatwa']);
   }
 
   Map<String, dynamic> toJson() {

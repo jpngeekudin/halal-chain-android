@@ -150,6 +150,7 @@ class MyApp extends StatelessWidget {
         '/auditor/check-sjh-mui': (context) => AuditorCheckSjhMuiPage(),
         '/auditor/appoint-lph': (context) => AuditorAppointLphPage(),
         '/auditor/upload-cert': (context) => AuditorUploadCertPage(),
+        '/auditor/upload-fatwa': (context) => AuditorUploadCertPage(type: 'mui'),
         '/auditor/review': (context) => AuditorReviewUserPage(),
         '/auditor/review/list': (context) => AuditorReviewPage(),
 

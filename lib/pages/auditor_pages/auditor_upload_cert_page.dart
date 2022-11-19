@@ -9,7 +9,8 @@ import 'package:halal_chain/helpers/typography_helper.dart';
 import 'package:halal_chain/services/core_service.dart';
 
 class AuditorUploadCertPage extends StatefulWidget {
-  const AuditorUploadCertPage({Key? key}) : super(key: key);
+  const AuditorUploadCertPage({Key? key, this.type = 'bpjph'}) : super(key: key);
+  final String type;
 
   @override
   State<AuditorUploadCertPage> createState() => _AuditorUploadCertPageState();
@@ -40,7 +41,11 @@ class _AuditorUploadCertPageState extends State<AuditorUploadCertPage> {
         'cert_id': uploadImage.data,
         'expire': _expireModel?.millisecondsSinceEpoch,
       };
-      final response = await core.genericPost(ApiList.coreBpjphInsertCert, null, params);
+
+      final url = widget.type == 'bpjph'
+        ? ApiList.coreBpjphInsertCert
+        : ApiList.coreMuiInsertFatwa;
+      final response = await core.genericPost(url, null, params);
       Navigator.of(context).pop();
       const snackBar = SnackBar(content: Text('Sukses menyimpan data'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -55,7 +60,7 @@ class _AuditorUploadCertPageState extends State<AuditorUploadCertPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload Cert')
+        title: Text(widget.type == 'bpjph' ? 'Upload Certificate' : 'Upload Fatwa')
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -76,7 +81,9 @@ class _AuditorUploadCertPageState extends State<AuditorUploadCertPage> {
                   ),
                 ),
                 getInputWrapper(
-                  label: 'Certificate Image',
+                  label: widget.type == 'bpjph'
+                    ? 'Certificate Image'
+                    : 'Fatwa Image',
                   input: getInputFile(
                     model: _certificateModel,
                     onChanged: (value) {

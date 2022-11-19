@@ -72,7 +72,7 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
     );
 
     if (_auditorType == UserAuditorType.bpjph) {
-      if (reg.statusCheckByBpjph && reg.lphId.isNotEmpty) return checkedWidget;
+      if (reg.statusCheckByBpjph && reg.lphId.isNotEmpty && reg.certificateStatus) return checkedWidget;
       else return uncheckedWidget;
     }
 
@@ -82,7 +82,7 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
     }
 
     else if (_auditorType == UserAuditorType.mui) {
-      if (reg.statusCheckedMui && reg.certificateStatus) return checkedWidget;
+      if (reg.statusCheckedMui && reg.fatwaStatus) return checkedWidget;
       else return uncheckedWidget;
     }
 
@@ -177,6 +177,7 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                         else if (_auditorType == UserAuditorType.mui)
                           ...[
                             _getPopupMenuItem('check-sjh-mui', 'Check SJH by MUI', reg.statusCheckedMui),
+                            _getPopupMenuItem('upload-fatwa', 'Upload Fatwa', reg.fatwaStatus),
                           ],
                       ],
                       onSelected: (String value) {
@@ -206,6 +207,11 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                             break;
                           case 'upload-cert':
                             Navigator.of(context).pushNamed('/auditor/upload-cert',
+                              arguments: { 'id': reg.umkmId }
+                            );
+                            break;
+                          case 'upload-fatwa':
+                            Navigator.of(context).pushNamed('/auditor/upload-fatwa',
                               arguments: { 'id': reg.umkmId }
                             );
                             break;
