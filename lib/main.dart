@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_appoint_lph_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_check_sjh_mui_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_check_sjh_page.dart';
+import 'package:halal_chain/pages/auditor_pages/auditor_pelaporan_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_registrator_list_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_review_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_review_user_page.dart';
@@ -154,6 +155,7 @@ class MyApp extends StatelessWidget {
         '/auditor/upload-fatwa': (context) => AuditorUploadCertPage(type: 'mui'),
         '/auditor/review': (context) => AuditorReviewUserPage(),
         '/auditor/review/list': (context) => AuditorReviewPage(),
+        '/auditor/pelaporan': (context) => AuditorPelaporanPage(),
 
         '/consument/scan': (context) => ConsumentScanPage(),
         '/consument/qr-detail': (context) => ConsumentQrDetailPage(),

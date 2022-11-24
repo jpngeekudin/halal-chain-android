@@ -236,6 +236,15 @@ class _HomePageState extends State<HomePage> {
                               route: '/auditor/review',
                             ),
                           ),
+                          Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: HomeItemWidget(
+                              title: 'Pelaporan',
+                              subtitle: 'See Pelaporan List',
+                              isDone: true,
+                              route: '/auditor/pelaporan',
+                            ),
+                          ),
                         ],
                         
                       if (userData.role != 'umkm')
