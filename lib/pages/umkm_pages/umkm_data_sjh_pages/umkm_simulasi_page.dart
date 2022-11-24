@@ -40,7 +40,8 @@ class _UmkmSimulasiPageState extends State<UmkmSimulasiPage> {
     try {
       final user = await getUserData();
       final params = { 'creator_id': user!.id };
-      final response = await _core.genericGet(ApiList.simulasiGetBahan, params);
+      // final response = await _core.genericGet(ApiList.simulasiGetBahan, params);
+      final response = await _core.genericGet('', params);
       _listBahanSubmitted = true;
       return response.data.map<UmkmSimulasiBahan>((d) => UmkmSimulasiBahan(
         bahan: d['bahan'],
@@ -203,7 +204,8 @@ class _UmkmSimulasiPageState extends State<UmkmSimulasiPage> {
         'first_insert_date': DateTime.now().millisecondsSinceEpoch,
         'detail_bahan': _listBahan!.map((bahan) => bahan.toJSON()).toList(),
       };
-      final url = _listBahanSubmitted ? ApiList.simulasiUpdateBahan : ApiList.simulasiInputBahan;
+      // final url = _listBahanSubmitted ? ApiList.simulasiUpdateBahan : ApiList.simulasiInputBahan;
+      const url = '';
       final response = await _core.genericPost(url, {}, params);
       _listBahanSubmitted = true;
       _logger.i(response.data);
@@ -234,7 +236,8 @@ class _UmkmSimulasiPageState extends State<UmkmSimulasiPage> {
         'creator_id': user!.id,
         'registered': true
       };
-      final response = await _core.genericPost(ApiList.simulasiSJH, params, {});
+      // final response = await _core.genericPost(ApiList.simulasiSJH, params, {});
+      final response = await _core.genericPost('', params, {});
       _logger.i(response.data);
 
       Navigator.of(context).pop();

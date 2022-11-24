@@ -263,6 +263,19 @@ class _HomePageState extends State<HomePage> {
                           // )
                         ],
 
+                      if (userData.role == 'consumen')
+                        ...[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: HomeItemWidget(
+                              title: 'Pelaporan',
+                              subtitle: 'Report a product',
+                              isDone: true,
+                              route: '/consument/pelaporan',
+                            ),
+                          )
+                        ],
+
                       Container(
                         margin: EdgeInsets.only(bottom: 20),
                         child: HomeItemWidget(

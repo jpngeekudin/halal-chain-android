@@ -8,6 +8,7 @@ import 'package:halal_chain/pages/auditor_pages/auditor_registrator_list_page.da
 import 'package:halal_chain/pages/auditor_pages/auditor_review_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_review_user_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_upload_cert_page.dart';
+import 'package:halal_chain/pages/consument_pages/consument_pelaporan_page.dart';
 import 'package:halal_chain/pages/consument_pages/consument_qr_detail_page.dart';
 import 'package:halal_chain/pages/consument_pages/consument_scan_page.dart';
 import 'package:halal_chain/pages/home_page.dart';
@@ -156,6 +157,7 @@ class MyApp extends StatelessWidget {
 
         '/consument/scan': (context) => ConsumentScanPage(),
         '/consument/qr-detail': (context) => ConsumentQrDetailPage(),
+        '/consument/pelaporan': (context) => ConsumentPelaporanPage(),
       },
       // home: FutureBuilder(
       //   future: _isLoggedIn(),

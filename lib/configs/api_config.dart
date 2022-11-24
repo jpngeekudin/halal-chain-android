@@ -78,4 +78,7 @@ abstract class ApiList {
   static String coreGetReview = '$apiPrefix/core/review_by_umkm';
 
   static String generateDownloadDoc = '$apiPrefix/generate/download_doc';
+
+  static String pelaporanCreate = '$apiPrefix/core/pelaporan';
+  static String pelaporanGet = '$apiPrefix/core/pelaporan';
 }
