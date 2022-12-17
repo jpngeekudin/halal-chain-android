@@ -24,6 +24,7 @@ class _UmkmSimulasi2PageState extends State<UmkmSimulasi2Page> {
       final core = CoreService();
       final params = { 'creator_id': user?.id };
       final res = await core.genericGet(ApiList.simulasiGet, params);
+      if (res.data == null) throw('Data not found');
       final simulasiList = res.data['log'].map<SimulasiLog>((json) => SimulasiLog.fromJSON(json)).toList();
       return simulasiList;
     }
@@ -218,6 +219,7 @@ class _UmkmSimulasi2PageState extends State<UmkmSimulasi2Page> {
                   else if (snapshot.hasError) {
                     return Container(
                       alignment: Alignment.center,
+                      height: 400,
                       child: Text(snapshot.error.toString(), style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.grey[600]
