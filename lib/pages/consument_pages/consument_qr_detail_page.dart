@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
+import 'package:halal_chain/helpers/http_helper.dart';
 import 'package:halal_chain/helpers/modal_helper.dart';
 import 'package:halal_chain/models/qr_model.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -9,6 +12,7 @@ import 'package:halal_chain/widgets/qr_trace_widget.dart';
 import 'package:halal_chain/widgets/review_form_widget.dart';
 import 'package:halal_chain/widgets/review_list_widget.dart';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ConsumentQrDetailPage extends StatefulWidget {
   const ConsumentQrDetailPage({Key? key}) : super(key: key);
@@ -69,6 +73,49 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
         );
       }
     );
+  }
+
+  Future _downloadCertificate() async {
+    final logger = Logger();
+    try {
+      Directory directory = Directory('/storage/emulated/0/Download');
+      if (!await directory.exists()) directory = (await getExternalStorageDirectory())!;
+
+      final dio = Dio();
+      final params = { 'umkm_id': _umkmId };
+      final res = await dio.get(ApiList.loadCertificate,
+      queryParameters: params,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          validateStatus: (status) => status != null && status < 500
+        )
+      );
+
+      String contentDisposition = res.headers.value('content-disposition')!;
+      String filename = contentDisposition.substring(22, contentDisposition.length-1);
+      String fullPath = directory.path + '/$filename';
+
+      final file = await File(fullPath).create();
+      file.writeAsBytesSync(res.data);
+
+      // var raf = file.openSync(mode: FileMode.write);
+      // raf.writeFromSync(res.data);
+      // await raf.close();
+
+      final snackBar = SnackBar(content: Text('Success downloading file at $fullPath'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
+    catch(err) {
+      String message = 'Certificate not found!';
+      if (err is DioError) {
+        logger.i(err.response?.data);
+        message = err.response?.data['message'] ?? message;
+      }
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override
@@ -358,6 +405,17 @@ class _ConsumentQrDetailPageState extends State<ConsumentQrDetailPage> {
                       Container(
                         margin: EdgeInsets.only(bottom: 20),
                         child: QrTraceWidget(umkmId: _umkmId),
+                      ),
+
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => _downloadCertificate(),
+                            child: Text('Download Certificate'),
+                          ),
+                        )
                       ),
 
                       Container(

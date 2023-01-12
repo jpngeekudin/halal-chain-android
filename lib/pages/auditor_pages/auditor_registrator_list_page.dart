@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/auth_helper.dart';
+import 'package:halal_chain/helpers/http_helper.dart';
 import 'package:halal_chain/models/umkm_registrator_model.dart';
 import 'package:halal_chain/models/user_data_model.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -109,6 +110,20 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
     setState(() => _auditorType = auditor!.type);
   }
 
+  Future _generateCert(UmkmRegistrator umkm) async {
+    try {
+      final core = CoreService();
+      final params = { 'umkm_id': umkm.umkmId };
+      final response = await core.genericPost(ApiList.generateCertificate, params, null);
+      const snackBar = SnackBar(content: Text('Success generating certificate!'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
+    catch(err) {
+      handleHttpError(context: context, err: err);
+    }
+  }
+
   final popupItemStyle = TextStyle(
     fontSize: 12
   );
@@ -163,7 +178,8 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                           ...[
                             _getPopupMenuItem('check-sjh-bpjph', 'Check SJH by BPJPH', reg.statusCheckByBpjph),
                             _getPopupMenuItem('appoint-lph', 'Appoint LPH', reg.lphId.isNotEmpty),
-                            _getPopupMenuItem('upload-cert', 'Upload Certificate', reg.certificateStatus),
+                            // _getPopupMenuItem('upload-cert', 'Upload Certificate', reg.certificateStatus),
+                            _getPopupMenuItem('generate-cert', 'Generate Certificate', reg.certificateStatus),
                           ]
 
                         // if user lph
@@ -214,6 +230,9 @@ class _AuditorRegistratorListPageState extends State<AuditorRegistratorListPage>
                             Navigator.of(context).pushNamed('/auditor/upload-fatwa',
                               arguments: { 'id': reg.umkmId }
                             );
+                            break;
+                          case 'generate-cert':
+                            _generateCert(reg);
                             break;
                         }
                       },
