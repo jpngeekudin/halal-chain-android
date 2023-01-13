@@ -59,6 +59,7 @@ abstract class ApiList {
   // static String simulasiSJH = '$apiPrefix/simulasi/simulasi_sjh';
   static String simulasiCreate = '$apiPrefix/simulasi/simulasi';
   static String simulasiGet = '$apiPrefix/simulasi/get_simulasi';
+  static String simulasiSaran = '$apiPrefix/simulasi/saran_simulasi';
 
   static String coreRegistrationSjh = '$apiPrefix/core/registration_sjh';
   static String coreGetUmkmRegistered = '$apiPrefix/core/get_umkm_registered';

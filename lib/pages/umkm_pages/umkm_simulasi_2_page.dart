@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/auth_helper.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
+import 'package:halal_chain/helpers/http_helper.dart';
 import 'package:halal_chain/helpers/modal_helper.dart';
 import 'package:halal_chain/models/simulasi_model.dart';
 import 'package:halal_chain/services/core_service.dart';
@@ -33,10 +34,25 @@ class _UmkmSimulasi2PageState extends State<UmkmSimulasi2Page> {
       logger.e(err);
       logger.e(trace);
       String message = 'Terjadi kesalahan';
-      if (err is DioError) message = err.response?.data['detail'];
+      if (err is DioError) message = err.response?.data['data'] ?? message;
       final snackBar = SnackBar(content: Text(message));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      rethrow;
+      throw(message);
+    }
+  }
+
+  Future<String> _getSaran() async {
+    try {
+      final user = await getUserUmkmData();
+      final core = CoreService();
+      final params = { 'creator_id': user?.id };
+      final res = await core.genericGet(ApiList.simulasiSaran, params);
+      return res.data;
+    }
+
+    catch(err) {
+      handleHttpError(context: context, err: err);
+      throw(err.toString());
     }
   }
 
@@ -127,7 +143,7 @@ class _UmkmSimulasi2PageState extends State<UmkmSimulasi2Page> {
                           children: [
                             Text(bahan.name),
                             SizedBox(height: 5),
-                            Text(bahan.status, style: TextStyle(
+                            Text(bahan.status ? 'Halal' : 'Non-Halal', style: TextStyle(
                               color: Colors.grey[600]
                             ))
                           ],
@@ -176,35 +192,69 @@ class _UmkmSimulasi2PageState extends State<UmkmSimulasi2Page> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FutureBuilder(
-                future: _getSimulasi(context: context),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    final List<SimulasiLog> simulasiList = snapshot.data;
-                    return Container(
-                      padding: EdgeInsets.all(20),
-                      child: Column(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Saran Simulasi', style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                )),
+                SizedBox(height: 20),
+                FutureBuilder(
+                  future: _getSaran(),
+                  builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(snapshot.data, style: TextStyle(
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16
+                      ));
+                    }
+
+                    else if (snapshot.hasError) {
+                      return Container(
+                        alignment: Alignment.center,
+                        height: 200,
+                        child: Text(snapshot.error.toString(), style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600]
+                        )),
+                      );
+                    }
+
+                    else return Container(
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Log Simulasi', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    )),
+                    TextButton(
+                      child: Text('Simulasi'),
+                      onPressed: () => _simulasi(context),
+                    )
+                  ],
+                ),
+                SizedBox(height: 20),
+                FutureBuilder(
+                  future: _getSimulasi(context: context),
+                  builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      final List<SimulasiLog> simulasiList = snapshot.data;
+                      return Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Log Simulasi', style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              )),
-                              TextButton(
-                                child: Text('Simulasi'),
-                                onPressed: () => _simulasi(context),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 20),
                           ...simulasiList.map((simulasi) {
                             return InkWell(
                               onTap: () => _showModalSimulasi(context: context, simulasi: simulasi),
@@ -212,28 +262,28 @@ class _UmkmSimulasi2PageState extends State<UmkmSimulasi2Page> {
                             );
                           })
                         ],
-                      ),
-                    );
-                  }
+                      );
+                    }
 
-                  else if (snapshot.hasError) {
-                    return Container(
+                    else if (snapshot.hasError) {
+                      return Container(
+                        alignment: Alignment.center,
+                        height: 400,
+                        child: Text(snapshot.error.toString(), style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600]
+                        )),
+                      );
+                    }
+
+                    else return Container(
                       alignment: Alignment.center,
-                      height: 400,
-                      child: Text(snapshot.error.toString(), style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600]
-                      )),
+                      child: CircularProgressIndicator(),
                     );
-                  }
-
-                  else return Container(
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator(),
-                  );
-                },
-              )
-            ],
+                  },
+                )
+              ],
+            ),
           ),
         )
       )

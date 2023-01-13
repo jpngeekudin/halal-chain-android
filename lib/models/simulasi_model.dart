@@ -19,7 +19,7 @@ class SimulasiLog {
 class SimulasiLogData {
   late String name;
   late String type;
-  late String status;
+  late bool status;
 
   SimulasiLogData({
     required this.name,
