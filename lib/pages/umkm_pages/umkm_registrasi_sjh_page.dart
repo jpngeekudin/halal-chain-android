@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/auth_helper.dart';
+import 'package:halal_chain/helpers/http_helper.dart';
 import 'package:halal_chain/helpers/modal_helper.dart';
 import 'package:halal_chain/services/core_service.dart';
 
@@ -61,6 +62,22 @@ class _UmkmRegistrasiSjhPageState extends State<UmkmRegistrasiSjhPage> {
     }
   }
 
+  Future<bool> _checkRegistrationSjh() async {
+    try {
+      final core = CoreService();
+      final user = await getUserData();
+      final params = { 'umkm_id': user!.id };
+      final response = await core.genericGet(ApiList.coreCheckRegistrationSjh, params);
+      return response.data['registered'];
+    }
+
+    catch(err) {
+      handleHttpError(context: context, err: err);
+      if (err is DioError) return false;
+      else throw(err.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,45 +86,80 @@ class _UmkmRegistrasiSjhPageState extends State<UmkmRegistrasiSjhPage> {
       ),
       body: Container(
         padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.check_circle,
-              color: Theme.of(context).primaryColor,
-              size: 72,
-            ),
-            SizedBox(height: 20),
-            Text('Daftarkan SJH?', style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24
-            )),
-            SizedBox(height: 10),
-            Text('Daftarkan SJH sesuai dengan data SJH yang sudah diisi?', textAlign: TextAlign.center,),
-            SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                child: Text('Ya'),
-                onPressed: () => _daftarSJH(),
-              ),
-            ),
-            SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                child: Text('Cancel', style: TextStyle(
-                  color: Colors.black
+        child: FutureBuilder(
+          future: _checkRegistrationSjh(),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              if (!snapshot.data) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.check_circle,
+                      color: Theme.of(context).primaryColor,
+                      size: 72,
+                    ),
+                    SizedBox(height: 20),
+                    Text('Daftarkan SJH?', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24
+                    )),
+                    SizedBox(height: 10),
+                    Text('Daftarkan SJH sesuai dengan data SJH yang sudah diisi?', textAlign: TextAlign.center,),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        child: Text('Ya'),
+                        onPressed: () => _daftarSJH(),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        child: Text('Cancel', style: TextStyle(
+                          color: Colors.black
+                        )),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey[200]
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    )
+                  ],
+                );
+              }
+
+              else {
+                return Center(
+                  child: Text('SJH has been registered', style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[600]
+                  ))
+                );
+              }
+            }
+
+            else if (snapshot.hasError) {
+              return Container(
+                alignment: Alignment.center,
+                height: 400,
+                child: Text(snapshot.error.toString(), style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[600]
                 )),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.grey[200]
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            )
-          ],
+              );
+            }
+
+            else return Container(
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(),
+            );
+          }
         ),
       )
     );
