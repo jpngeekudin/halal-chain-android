@@ -52,6 +52,7 @@ class _UmkmSimulasi2PageState extends State<UmkmSimulasi2Page> {
 
     catch(err) {
       handleHttpError(context: context, err: err);
+      if (err is DioError) throw(err.response?.data['data']);
       throw(err.toString());
     }
   }
@@ -143,9 +144,22 @@ class _UmkmSimulasi2PageState extends State<UmkmSimulasi2Page> {
                           children: [
                             Text(bahan.name),
                             SizedBox(height: 5),
-                            Text(bahan.status ? 'Halal' : 'Non-Halal', style: TextStyle(
-                              color: Colors.grey[600]
-                            ))
+                            Wrap(
+                              direction: Axis.horizontal,
+                              crossAxisAlignment: WrapCrossAlignment.start,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                Icon(
+                                  bahan.status ? Icons.check_circle : Icons.remove_circle,
+                                  color: bahan.status ? Colors.green : Colors.red,
+                                  size: 18,
+                                ),
+                                SizedBox(width: 5),
+                                Text(bahan.detail, style: TextStyle(
+                                  color: Colors.grey[600]
+                                )),
+                              ],
+                            )
                           ],
                         ),
                       );
@@ -217,7 +231,7 @@ class _UmkmSimulasi2PageState extends State<UmkmSimulasi2Page> {
                     else if (snapshot.hasError) {
                       return Container(
                         alignment: Alignment.center,
-                        height: 200,
+                        height: 100,
                         child: Text(snapshot.error.toString(), style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.grey[600]
