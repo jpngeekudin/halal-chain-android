@@ -221,13 +221,13 @@ class UserConsumentData {
 
   UserConsumentData.fromJSON(Map<String, dynamic> json) {
     id = json['_id'] ?? json['id'];
-    name = json['name'];
+    name = json['name'] ?? 'No Name';
     username = json['username'];
     password = json['password'];
     email = json['email'];
     role = json['role'];
-    phone = json['phone'];
-    address = json['address'];
+    phone = json['phone'] ?? '';
+    address = json['address'] ?? '';
     createdAt = DateTime.fromMillisecondsSinceEpoch(json['created_at']);
   }
 
