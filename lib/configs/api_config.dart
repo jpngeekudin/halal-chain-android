@@ -32,6 +32,7 @@ abstract class ApiList {
   static String umkmFormKebersihan = '$apiPrefix/umkm/form_pengecekan_kebersihan';
   static String umkmBarangHalal = '$apiPrefix/umkm/daftar_barang_halal';
   static String umkmMatriksProduk = '$apiPrefix/umkm/matriks_produk';
+  static String umkmGroupingData = '$apiPrefix/umkm/grouping_data';
 
   static String sjhDetailUmkm = '$apiPrefix/sjh/detail_umkm';
   static String sjhPenetapanTim = '$apiPrefix/sjh/penetapan_tim';

@@ -108,9 +108,15 @@ class UmkmAuditInternalListPage extends StatelessWidget {
     try {
       final currentUser = await getUserData();
       final core = CoreService();
-      final params = { 'umkm_id': currentUser?.id };
-      final res = await core.genericGet(ApiList.umkmGetAuditList, params);
-      final auditList = res.data.map<UmkmAuditInternal>((data) => UmkmAuditInternal.fromJSON(data)).toList();
+      final params = { 'umkm_id': currentUser?.id, 'type': 'audit' };
+      final res = await core.genericGet(ApiList.umkmGroupingData, params);
+      List<UmkmAuditInternal> auditList = [];
+      res.data.forEach((doc) {
+        doc['data'].forEach((data) {
+          final audit = UmkmAuditInternal.fromJSON(data);
+          auditList.add(audit);
+        });
+      });
       return auditList;
     }
 
@@ -192,6 +198,16 @@ class UmkmAuditInternalListPage extends StatelessWidget {
                                         SizedBox(width: 5),
                                         Text(defaultDateFormat.format(audit.data.createdAt))
                                       ],
+                                    ),
+                                    SizedBox(width: 10),
+                                    Wrap(
+                                      direction: Axis.horizontal,
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      children: [
+                                        Icon(Icons.file_copy, color: Colors.grey[600], size: 12),
+                                        SizedBox(width: 5),
+                                        Text(audit.docId)
+                                      ]
                                     )
                                   ],
                                 ),
