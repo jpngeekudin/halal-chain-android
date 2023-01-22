@@ -30,9 +30,11 @@ import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_detail_ins
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_evaluasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_kebersihan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_matriks_produk_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_pembelian_list_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_pembelian_pemeriksaan_bahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_pemusnahan_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_penilaian_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_produksi_list_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_produksi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_stok_barang_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_team_assign_page.dart';
@@ -120,10 +122,13 @@ class MyApp extends StatelessWidget {
         '/umkm/data-sjh/audit-internal': (context) => UmkmAuditInternalListPage(),
         '/umkm/data-sjh/audit-internal/create': (context) => UmkmAuditInternal2Page(),
         '/umkm/data-sjh/daftar-hadir-kajian': (context) => UmkmDaftarHadirKajiPage(),
-        '/umkm/data-sjh/pembelian-bahan': (context) => UmkmPembelianPemerikasaanBahanPage(),
-        '/umkm/data-sjh/pembelian-bahan-import': (context) => UmkmPembelianPemerikasaanBahanPage(typeBahan: 'import'),
+        '/umkm/data-sjh/pembelian-bahan': (context) => UmkmPembelianListPage(),
+        '/umkm/data-sjh/pembelian-bahan/create': (context) => UmkmPembelianPemerikasaanBahanPage(),
+        '/umkm/data-sjh/pembelian-bahan-import': (context) => UmkmPembelianListPage(typeBahan: 'import'),
+        '/umkm/data-sjh/pembelian-bahan-import/create': (context) => UmkmPembelianPemerikasaanBahanPage(typeBahan: 'import'),
         '/umkm/data-sjh/stok-bahan': (context) => UmkmStokBarangPage(),
-        '/umkm/data-sjh/produksi': (context) => UmkmProduksiPage(),
+        '/umkm/data-sjh/produksi': (context) => UmkmProduksiListPage(),
+        '/umkm/data-sjh/produksi/create': (context) => UmkmProduksiPage(),
         '/umkm/data-sjh/pemusnahan': (context) => UmkmPemusnahanPage(),
         '/umkm/data-sjh/kebersihan': (context) => UmkmKebersihanPage(),
         '/umkm/data-sjh/bahan-halal': (context) => UmkmBahanHalalPage(),
