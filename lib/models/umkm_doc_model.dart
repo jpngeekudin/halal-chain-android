@@ -125,3 +125,73 @@ class UmkmDocProduksiData {
     "paraf": paraf,
   };
 }
+
+class UmkmDocBahanHalal {
+  UmkmDocBahanHalal({
+    required this.id,
+    required this.docId,
+    required this.data,
+  });
+
+  String id;
+  String docId;
+  List<UmkmDocBahanHalalData> data;
+
+  factory UmkmDocBahanHalal.fromJson(Map<String, dynamic> json) => UmkmDocBahanHalal(
+    id: json["_id"],
+    docId: json["doc_id"],
+    data: List<UmkmDocBahanHalalData>.from(json["data"].map((x) => UmkmDocBahanHalalData.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "_id": id,
+    "doc_id": docId,
+    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+  };
+}
+
+class UmkmDocBahanHalalData {
+  UmkmDocBahanHalalData({
+    required this.namaMerk,
+    required this.namaNegara,
+    required this.pemasok,
+    required this.penerbit,
+    required this.nomor,
+    required this.masaBerlaku,
+    required this.dokumenLain,
+    required this.keterangan,
+  });
+
+  String namaMerk;
+  String namaNegara;
+  String pemasok;
+  String penerbit;
+  String nomor;
+  DateTime? masaBerlaku;
+  String dokumenLain;
+  String keterangan;
+
+  factory UmkmDocBahanHalalData.fromJson(Map<String, dynamic> json) => UmkmDocBahanHalalData(
+    namaMerk: json["nama_merk"],
+    namaNegara: json["nama_negara"],
+    pemasok: json["pemasok"],
+    penerbit: json["penerbit"],
+    nomor: json["nomor"],
+    masaBerlaku: json['masa_berlaku'].toLowerCase() == 'string'
+      ? null
+      : DateTime.fromMillisecondsSinceEpoch(int.parse(json["masa_berlaku"])),
+    dokumenLain: json["dokumen_lain"],
+    keterangan: json["keterangan"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "nama_merk": namaMerk,
+    "nama_negara": namaNegara,
+    "pemasok": pemasok,
+    "penerbit": penerbit,
+    "nomor": nomor,
+    "masa_berlaku": masaBerlaku?.millisecondsSinceEpoch ?? '',
+    "dokumen_lain": dokumenLain,
+    "keterangan": keterangan,
+  };
+}
