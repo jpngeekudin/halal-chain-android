@@ -149,7 +149,7 @@ class _UmkmDataSjhPageState extends State<UmkmDataSjhPage> {
                         title: 'Pembelian dan Pemeriksaan Bahan Import',
                         subtitle: 'Mengisi daftar pembelian dan pemeriksaan bahan import',
                         route: '/umkm/data-sjh/pembelian-bahan-import',
-                        routeView: '/umkm/view-sjh/pembelian-bahan-import',
+                        // routeView: '/umkm/view-sjh/pembelian-bahan-import',
                         isDone: document.pembelianImport
                       ),
                     ),
@@ -211,7 +211,8 @@ class _UmkmDataSjhPageState extends State<UmkmDataSjhPage> {
                         title: 'Matriks Produk',
                         subtitle: 'Mengisi form matriks produk',
                         route: '/umkm/data-sjh/matriks',
-                        routeView: '/umkm/view-sjh/matriks',
+                        routeView: '/umkm/data-sjh/matriks',
+                        // routeView: '/umkm/view-sjh/matriks',
                         isDone: document.matriksProduk,
                       ),
                     ),

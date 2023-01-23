@@ -30,6 +30,7 @@ import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_daftar_had
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_detail_insert_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_evaluasi_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_kebersihan_page.dart';
+import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_matriks_list_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_matriks_produk_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_pembelian_list_page.dart';
 import 'package:halal_chain/pages/umkm_pages/umkm_data_sjh_pages/umkm_pembelian_pemeriksaan_bahan_page.dart';
@@ -134,7 +135,8 @@ class MyApp extends StatelessWidget {
         '/umkm/data-sjh/kebersihan': (context) => UmkmKebersihanPage(),
         '/umkm/data-sjh/bahan-halal': (context) => UmkmBahanHalalListPage(),
         '/umkm/data-sjh/bahan-halal/create': (context) => UmkmBahanHalalPage(),
-        '/umkm/data-sjh/matriks': (context) => UmkmMatriksProdukPage(),
+        '/umkm/data-sjh/matriks': (context) => UmkmMatriksListPage(),
+        '/umkm/data-sjh/matriks/create': (context) => UmkmMatriksProdukPage(),
 
         '/umkm/view-sjh/detail-umkm': (context) => UmkmViewDetailPage(),
         '/umkm/view-sjh/penetapan-tim': (context) => UmkmViewPenetapanTimPage(),

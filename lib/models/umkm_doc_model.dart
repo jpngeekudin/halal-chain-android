@@ -195,3 +195,69 @@ class UmkmDocBahanHalalData {
     "keterangan": keterangan,
   };
 }
+
+class UmkmDocMatriks {
+    UmkmDocMatriks({
+      required this.id,
+      required this.docId,
+      required this.data,
+    });
+
+    String id;
+    String docId;
+    List<UmkmDocMatriksData> data;
+
+    factory UmkmDocMatriks.fromJson(Map<String, dynamic> json) => UmkmDocMatriks(
+      id: json["_id"],
+      docId: json["doc_id"],
+      data: List<UmkmDocMatriksData>.from(json["data"].map((x) => UmkmDocMatriksData.fromJson(x))),
+    );
+
+    Map<String, dynamic> toJson() => {
+      "_id": id,
+      "doc_id": docId,
+      "data": List<dynamic>.from(data.map((x) => x.toJson())),
+    };
+}
+
+class UmkmDocMatriksData {
+    UmkmDocMatriksData({
+      required this.namaBahan,
+      required this.listBarang,
+    });
+
+    String namaBahan;
+    List<UmkmDocMatriksBarang> listBarang;
+
+    factory UmkmDocMatriksData.fromJson(Map<String, dynamic> json) => UmkmDocMatriksData(
+      namaBahan: json["nama_bahan"],
+      listBarang: json['list_barang'] != null
+        ? List<UmkmDocMatriksBarang>.from(json["list_barang"].map((x) => UmkmDocMatriksBarang.fromJson(x)))
+        : List.empty(),
+    );
+
+    Map<String, dynamic> toJson() => {
+      "nama_bahan": namaBahan,
+      "list_barang": List<dynamic>.from(listBarang.map((x) => x.toJson())),
+    };
+}
+
+class UmkmDocMatriksBarang {
+  UmkmDocMatriksBarang({
+    required this.barang,
+    required this.status,
+  });
+
+  String barang;
+  bool status;
+
+  factory UmkmDocMatriksBarang.fromJson(Map<String, dynamic> json) => UmkmDocMatriksBarang(
+    barang: json["barang"],
+    status: json["status"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "barang": barang,
+    "status": status,
+  };
+}
