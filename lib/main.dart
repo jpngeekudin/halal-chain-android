@@ -158,6 +158,12 @@ class MyApp extends StatelessWidget {
 
         '/auditor/daftar-sjh': (context) => AuditorRegistratorListPage(),
         '/auditor/check-sjh': (context) => AuditorCheckSjhPage(),
+        '/auditor/check-sjh/audit-internal': (context) => UmkmAuditInternalListPage(enableCreate: false,),
+        '/auditor/check-sjh/bahan-halal': (context) => UmkmBahanHalalListPage(enableCreate: false),
+        '/auditor/check-sjh/matriks': (context) => UmkmMatriksListPage(enableCreate: false,),
+        '/auditor/check-sjh/pembelian-bahan': (context) => UmkmPembelianListPage(enableCreate: false,),
+        '/auditor/check-sjh/pembelian-bahan-import': (context) => UmkmPembelianListPage(typeBahan: 'import', enableCreate: false,),
+        '/auditor/check-sjh/produksi': (context) => UmkmProduksiListPage(enableCreate: false,),
         '/auditor/check-sjh-mui': (context) => AuditorCheckSjhMuiPage(),
         '/auditor/appoint-lph': (context) => AuditorAppointLphPage(),
         '/auditor/upload-cert': (context) => AuditorUploadCertPage(),
