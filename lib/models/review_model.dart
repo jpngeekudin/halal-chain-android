@@ -7,7 +7,7 @@ class Review {
   late double point;
   late String desc;
   late DateTime createdAt;
-  late String transactionId;
+  String? transactionId;
 
   Review({
     required this.id,
@@ -16,7 +16,7 @@ class Review {
     required this.point,
     required this.desc,
     required this.createdAt,
-    required this.transactionId
+    this.transactionId
   });
 
   Review.fromJson(Map<String, dynamic> json) {
