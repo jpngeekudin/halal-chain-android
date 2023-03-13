@@ -62,8 +62,8 @@ class _QrTraceWidgetState extends State<QrTraceWidget> {
         FutureBuilder(
           future: _getTrace(),
           builder: (context, AsyncSnapshot snapshot) {
-            final QrDetailCore data = snapshot.data;
             if (snapshot.hasData) {
+              final QrDetailCore data = snapshot.data;
               final timelineNode = TimelineNode(
                 indicator: DotIndicator(),
                 startConnector: SolidLineConnector(),
