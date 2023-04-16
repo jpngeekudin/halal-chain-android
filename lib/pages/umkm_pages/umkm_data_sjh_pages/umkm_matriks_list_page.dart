@@ -130,9 +130,9 @@ class UmkmMatriksListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final String userId = args['id'];
+    final Map<String, dynamic>? args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    final String? userId = args?['id'];
 
     return Scaffold(
         appBar: AppBar(

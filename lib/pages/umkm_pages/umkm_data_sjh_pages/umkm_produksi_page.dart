@@ -13,6 +13,7 @@ import 'package:halal_chain/services/core_service.dart';
 import 'package:halal_chain/widgets/signature_form_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:signature/signature.dart';
+import 'package:halal_chain/models/bahan_halal_opt_model.dart';
 
 class UmkmProduksiPage extends StatefulWidget {
   const UmkmProduksiPage({ Key? key }) : super(key: key);
@@ -39,6 +40,40 @@ class _UmkmProduksiPageState extends State<UmkmProduksiPage> {
   // final _parafController = SignatureController(
   //   penStrokeWidth: 5
   // );
+  // List<BahanHalalOpts> _bahanHalalOpts = [];
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _getBahanOpts();
+  // }
+
+  // Future<void> _getBahanOpts() async {
+  //   try {
+  //     final logger = Logger();
+  //     final core = CoreService();
+  //     final res = await core.genericGet(ApiList.utilListBahanHalal);
+  //     setState(() {
+  //       _bahanHalalOpts = res.data
+  //           .map<BahanHalalOpts>((d) => BahanHalalOpts.fromJSON(d))
+  //           .toList();
+  //       logger.i(_bahanHalalOpts.map(
+  //           (o) => {'id': o.id, 'name': o.name, 'requireCert': o.requireCert}));
+  //     });
+  //   } catch (err, trace) {
+  //     String message = 'Terjadi kesalahan';
+  //     if (err is DioError) message = err.response?.data['detail'];
+
+  //     showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //               title: Text('Error'),
+  //               content: Text(message),
+  //             ));
+
+  //     rethrow;
+  //   }
+  // }
 
   void _showModalSignature() {
     showModalBottomSheet(

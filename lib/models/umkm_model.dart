@@ -313,7 +313,7 @@ class UmkmBahanHalal {
   String pemasok;
   String penerbit;
   String nomor;
-  DateTime masaBerlaku;
+  DateTime? masaBerlaku;
   String dokumenLain;
   String keterangan;
 
@@ -323,7 +323,7 @@ class UmkmBahanHalal {
     required this.pemasok,
     required this.penerbit,
     required this.nomor,
-    required this.masaBerlaku,
+    this.masaBerlaku,
     required this.dokumenLain,
     required this.keterangan
   });

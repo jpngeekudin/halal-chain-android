@@ -359,7 +359,7 @@ class SjhMatriksItem {
 
 class SjhMatriksBahan {
   String barang;
-  bool status;
+  bool? status;
 
   SjhMatriksBahan(this.barang, this.status);
 }
