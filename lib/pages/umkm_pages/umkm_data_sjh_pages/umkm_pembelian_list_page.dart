@@ -17,7 +17,12 @@ class UmkmPembelianListPage extends StatelessWidget {
   final String typeBahan;
 
   void _navigateToCreate(BuildContext context) {
-    Navigator.of(context).pushNamed('/umkm/data-sjh/pembelian-bahan/create');
+    String url;
+    if (typeBahan == 'non-import')
+      url = '/umkm/data-sjh/pembelian-bahan/create';
+    else
+      url = '/umkm/data-sjh/pembelian-bahan-import/create';
+    Navigator.of(context).pushNamed(url);
   }
 
   Widget _getDetailRow(String label, String value) {

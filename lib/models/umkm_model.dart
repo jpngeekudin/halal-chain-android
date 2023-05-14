@@ -199,6 +199,7 @@ class UmkmPembelianPemeriksaanBahan {
   DateTime expDateBahan;
   String noSertifikat;
   File strukPembelian;
+  int jumlahPembalian;
   String? strukUploadedUrl;
   UserSignature paraf;
   String? parafUploadedUrl;
@@ -212,6 +213,7 @@ class UmkmPembelianPemeriksaanBahan {
     required this.noSertifikat,
     required this.strukPembelian,
     required this.paraf,
+    required this.jumlahPembalian
   });
 
   void setParafUrl(String url) {

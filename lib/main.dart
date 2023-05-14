@@ -8,6 +8,7 @@ import 'package:halal_chain/pages/auditor_pages/auditor_pelaporan_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_registrator_list_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_review_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_review_user_page.dart';
+import 'package:halal_chain/pages/auditor_pages/auditor_unregistered_umkm_page.dart';
 import 'package:halal_chain/pages/auditor_pages/auditor_upload_cert_page.dart';
 import 'package:halal_chain/pages/consument_pages/consument_pelaporan_page.dart';
 import 'package:halal_chain/pages/consument_pages/consument_qr_detail_page.dart';
@@ -157,6 +158,7 @@ class MyApp extends StatelessWidget {
         '/umkm/qr-view': (context) => UmkmQrViewPage(),
 
         '/auditor/daftar-sjh': (context) => AuditorRegistratorListPage(),
+        '/auditor/daftar-not-registered': (context) => AuditorUnregisteredUmkmPage(),
         '/auditor/check-sjh': (context) => AuditorCheckSjhPage(),
         '/auditor/check-sjh/audit-internal': (context) => UmkmAuditInternalListPage(enableCreate: false,),
         '/auditor/check-sjh/bahan-halal': (context) => UmkmBahanHalalListPage(enableCreate: false),

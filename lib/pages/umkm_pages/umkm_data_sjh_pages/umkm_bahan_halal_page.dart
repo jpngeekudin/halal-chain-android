@@ -51,7 +51,10 @@ class _UmkmBahanHalalPageState extends State<UmkmBahanHalalPage> {
         _bahanHalalOpts = [
           ...res.data,
           {'_id': 'other', 'name': 'other', 'required': false}
-        ].map<BahanHalalOpts>((d) => BahanHalalOpts.fromJSON(d)).toList();
+        ]
+            .where((e) => e['name'] != null)
+            .map<BahanHalalOpts>((d) => BahanHalalOpts.fromJSON(d))
+            .toList();
       });
     } catch (err, trace) {
       String message = 'Terjadi kesalahan';

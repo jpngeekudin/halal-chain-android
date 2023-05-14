@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
 import 'package:halal_chain/helpers/form_helper.dart';
@@ -39,6 +40,7 @@ class _UmkmPembelianPemerikasaanBahanPageState
   final _namaBahanLainnya = TextEditingController();
   final _namaNegaraProdusen = TextEditingController();
   bool _adaDiDaftarBahanHalalModel = false;
+  final _jumlahPembelianController = TextEditingController();
   final _expDateBahanController = TextEditingController();
   final _noSertifikatController = TextEditingController();
   File? _strukPembelianModel;
@@ -70,7 +72,10 @@ class _UmkmPembelianPemerikasaanBahanPageState
         _bahanHalalOpts = [
           ...res.data,
           {'_id': 'other', 'name': 'Lainnya', 'required': false}
-        ].map<BahanHalalOpts>((d) => BahanHalalOpts.fromJSON(d)).toList();
+        ]
+            .where((e) => e['name'] != null)
+            .map<BahanHalalOpts>((d) => BahanHalalOpts.fromJSON(d))
+            .toList();
       });
     } catch (err, trace) {
       String message = 'Terjadi kesalahan';
@@ -224,6 +229,18 @@ class _UmkmPembelianPemerikasaanBahanPageState
                         );
                       }),
                       getInputWrapper(
+                          label: 'Jumlah Pembelian',
+                          input: TextField(
+                            controller: _jumlahPembelianController,
+                            decoration:
+                                getInputDecoration(label: 'Jumlah Pembelian'),
+                            style: inputTextStyle,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                          )),
+                      getInputWrapper(
                         label: 'Exp. Date Bahan',
                         input: TextFormField(
                           controller: _expDateBahanController,
@@ -369,6 +386,7 @@ class _UmkmPembelianPemerikasaanBahanPageState
       adaDiDaftarBahanHalal: _adaDiDaftarBahanHalalModel,
       noSertifikat: _noSertifikatController.text,
       strukPembelian: _strukPembelianModel!,
+      jumlahPembalian: int.parse(_jumlahPembelianController.text),
       // paraf: await uint8ListToFile(parafBytes!),
       paraf: _parafModel!,
     );
@@ -427,7 +445,8 @@ class _UmkmPembelianPemerikasaanBahanPageState
                   'exp_bahan': bahan.expDateBahan.millisecondsSinceEpoch,
                   'no_sertifikat': bahan.noSertifikat,
                   'struk_pembelian': bahan.strukUploadedUrl,
-                  'paraf': bahan.paraf.sign
+                  'paraf': bahan.paraf.sign,
+                  'jumlah_pembelian': bahan.jumlahPembalian,
                 })
             .toList()
       };
