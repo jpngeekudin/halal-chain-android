@@ -22,7 +22,6 @@ class UmkmQrViewPage extends StatefulWidget {
 }
 
 class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
-
   final _logger = Logger();
   GlobalKey _globalKey = GlobalKey();
 
@@ -30,14 +29,12 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
     try {
       final userData = await getUserData();
       final core = CoreService();
-      final params = { 'umkm_id': userData?.id };
+      final params = {'umkm_id': userData?.id};
       final response = await core.genericGet(ApiList.coreQrDetail, params);
       final qrDetail = QrDetail.fromJson(response.data);
       _logger.i(qrDetail);
       return qrDetail;
-    }
-
-    catch(err, trace) {
+    } catch (err, trace) {
       _logger.e(trace);
       String message = 'Terjadi kesalahan';
       if (err is DioError) message = err.response?.data?['message'] ?? message;
@@ -59,7 +56,8 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
     // }
 
     try {
-      RenderRepaintBoundary boundary = _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+      RenderRepaintBoundary boundary = _globalKey.currentContext
+          ?.findRenderObject() as RenderRepaintBoundary;
       final image = await boundary.toImage();
       final byteData = await image.toByteData(format: ImageByteFormat.png);
       final pngBytes = byteData?.buffer.asUint8List();
@@ -71,13 +69,11 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
 
       // final channel = MethodChannel('channel:me.cocode.share/share');
       // channel.invokeMethod('shareFile', 'qr.png');
-    }
-
-    catch(err, trace) {
+    } catch (err, trace) {
       final logger = Logger();
       logger.e(err);
       logger.e(trace);
-      throw(err.toString());
+      throw (err.toString());
     }
   }
 
@@ -90,14 +86,16 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
       body: SafeArea(
         child: FutureBuilder(
           future: _getQrDetail(),
-          builder:(context, AsyncSnapshot snapshot) {
+          builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               QrDetail qrDetail = snapshot.data;
 
               if (qrDetail.core != null) {
                 final umkmId = qrDetail.profile.id;
                 final certified = qrDetail.core!.certificate.status;
-                final certificateImageUrl = ApiList.utilLoadFile + '?image_name=' + qrDetail.core!.certificate.data;
+                final certificateImageUrl = ApiList.utilLoadFile +
+                    '?image_name=' +
+                    qrDetail.core!.certificate.data;
 
                 return SingleChildScrollView(
                   child: Column(
@@ -109,36 +107,35 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
                         child: Container(
                           padding: EdgeInsets.all(10),
                           color: Colors.white,
-                          child: QrImage(
-                            data: umkmId,
-                            version: QrVersions.auto,
-                            size: 200
-                          ),
+                          child: QrImageView(
+                              data: umkmId,
+                              version: QrVersions.auto,
+                              size: 200),
                         ),
                       ),
                       SizedBox(height: 10),
-                      Text(qrDetail.profile.companyName, style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24
-                      )),
+                      Text(qrDetail.profile.companyName,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 24)),
                       SizedBox(height: 10),
                       certified
-                        ? Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Icon(Icons.check_circle_outline, color: Colors.green),
-                            SizedBox(width: 5),
-                            Text('Certified')
-                          ],
-                        )
-                        : Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Icon(Icons.close_rounded, color: Colors.red),
-                            SizedBox(width: 5),
-                            Text('Not Certified')
-                          ],
-                        ),
+                          ? Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Icon(Icons.check_circle_outline,
+                                    color: Colors.green),
+                                SizedBox(width: 5),
+                                Text('Certified')
+                              ],
+                            )
+                          : Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Icon(Icons.close_rounded, color: Colors.red),
+                                SizedBox(width: 5),
+                                Text('Not Certified')
+                              ],
+                            ),
                       SizedBox(height: 10),
                       ElevatedButton(
                         child: Wrap(
@@ -152,36 +149,30 @@ class _UmkmQrViewPageState extends State<UmkmQrViewPage> {
                         onPressed: () => _shareQr(umkmId),
                       ),
                       SizedBox(height: 50),
-                      Image.network(certificateImageUrl, width: 400,),
+                      Image.network(
+                        certificateImageUrl,
+                        width: 400,
+                      ),
                       SizedBox(height: 50)
                     ],
                   ),
                 );
-              }
-
-              else {
+              } else {
                 return Center(
-                  child: Text('UMKM has not been certified', style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[400]
-                  )),
+                  child: Text('UMKM has not been certified',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[400])),
                 );
               }
-            }
-
-            else if (snapshot.hasError) {
+            } else if (snapshot.hasError) {
               return Center(
-                child: Text(snapshot.error.toString(), style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[400]
-                ))
-              );
-            }
-
-            else {
-              return Center(
-                child: CircularProgressIndicator()
-              );
+                  child: Text(snapshot.error.toString(),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[400])));
+            } else {
+              return Center(child: CircularProgressIndicator());
             }
           },
         ),

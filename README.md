@@ -1,3 +1,3 @@
-# Halal Chain
+# Halal Chain (Deprecated)
 
-Android apps for Sertifikasi Jaminan Halal.
+This repository already deprecated, now moved to [Halal Chain](https://github.com/jpngeekudin/halal-chain).

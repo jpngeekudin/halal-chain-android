@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:halal_chain/configs/api_config.dart';
 import 'package:halal_chain/helpers/auth_helper.dart';
 import 'package:halal_chain/helpers/date_helper.dart';
